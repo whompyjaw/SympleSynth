@@ -7,9 +7,9 @@
 
   ==============================================================================
 */
-#include <JuceHeader.h>
-#pragma once
 
+#pragma once
+#include <JuceHeader.h>
 
 // This code was taken from the Juce tutorial "SynthUsingMidiInputTutorial"
 
@@ -27,8 +27,8 @@ struct SineWaveSound : public juce::SynthesiserSound
     SineWaveSound() {}
 
     // Not sure why these are overridden functions when they don't exist in the "SynthesizerSounds" class
-    bool appliesToNote(int) override { return true; }
-    bool appliesToChannel(int) override { return true; }
+    bool appliesToNote(int midiNoteNumber) override { return true; }
+    bool appliesToChannel(int midiNoteNumber) override { return true; }
 };
 
 
@@ -114,7 +114,7 @@ struct SineWaveVoice : public juce::SynthesiserVoice
             {
                 /* Used for the normal state of the voice, while the key is being held down
                 Notice that we use the AudioSampleBuffer::addSample() function, which mixes
-                the currentSample value with the value alread at index startSample. This is
+                the currentSample value with the value already at index startSample. This is
                 because the synthesiser will be iterating over all of the voices.
                 It is the responsibility of each voice to mix its output with the current
                 contents of the buffer.*/
@@ -134,61 +134,4 @@ struct SineWaveVoice : public juce::SynthesiserVoice
 
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0, tailOff = 0.0;
-};
-
-class SynthAudioSource : public juce::AudioSource
-{
-public:
-    SynthAudioSource(juce::MidiKeyboardState& keyState) : keyboardState(keyState)
-    {
-        // Add number of synth voices
-        for (auto i = 0; i < 4; ++i)
-            synth.addVoice(new SineWaveVoice());
-
-        synth.addSound(new SineWaveSound());
-    }
-
-    void setUsingSineWaveSound()
-    {
-        synth.clearSounds();
-    }
-
-    /* In order to process the timestamps of the MIDI data the collector class needs to know
-    the audio sample rate. That is set here.*/
-    void prepareToPlay(int /*samplesPerBlockExpected*/, double sampleRate) override
-    {
-        synth.setCurrentPlaybackSampleRate(sampleRate); // Needs to know the sample rate of audio output
-        midiCollector.reset(sampleRate);
-    }
-
-    void releaseResources() override {}
-
-
-    void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override
-    {
-        bufferToFill.clearActiveBufferRegion(); // otherwise i think you would have garbage data
-
-        juce::MidiBuffer incomingMidi;
-        midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples); // pull any MIDI messages for each block of audio
-
-        // Pull midi buffers from keyboardState object
-        keyboardState.processNextMidiBuffer(incomingMidi, bufferToFill.startSample, bufferToFill.numSamples, true);
-
-        // These buffers of midi are passed to the synth which whill be used to render the voices using the timestamps
-        // of the note-on and note-off messages (and other MIDI channel voice messages)
-        synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, bufferToFill.startSample, bufferToFill.numSamples);
-    }
-
-    // Accessor function 
-    juce::MidiMessageCollector* getMidiCollector()
-    {
-        return &midiCollector;
-    }
-
-private:
-    juce::MidiKeyboardState& keyboardState; // Note this is second time calling keyboardState, so not sure what this is for again
-    juce::MidiMessageCollector midiCollector;
-    juce::Synthesiser synth; // Only one synth. It manages the lifetime of the voices.
-
-
 };
