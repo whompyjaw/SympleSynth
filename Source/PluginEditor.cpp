@@ -11,14 +11,14 @@
 
 //==============================================================================
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), keyboardComponent(keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
+    : AudioProcessorEditor (&p), audioProcessor (p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
-    addAndMakeVisible(keyboardComponent);
+    //addAndMakeVisible(keyboardComponent);
     setSize (1200, 800);
-    startTimer(400);
+    //startTimer(400);
 }
 
 SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
@@ -38,8 +38,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
 
-    keyboardComponent.setBounds(0, 700, getWidth(), 100);
+
+    //keyboardComponent.setBounds(0, 700, getWidth(), 100);
 }

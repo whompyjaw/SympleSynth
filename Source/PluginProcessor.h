@@ -55,9 +55,10 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    juce::MidiKeyboardState keyboardState;
-    SynthAudioSource synthAudioSource;
     juce::Synthesiser synth;
+    SineWaveVoice* synthVoice;
+
+    double lastSampleRate;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessor)
 };

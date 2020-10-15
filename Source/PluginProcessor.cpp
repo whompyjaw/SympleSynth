@@ -19,9 +19,17 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), synthAudioSource(keyboardState)
+                       )
 #endif
 {
+    synth.clearVoices();
+    for (int i = 0; i < 8; ++i)
+    {
+        synth.addVoice(new SineWaveVoice());
+    }
+
+    synth.clearSounds();
+    synth.addSound(new SineWaveSound());
 }
 
 SympleSynthAudioProcessor::~SympleSynthAudioProcessor()
@@ -95,14 +103,20 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you 
-    synthAudioSource.prepareToPlay(samplesPerBlock, sampleRate);
+    juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
+    //synth.prepareToPlay(samplesPerBlock, sampleRate);
+    lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
+    synth.setCurrentPlaybackSampleRate(lastSampleRate);
 }
 
+/* Gets called when the application is closed. */
 void SympleSynthAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-    synthAudioSource.releaseResources();
+    //keyboardState.reset();
+    /*synthAudioSource.releaseResources();*/
+
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -129,38 +143,15 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
+/* This block gets called sampleRate / bufferSize times per second.
+So 44100 / 512 = 86 times per second
+44100 / 64 = 689 times per second */
 void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    /*juce::MidiMessageCollector* midiMessageCollector = synthAudioSource.getMidiCollector();*/
-    juce::AudioSourceChannelInfo audioInfo(buffer);
-    synthAudioSource.getNextAudioBlock(audioInfo);
 
-
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
+    /*juce::clearBuffer();*/
+    buffer.clear();
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 }
 
 //==============================================================================
