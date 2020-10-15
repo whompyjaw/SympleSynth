@@ -33,8 +33,7 @@ private:
     //    stopTimer();
     //}
 
-    //juce::MidiKeyboardState keyboardState;
-    //juce::MidiKeyboardComponent keyboardComponent;
+    juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;
 
 
