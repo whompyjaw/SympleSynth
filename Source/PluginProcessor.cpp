@@ -179,9 +179,9 @@ void SympleSynthAudioProcessor::setStateInformation (const void* data, int sizeI
     // whose contents will have been created by the getStateInformation() call.
 }
 
-juce::MidiKeyboardState* SympleSynthAudioProcessor::getKeyboardState()
+juce::MidiKeyboardState& SympleSynthAudioProcessor::getKeyboardState()
 {
-    return &keyboardState;
+    return keyboardState;
 }
 
 //==============================================================================

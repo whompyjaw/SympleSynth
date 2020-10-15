@@ -12,7 +12,7 @@
 //==============================================================================
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
     : AudioProcessorEditor (&p),
-      keyboardComponent (*p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
+      keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
       audioProcessor (p)
 {
     // Make sure that before the constructor has finished, you've set the
