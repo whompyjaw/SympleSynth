@@ -13,12 +13,14 @@
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
     : AudioProcessorEditor (&p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
-      audioProcessor (p)
+      audioProcessor (p),
+      amplifier(p.getAmpParameters())
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
     addAndMakeVisible(keyboardComponent);
+    addAndMakeVisible(amplifier);
     setSize (1200, 800);
     //startTimer(400);
 }

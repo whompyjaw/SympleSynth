@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "SympleADSRComponent.h"
+
 //==============================================================================
 /**
 */
@@ -35,6 +37,8 @@ private:
 
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;
+    
+    SympleADSRComponent amplifier;
 
 
    /* juce::ComboBox midiInputList;

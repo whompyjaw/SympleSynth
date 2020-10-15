@@ -55,11 +55,14 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     juce::MidiKeyboardState& getKeyboardState();
+    juce::ADSR::Parameters& getAmpParameters();
 
 private:
     juce::Synthesiser synth;
     SineWaveVoice* synthVoice;
     juce::MidiKeyboardState keyboardState;
+    
+    juce::ADSR::Parameters ampParameters;
 
     double lastSampleRate;
     //==============================================================================

@@ -22,6 +22,9 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                        )
 #endif
 {
+    // initialize amplifier parameters
+    ampParameters = {0.001, 1.0, 1.0, 0.2};
+
     synth.clearVoices();
     for (int i = 0; i < 8; ++i)
     {
@@ -183,6 +186,11 @@ void SympleSynthAudioProcessor::setStateInformation (const void* data, int sizeI
 juce::MidiKeyboardState& SympleSynthAudioProcessor::getKeyboardState()
 {
     return keyboardState;
+}
+
+juce::ADSR::Parameters& SympleSynthAudioProcessor::getAmpParameters()
+{
+    return ampParameters;
 }
 
 //==============================================================================
