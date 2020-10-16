@@ -152,6 +152,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     keyboardState.processNextMidiBuffer (midiMessages, 0,
                                          buffer.getNumSamples(), true);
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    midiMessages.clear();
 }
 
 //==============================================================================
