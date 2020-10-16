@@ -49,6 +49,6 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 void SympleSynthAudioProcessorEditor::resized()
 {
 
-
+    amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 0, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
 }

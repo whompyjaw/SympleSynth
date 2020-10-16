@@ -14,46 +14,42 @@
 
 SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
-    setSize (600, 300);
+    setSize (350, 300);
     
     // attack
-    attack.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    attack.setSliderStyle (juce::Slider::LinearBarVertical);
     attack.setRange (0.0, 10.0, 0.001);
     attack.setValue (audioProcessor.getAmpParameters().attack);
     attack.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
-    attack.setPopupDisplayEnabled (false, false, this);
+    attack.setPopupDisplayEnabled (true, false, this);
     attack.setTextValueSuffix (" sec");
-    attack.setRotaryParameters (0, 2, true);
     addAndMakeVisible (&attack);
     attack.addListener (this);
     
-    decay.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    decay.setSliderStyle (juce::Slider::LinearBarVertical);
     decay.setRange (0.0, 10.0, 0.001);
     decay.setValue (audioProcessor.getAmpParameters().decay);
     decay.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     decay.setPopupDisplayEnabled (false, false, this);
     decay.setTextValueSuffix (" sec");
-    decay.setRotaryParameters (0, 2, true);
     addAndMakeVisible (&decay);
     decay.addListener (this);
 
-    sustain.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    sustain.setSliderStyle (juce::Slider::LinearBarVertical);
     sustain.setRange (0.0, 10.0, 0.001);
     sustain.setValue (audioProcessor.getAmpParameters().sustain);
     sustain.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     sustain.setPopupDisplayEnabled (false, false, this);
     sustain.setTextValueSuffix (" sec");
-    sustain.setRotaryParameters (0, 2, true);
     addAndMakeVisible (&sustain);
     sustain.addListener (this);
 
-    release.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
+    release.setSliderStyle (juce::Slider::LinearBarVertical);
     release.setRange (0.0, 10.0, 0.001);
     release.setValue (audioProcessor.getAmpParameters().release);
     release.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     release.setPopupDisplayEnabled (false, false, this);
     release.setTextValueSuffix (" sec");
-    release.setRotaryParameters (0, 2, true);
     addAndMakeVisible (&release);
     release.addListener (this);
 }
@@ -69,19 +65,19 @@ void SympleADSRComponent::paint(juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    
-    attack.setColour(0x0001, juce::Colours::white);
-    decay.setColour(0x0001, juce::Colours::white);
-    sustain.setColour(0x0001, juce::Colours::white);
-    release.setColour(0x0001, juce::Colours::white);
+    g.drawFittedText ("Amplifier", 0, 0, getWidth(), 30, juce::Justification::centred, 1);
+    g.drawFittedText ("A", 70, 85, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("D", 145, 85, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("S", 220, 85, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("R", 295, 85, 10, 15, juce::Justification::centred, 1);
 }
 
 void SympleADSRComponent::resized()
 {
-    attack.setBounds (50, 50, 50, 50);
-    decay.setBounds (125, 50, 50, 50);
-    sustain.setBounds (200, 50, 50, 50);
-    release.setBounds (275, 50, 50, 50);
+    attack.setBounds (50, 35, 50, 50);
+    decay.setBounds (125, 35, 50, 50);
+    sustain.setBounds (200, 35, 50, 50);
+    release.setBounds (275, 35, 50, 50);
 }
 
 void SympleADSRComponent::sliderValueChanged(juce::Slider* slider)
