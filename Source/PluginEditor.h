@@ -15,7 +15,7 @@
 //==============================================================================
 /**
 */
-class SympleSynthAudioProcessorEditor  : public juce::AudioProcessorEditor
+class SympleSynthAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Slider::Listener
 {
 public:
     SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor&);
@@ -24,6 +24,8 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    void sliderValueChanged(juce::Slider* slider) override;
 
 private:
     juce::MidiKeyboardComponent keyboardComponent;

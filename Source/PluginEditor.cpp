@@ -23,10 +23,10 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(amplifier);
 
     masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    masterGainSlider.setRange(0.0f, 1.0f, 0.01f);
-    masterGainSlider.setValue(0.5f);
+    masterGainSlider.setRange(-60.0f, 0.0f, 0.01f);
+    masterGainSlider.setValue(-20.0f);
     masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
-
+    masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
     addAndMakeVisible(masterGainSlider);
     setSize (1200, 800);
     //startTimer(400);
@@ -63,4 +63,13 @@ void SympleSynthAudioProcessorEditor::resized()
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
     masterGainSlider.setBounds(1100, 400, 40, 100);
+}
+
+void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
+{
+    // If the passed in slider is masterGainSlider (if the addresses are equal
+    if (slider == &masterGainSlider)
+    {
+        audioProcessor.masterGain = masterGainSlider.getValue();
+    }
 }
