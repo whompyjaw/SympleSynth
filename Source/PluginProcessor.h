@@ -56,6 +56,7 @@ public:
 
     juce::MidiKeyboardState& getKeyboardState();
     juce::ADSR::Parameters& getAmpParameters();
+    void setAmpParameters(juce::ADSR::Parameters&);
 
 private:
     juce::Synthesiser synth;

@@ -37,7 +37,11 @@ A voice plays a single sound at a time, and a synthesiser holds an array of voic
 play polyphonically */
 struct SineWaveVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice() {}
+    SineWaveVoice(juce::ADSR::Parameters& ampParameters) : ampParameters(ampParameters)
+    {
+        amplifier.setSampleRate(getSampleRate());
+        amplifier.setParameters(ampParameters);
+    }
 
     bool canPlaySound(juce::SynthesiserSound* sound) override
     {
@@ -47,9 +51,9 @@ struct SineWaveVoice : public juce::SynthesiserVoice
     // Start the sine tone based on midi input
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int /*currentPitchWheelPosition*/) override
     {
+        amplifier.noteOn();
         currentAngle = 0.0;
         level = velocity * 0.15;
-        tailOff = 0.0; // Q: not sure what this is for
 
         auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
         juce::Logger::outputDebugString(std::to_string(midiNoteNumber));
@@ -61,77 +65,44 @@ struct SineWaveVoice : public juce::SynthesiserVoice
     /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
     void stopNote(float /*velocity*/, bool allowTailOff) override
     {
-
-        // You could just have clearCurrentNote();, but the below code adds extra bits I think
-        if (allowTailOff)
-        {
-            if (tailOff == 0.0)
-                tailOff = 1.0;
-        }
-        else
-        {
-            clearCurrentNote();
-            angleDelta = 0.0;
-        }
+        amplifier.noteOff();
     }
 
     void pitchWheelMoved(int) override {}
     void controllerMoved(int, int) override {}
 
     /* Renders the next block of data for this voice. */
-    // TODO: Try to add a slower attack so they don't play abruptly.
     void renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
     {
         if (angleDelta != 0.0) // Not silent
         {
-            /* When the key has been released the tailOff value will be greater than 0*/
-            if (tailOff > 0.0)
+            while (--numSamples >= 0)
             {
-                while (--numSamples >= 0)
-                {
-                    auto currentSample = (float)(std::sin(currentAngle) * level * tailOff);
+                auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
 
-                    for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                        outputBuffer.addSample(i, startSample, currentSample);
+                for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
+                    outputBuffer.addSample(i, startSample, currentSample);
 
-                    currentAngle += angleDelta;
-                    ++startSample;
+                currentAngle += angleDelta;
+                ++startSample;
 
-                    // TODO: This is maybe where we would add our own decay value?
-                    tailOff *= 0.99; // Simple exponential decay envelope shape
-
-                    // If note has decayed enough, kill the sound
-                    // Note: This could be placed in the stopNote method as well
-                    if (tailOff <= 0.005)
-                    {
-                        clearCurrentNote();
-                        angleDelta = 0.0;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                /* Used for the normal state of the voice, while the key is being held down
-                Notice that we use the AudioSampleBuffer::addSample() function, which mixes
-                the currentSample value with the value already at index startSample. This is
-                because the synthesiser will be iterating over all of the voices.
-                It is the responsibility of each voice to mix its output with the current
-                contents of the buffer.*/
-                while (--numSamples >= 0)
-                {
-                    auto currentSample = (float)(std::sin(currentAngle) * level);
-
-                    for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                        outputBuffer.addSample(i, startSample, currentSample);
-
-                    currentAngle += angleDelta;
-                    ++startSample;
+                if (!amplifier.isActive()) {
+                    clearCurrentNote();
+                    amplifier.reset();
+                    angleDelta = 0.0;
+                    break;
                 }
             }
         }
     }
+    
+    void setAmpParameters(juce::ADSR::Parameters& params)
+    {
+        amplifier.setParameters(params);
+    }
 
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0, tailOff = 0.0;
+    juce::ADSR amplifier;
+    juce::ADSR::Parameters& ampParameters;
 };

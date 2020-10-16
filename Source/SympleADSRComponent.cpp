@@ -9,16 +9,17 @@
 */
 
 #include <JuceHeader.h>
+#include "PluginProcessor.h"
 #include "SympleADSRComponent.h"
 
-SympleADSRComponent::SympleADSRComponent(juce::ADSR::Parameters& params) : params(params)
+SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
     setSize (600, 300);
     
     // attack
     attack.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
     attack.setRange (0.0, 10.0, 0.001);
-    attack.setValue (params.attack);
+    attack.setValue (audioProcessor.getAmpParameters().attack);
     attack.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     attack.setPopupDisplayEnabled (false, false, this);
     attack.setTextValueSuffix (" sec");
@@ -28,7 +29,7 @@ SympleADSRComponent::SympleADSRComponent(juce::ADSR::Parameters& params) : param
     
     decay.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
     decay.setRange (0.0, 10.0, 0.001);
-    decay.setValue (params.decay);
+    decay.setValue (audioProcessor.getAmpParameters().decay);
     decay.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     decay.setPopupDisplayEnabled (false, false, this);
     decay.setTextValueSuffix (" sec");
@@ -38,7 +39,7 @@ SympleADSRComponent::SympleADSRComponent(juce::ADSR::Parameters& params) : param
 
     sustain.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
     sustain.setRange (0.0, 10.0, 0.001);
-    sustain.setValue (params.sustain);
+    sustain.setValue (audioProcessor.getAmpParameters().sustain);
     sustain.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     sustain.setPopupDisplayEnabled (false, false, this);
     sustain.setTextValueSuffix (" sec");
@@ -48,7 +49,7 @@ SympleADSRComponent::SympleADSRComponent(juce::ADSR::Parameters& params) : param
 
     release.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
     release.setRange (0.0, 10.0, 0.001);
-    release.setValue (params.release);
+    release.setValue (audioProcessor.getAmpParameters().release);
     release.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
     release.setPopupDisplayEnabled (false, false, this);
     release.setTextValueSuffix (" sec");
@@ -59,14 +60,6 @@ SympleADSRComponent::SympleADSRComponent(juce::ADSR::Parameters& params) : param
 
 SympleADSRComponent::~SympleADSRComponent()
 {
-}
-
-void SympleADSRComponent::useParameters(juce::ADSR::Parameters& params) {
-    params = params;
-    attack.setValue (params.attack);
-    decay.setValue (params.decay);
-    sustain.setValue (params.sustain);
-    release.setValue (params.release);
 }
 
 void SympleADSRComponent::paint(juce::Graphics& g)
@@ -93,9 +86,13 @@ void SympleADSRComponent::resized()
 
 void SympleADSRComponent::sliderValueChanged(juce::Slider* slider)
 {
+    juce::ADSR::Parameters& params = audioProcessor.getAmpParameters();
+
     params.attack = attack.getValue();
     params.decay = decay.getValue();
     params.sustain = sustain.getValue();
     params.release = release.getValue();
+    
+    audioProcessor.setAmpParameters(params);
 }
 

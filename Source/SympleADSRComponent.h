@@ -15,7 +15,7 @@ class SympleADSRComponent : public juce::Component,
                             private juce::Slider::Listener
 {
 public:
-    SympleADSRComponent(juce::ADSR::Parameters&);
+    SympleADSRComponent(SympleSynthAudioProcessor&);
     ~SympleADSRComponent();
 
     //==============================================================================
@@ -30,9 +30,7 @@ private:
     juce::Slider sustain;
     juce::Slider release;
     
-    void useParameters(juce::ADSR::Parameters&);
-    
-    juce::ADSR::Parameters& params;
+    SympleSynthAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleADSRComponent)
 };

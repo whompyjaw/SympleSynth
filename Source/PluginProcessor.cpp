@@ -28,7 +28,7 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     synth.clearVoices();
     for (int i = 0; i < 8; ++i)
     {
-        synth.addVoice(new SineWaveVoice());
+        synth.addVoice(new SineWaveVoice(ampParameters));
     }
 
     synth.clearSounds();
@@ -191,6 +191,14 @@ juce::MidiKeyboardState& SympleSynthAudioProcessor::getKeyboardState()
 juce::ADSR::Parameters& SympleSynthAudioProcessor::getAmpParameters()
 {
     return ampParameters;
+}
+
+void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
+{
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        dynamic_cast<SineWaveVoice*>(synth.getVoice(0))->setAmpParameters (params);
+    }
 }
 
 //==============================================================================
