@@ -114,7 +114,7 @@ void SympleSynthAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-    //keyboardState.reset();
+    keyboardState.reset();
     /*synthAudioSource.releaseResources();*/
 
 }
@@ -148,10 +148,11 @@ So 44100 / 512 = 86 times per second
 44100 / 64 = 689 times per second */
 void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-
-    /*juce::clearBuffer();*/
     buffer.clear();
+    keyboardState.processNextMidiBuffer (midiMessages, 0,
+                                         buffer.getNumSamples(), true);
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    midiMessages.clear();
 }
 
 //==============================================================================
@@ -177,6 +178,11 @@ void SympleSynthAudioProcessor::setStateInformation (const void* data, int sizeI
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+juce::MidiKeyboardState& SympleSynthAudioProcessor::getKeyboardState()
+{
+    return keyboardState;
 }
 
 //==============================================================================
