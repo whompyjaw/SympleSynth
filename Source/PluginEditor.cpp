@@ -21,6 +21,13 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
 
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(amplifier);
+
+    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    masterGainSlider.setRange(0.0f, 1.0f, 0.01f);
+    masterGainSlider.setValue(0.5f);
+    masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
+
+    addAndMakeVisible(masterGainSlider);
     setSize (1200, 800);
     //startTimer(400);
 }
@@ -33,7 +40,7 @@ SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(juce::Colours::black);
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
@@ -48,11 +55,12 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     {
         keyboardComponent.grabKeyboardFocus();
     }
+
 }
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
+    masterGainSlider.setBounds(1100, 400, 40, 100);
 }
