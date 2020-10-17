@@ -110,6 +110,11 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     //synth.prepareToPlay(samplesPerBlock, sampleRate);
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
+
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
 }
 
 /* Gets called when the application is closed. */
@@ -156,6 +161,8 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
                                          buffer.getNumSamples(), true);
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     midiMessages.clear();
+
+    juce::dsp::AudioBlock<float> block(buffer);
 }
 
 //==============================================================================
