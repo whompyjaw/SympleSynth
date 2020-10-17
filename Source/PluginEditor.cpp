@@ -13,12 +13,14 @@
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
     : AudioProcessorEditor (&p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
-      audioProcessor (p)
+      audioProcessor (p),
+      amplifier(p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
     addAndMakeVisible(keyboardComponent);
+    addAndMakeVisible(amplifier);
     setSize (1200, 800);
     //startTimer(400);
 }
@@ -37,6 +39,10 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     g.setFont (15.0f);
     g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
     
+    // draw amplifier label
+    g.drawFittedText ("Amplifier", getWidth() - amplifier.getWidth() - 20,
+                      0, amplifier.getWidth(), 20, juce::Justification::centred, 1);
+
     if (!keyboardComponent.hasKeyboardFocus (true) &&
         keyboardComponent.isVisible())
     {
@@ -47,6 +53,6 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 void SympleSynthAudioProcessorEditor::resized()
 {
 
-
+    amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
 }

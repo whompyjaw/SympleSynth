@@ -12,6 +12,10 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="s27kFQ" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="QLQlKC" name="SympleADSRComponent.cpp" compile="1" resource="0"
+            file="Source/SympleADSRComponent.cpp"/>
+      <FILE id="tJLjWj" name="SympleADSRComponent.h" compile="0" resource="0"
+            file="Source/SympleADSRComponent.h"/>
       <FILE id="I5GcwK" name="SynthAudioSource.h" compile="0" resource="0"
             file="Source/SynthAudioSource.h"/>
     </GROUP>
