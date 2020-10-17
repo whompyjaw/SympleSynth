@@ -14,7 +14,7 @@
 
 SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
-    setSize (350, 300);
+    setSize (350, 100);
     
     // attack
     attack.setSliderStyle (juce::Slider::LinearBarVertical);
@@ -65,19 +65,18 @@ void SympleADSRComponent::paint(juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Amplifier", 0, 0, getWidth(), 30, juce::Justification::centred, 1);
-    g.drawFittedText ("A", 70, 85, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("D", 145, 85, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("S", 220, 85, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("R", 295, 85, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("A", 70, 55, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("D", 145, 55, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("S", 220, 55, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("R", 295, 55, 10, 15, juce::Justification::centred, 1);
 }
 
 void SympleADSRComponent::resized()
 {
-    attack.setBounds (50, 35, 50, 50);
-    decay.setBounds (125, 35, 50, 50);
-    sustain.setBounds (200, 35, 50, 50);
-    release.setBounds (275, 35, 50, 50);
+    attack.setBounds (50, 0, 50, 50);
+    decay.setBounds (125, 0, 50, 50);
+    sustain.setBounds (200, 0, 50, 50);
+    release.setBounds (275, 0, 50, 50);
 }
 
 void SympleADSRComponent::sliderValueChanged(juce::Slider* slider)
