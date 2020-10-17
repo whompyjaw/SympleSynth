@@ -59,6 +59,8 @@ public:
     void setAmpParameters(juce::ADSR::Parameters&);
 
 private:
+    const int VOICE_COUNT = 64;
+    
     juce::Synthesiser synth;
     SineWaveVoice* synthVoice;
     juce::MidiKeyboardState keyboardState;

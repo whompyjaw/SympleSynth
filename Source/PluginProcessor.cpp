@@ -9,8 +9,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#define VOICE_COUNT (int)64
-
 //==============================================================================
 SympleSynthAudioProcessor::SympleSynthAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
