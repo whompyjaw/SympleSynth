@@ -19,7 +19,7 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f))
 #endif
 {
     // initialize amplifier parameters
@@ -163,6 +163,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     midiMessages.clear();
 
     juce::dsp::AudioBlock<float> block(buffer);
+    lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
 }
 
 //==============================================================================
