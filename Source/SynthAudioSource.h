@@ -102,7 +102,7 @@ struct SineWaveVoice : public juce::SynthesiserVoice
     }
 
 private:
-    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0, tailOff = 0.0;
+    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     juce::ADSR amplifier;
     juce::ADSR::Parameters& ampParameters;
 };
