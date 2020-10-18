@@ -37,8 +37,8 @@ private:
 
     juce::Slider filterCutoffDial;
     juce::Slider filterResDial;
-    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
-    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
 
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& processor;

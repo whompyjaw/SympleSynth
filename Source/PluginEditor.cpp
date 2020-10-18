@@ -13,9 +13,9 @@
 
 //==============================================================================
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
-    : AudioProcessorEditor (&p),
+    : AudioProcessorEditor (&p), processor(p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
-      processor (p),
+      
       amplifier(p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -27,21 +27,21 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
 
     //  Add Filter Dials
     filterCutoffDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    filterCutoffDial.setRange(20.0f, 20000.0f);
-    filterCutoffDial.setValue(600.0f);
+   // filterCutoffDial.setRange(20.0f, 20000.0f);
+    //filterCutoffDial.setValue(600.0f);
     filterCutoffDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     filterCutoffDial.setPopupDisplayEnabled(true, true, this);
     addAndMakeVisible(&filterCutoffDial);
 
     filterResDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    filterResDial.setRange(0.1f, 1.0f);
-    filterResDial.setValue(2.0f);
+    //filterResDial.setRange(0.1f, 1.0f);
+    //filterResDial.setValue(2.0f);
     filterResDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     filterResDial.setPopupDisplayEnabled(true, true, this);
     addAndMakeVisible(&filterResDial);
 
-    filterCutoffValue = new juce::AudioProcessorValueTreeState::SliderAttachment(processor.tree, "cutoff", filterCutoffDial);
-    filterResValue = new juce::AudioProcessorValueTreeState::SliderAttachment(processor.tree, "resonance", filterResDial);
+    filterCutoffValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor.getTree(), "CUTOFF", filterCutoffDial);
+    filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor.getTree(), "RESONANCE", filterResDial);
     filterCutoffDial.setSkewFactorFromMidPoint(1000.0f);
 
     //startTimer(400);
@@ -67,7 +67,6 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     // draw amplifier label
     g.drawFittedText ("Amplifier", getWidth() - amplifier.getWidth() - 20,
                       0, amplifier.getWidth(), 20, juce::Justification::centred, 1);
-
     // Draw Filter Dials
     g.fillAll(juce::Colours::black);
     g.setColour(juce::Colours::white);
@@ -91,7 +90,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-
+    juce::Rectangle<int> area = getLocalBounds().reduced(40);
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
     filterCutoffDial.setBounds(30, 90, 70, 70);

@@ -60,7 +60,8 @@ public:
 
     void updateFilter();
 
-    juce::AudioProcessorValueTreeState tree;
+    juce::AudioProcessorValueTreeState& getTree() { return tree; }
+
 
 private:
     const int VOICE_COUNT = 64;
@@ -71,8 +72,10 @@ private:
     
     juce::ADSR::Parameters ampParameters;
 
-    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter <float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
+    juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
+    juce::AudioProcessorValueTreeState tree;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
     float lastSampleRate;
     //==============================================================================

@@ -21,19 +21,19 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), tree(*this, nullptr), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f))
+                       ), tree(*this, nullptr, "PARAMETERS", createParameters()), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f))
 #endif
 {
     // Initialize lowpass ranges
-    juce::NormalisableRange<float> cutoffRange(10.0f, 20000.0f);
-    juce::NormalisableRange<float> resRange(0.1f, 1.0f);
+    //juce::NormalisableRange<float> cutoffRange(10.0f, 20000.0f);
+    //juce::NormalisableRange<float> resRange(0.1f, 1.0f);
 
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
 
     // Initialize Filter Parameters
-    tree.createAndAddParameter("cutoff", "Cutoff", "cutoff", cutoffRange, 100.0f, nullptr, nullptr);
-    tree.createAndAddParameter("resonance", "Resonance", "resonance", resRange, 0.1f, nullptr, nullptr);
+    //tree.createAndAddParameter("cutoff", "Cutoff", "cutoff", cutoffRange, 100.0f, nullptr, nullptr);
+    //tree.createAndAddParameter("resonance", "Resonance", "resonance", resRange, 0.1f, nullptr, nullptr);
 
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
@@ -166,8 +166,8 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 
 void SympleSynthAudioProcessor::updateFilter()
 {
-    float freq = *tree.getRawParameterValue("cutoff");
-    float res = *tree.getRawParameterValue("resonance");
+    float freq = tree.getRawParameterValue("CUTOFF")->load();
+    float res = tree.getRawParameterValue("RESONANCE")->load();
     
     *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, freq, res);
 }
@@ -177,13 +177,18 @@ So 44100 / 512 = 86 times per second
 44100 / 64 = 689 times per second */
 void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    buffer.clear();
+    keyboardState.processNextMidiBuffer (midiMessages, 0,
+                                         buffer.getNumSamples(), true);
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    midiMessages.clear();
 
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear(i, 0, buffer.getNumSamples());
+    //for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+     //   buffer.clear(i, 0, buffer.getNumSamples());
 
     juce::dsp::AudioBlock<float> block(buffer);
     updateFilter();
@@ -231,6 +236,16 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
     {
         dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->setAmpParameters (params);
     }
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 100.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
+
+    return { parameters.begin(), parameters.end() };
 }
 
 //==============================================================================
