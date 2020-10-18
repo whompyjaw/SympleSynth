@@ -25,7 +25,6 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     attack.setPopupDisplayEnabled (true, false, this);
     attack.setTextValueSuffix (" sec");
     addAndMakeVisible (&attack);
-    attack.addListener (this);
     
     decay.setSliderStyle (juce::Slider::LinearBarVertical);
     decay.setRange (0.0, 10.0, 0.001);
@@ -35,7 +34,6 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     decay.setPopupDisplayEnabled (false, false, this);
     decay.setTextValueSuffix (" sec");
     addAndMakeVisible (&decay);
-    decay.addListener (this);
 
     sustain.setSliderStyle (juce::Slider::LinearBarVertical);
     sustain.setRange (0.0, 100.0, 0.01);
@@ -44,7 +42,6 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     sustain.setPopupDisplayEnabled (false, false, this);
     sustain.setTextValueSuffix ("%");
     addAndMakeVisible (&sustain);
-    sustain.addListener (this);
 
     release.setSliderStyle (juce::Slider::LinearBarVertical);
     release.setRange (0.0, 10.0, 0.001);
@@ -54,7 +51,6 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     release.setPopupDisplayEnabled (false, false, this);
     release.setTextValueSuffix (" sec");
     addAndMakeVisible (&release);
-    release.addListener (this);
     
     attackValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_ATTACK", attack);
     decayValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_DECAY", decay);
@@ -68,9 +64,6 @@ SympleADSRComponent::~SympleADSRComponent()
 
 void SympleADSRComponent::paint(juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-//    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
     g.drawFittedText ("A", 70, 55, 10, 15, juce::Justification::centred, 1);
@@ -86,16 +79,3 @@ void SympleADSRComponent::resized()
     sustain.setBounds (200, 0, 50, 50);
     release.setBounds (275, 0, 50, 50);
 }
-
-void SympleADSRComponent::sliderValueChanged(juce::Slider* slider)
-{
-//    juce::ADSR::Parameters& params = audioProcessor.getAmpParameters();
-//
-//    params.attack = attack.getValue();
-//    params.decay = decay.getValue();
-//    params.sustain = sustain.getValue() / 100.0;
-//    params.release = release.getValue();
-//
-//    audioProcessor.setAmpParameters(params);
-}
-

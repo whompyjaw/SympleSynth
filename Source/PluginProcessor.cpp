@@ -36,6 +36,8 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
 
     synth.clearSounds();
     synth.addSound(new SineWaveSound());
+    
+    setUpValueTreeListeners();
 }
 
 SympleSynthAudioProcessor::~SympleSynthAudioProcessor()
@@ -233,6 +235,24 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
     {
         dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->setAmpParameters (params);
     }
+}
+
+void SympleSynthAudioProcessor::setUpValueTreeListeners()
+{
+    tree.addParameterListener("AMP_ATTACK", this);
+    tree.addParameterListener("AMP_DECAY", this);
+    tree.addParameterListener("AMP_SUSTAIN", this);
+    tree.addParameterListener("AMP_RELEASE", this);
+}
+
+void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
+{
+    ampParameters.attack = tree.getRawParameterValue("AMP_ATTACK")->load();
+    ampParameters.decay = tree.getRawParameterValue("AMP_DECAY")->load();
+    ampParameters.sustain = tree.getRawParameterValue("AMP_SUSTAIN")->load() / 100;
+    ampParameters.release = tree.getRawParameterValue("AMP_RELEASE")->load();
+    
+    setAmpParameters(ampParameters);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
