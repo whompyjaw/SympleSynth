@@ -49,6 +49,10 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
 
 SympleADSRComponent::~SympleADSRComponent()
 {
+    attackValue.reset();
+    decayValue.reset();
+    sustainValue.reset();
+    releaseValue.reset();
 }
 
 void SympleADSRComponent::paint(juce::Graphics& g)
