@@ -27,15 +27,11 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
 
     //  Add Filter Dials
     filterCutoffDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-   // filterCutoffDial.setRange(20.0f, 20000.0f);
-    //filterCutoffDial.setValue(600.0f);
     filterCutoffDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     filterCutoffDial.setPopupDisplayEnabled(true, true, this);
     addAndMakeVisible(&filterCutoffDial);
 
     filterResDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    //filterResDial.setRange(0.1f, 1.0f);
-    //filterResDial.setValue(2.0f);
     filterResDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     filterResDial.setPopupDisplayEnabled(true, true, this);
     addAndMakeVisible(&filterResDial);

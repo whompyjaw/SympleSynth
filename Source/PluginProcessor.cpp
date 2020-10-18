@@ -24,16 +24,8 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                        ), tree(*this, nullptr, "PARAMETERS", createParameters()), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f))
 #endif
 {
-    // Initialize lowpass ranges
-    //juce::NormalisableRange<float> cutoffRange(10.0f, 20000.0f);
-    //juce::NormalisableRange<float> resRange(0.1f, 1.0f);
-
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
-
-    // Initialize Filter Parameters
-    //tree.createAndAddParameter("cutoff", "Cutoff", "cutoff", cutoffRange, 100.0f, nullptr, nullptr);
-    //tree.createAndAddParameter("resonance", "Resonance", "resonance", resRange, 0.1f, nullptr, nullptr);
 
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
@@ -117,7 +109,6 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // Use this method as the place to do any pre-playback
     // initialisation that you 
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
-    //synth.prepareToPlay(samplesPerBlock, sampleRate);
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
 
@@ -136,7 +127,6 @@ void SympleSynthAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     keyboardState.reset();
-    /*synthAudioSource.releaseResources();*/
 
 }
 
@@ -186,9 +176,6 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-    //for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-     //   buffer.clear(i, 0, buffer.getNumSamples());
 
     juce::dsp::AudioBlock<float> block(buffer);
     updateFilter();
