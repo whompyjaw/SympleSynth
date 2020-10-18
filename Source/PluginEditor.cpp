@@ -13,9 +13,9 @@
 
 //==============================================================================
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor(p),
+    : AudioProcessorEditor (&p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
-      
+      audioProcessor(p),
       amplifier(p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -92,7 +92,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-    juce::Rectangle<int> area = getLocalBounds().reduced(40);
+
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
     masterGainSlider.setBounds(1100, 400, 40, 100);
