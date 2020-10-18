@@ -3,6 +3,8 @@
 
     This file contains the basic framework code for a JUCE plugin processor.
 
+    Sources: https://github.com/TheAudioProgrammer/juceIIRFilter
+
   ==============================================================================
 */
 
@@ -19,7 +21,7 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), tree(*this, nullptr, "PARAMETERS", createParameters()), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f))
 #endif
 {
     // initialize amplifier parameters
@@ -107,9 +109,16 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // Use this method as the place to do any pre-playback
     // initialisation that you 
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
-    //synth.prepareToPlay(samplesPerBlock, sampleRate);
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
+
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
+
+    lowPassFilter.prepare(spec);
+    lowPassFilter.reset();
 }
 
 /* Gets called when the application is closed. */
@@ -118,7 +127,6 @@ void SympleSynthAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     keyboardState.reset();
-    /*synthAudioSource.releaseResources();*/
 
 }
 
@@ -145,6 +153,14 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
   #endif
 }
 #endif
+
+void SympleSynthAudioProcessor::updateFilter()
+{
+    float freq = tree.getRawParameterValue("CUTOFF")->load();
+    float res = tree.getRawParameterValue("RESONANCE")->load();
+    
+    *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, freq, res);
+}
 
 /* This block gets called sampleRate / bufferSize times per second.
 So 44100 / 512 = 86 times per second
@@ -175,6 +191,14 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
+    /*
+    juce::ScopedNoDenormals noDenormals;
+    auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
+*/
+    juce::dsp::AudioBlock<float> block(buffer);
+    updateFilter();
+    lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
 }
 
 //==============================================================================
@@ -218,6 +242,16 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
     {
         dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->setAmpParameters (params);
     }
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 100.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
+
+    return { parameters.begin(), parameters.end() };
 }
 
 //==============================================================================

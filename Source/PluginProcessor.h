@@ -61,6 +61,11 @@ public:
     juce::ADSR::Parameters& getAmpParameters();
     void setAmpParameters(juce::ADSR::Parameters&);
 
+    void updateFilter();
+
+    juce::AudioProcessorValueTreeState& getTree() { return tree; }
+
+
 private:
     const int VOICE_COUNT = 64;
     
@@ -70,7 +75,12 @@ private:
     
     juce::ADSR::Parameters ampParameters;
 
-    double lastSampleRate;
+    juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
+
+    juce::AudioProcessorValueTreeState tree;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+
+    float lastSampleRate;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessor)
 };
