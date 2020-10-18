@@ -35,10 +35,16 @@ private:
     //    stopTimer();
     //}
 
+    juce::Slider filterCutoffDial;
+    juce::Slider filterResDial;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
+    juce::ScopedPointer<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
+
     juce::MidiKeyboardComponent keyboardComponent;
-    SympleSynthAudioProcessor& audioProcessor;
+    SympleSynthAudioProcessor& processor;
     
     SympleADSRComponent amplifier;
+
 
 
    /* juce::ComboBox midiInputList;
