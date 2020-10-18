@@ -40,6 +40,14 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor.getTree(), "RESONANCE", filterResDial);
     filterCutoffDial.setSkewFactorFromMidPoint(1000.0f);
 
+
+    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    masterGainSlider.setRange(-60.0f, 0.0f, 0.01f);
+    masterGainSlider.setValue(-20.0f);
+    masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
+    masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
+    addAndMakeVisible(masterGainSlider);
+    setSize (1200, 800);
     //startTimer(400);
 }
 
@@ -53,7 +61,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     juce::Rectangle<int> titleArea(0, 10, getWidth(), 20);
 
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(juce::Colours::black);
 
 
     g.setColour (juce::Colours::white);
@@ -80,8 +88,6 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     {
         keyboardComponent.grabKeyboardFocus();
     }
-
-
 }
 
 void SympleSynthAudioProcessorEditor::resized()
@@ -89,6 +95,16 @@ void SympleSynthAudioProcessorEditor::resized()
     juce::Rectangle<int> area = getLocalBounds().reduced(40);
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
+    masterGainSlider.setBounds(1100, 400, 40, 100);
     filterCutoffDial.setBounds(30, 90, 70, 70);
     filterResDial.setBounds(100, 90, 70, 70);
+}
+
+void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
+{
+    // If the passed in slider is masterGainSlider (if the addresses are equal
+    if (slider == &masterGainSlider)
+    {
+        audioProcessor.masterGain = masterGainSlider.getValue();
+    }
 }

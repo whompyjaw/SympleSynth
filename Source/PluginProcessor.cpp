@@ -167,10 +167,29 @@ So 44100 / 512 = 86 times per second
 44100 / 64 = 689 times per second */
 void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    juce::ScopedNoDenormals noDenormals;
+    auto totalNumInputChannels = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
+
     buffer.clear();
-    keyboardState.processNextMidiBuffer (midiMessages, 0,
-                                         buffer.getNumSamples(), true);
-    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    keyboardState.processNextMidiBuffer(midiMessages, 0,
+        buffer.getNumSamples(), true);
+
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    {
+        buffer.clear(i, 0, buffer.getNumSamples());
+    }
+
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this process loop.
+    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
+    {
+        auto* channelData = buffer.getWritePointer(channel);
+
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(masterGain);
+        }
+    }
     midiMessages.clear();
 
     juce::ScopedNoDenormals noDenormals;
