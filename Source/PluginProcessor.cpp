@@ -264,10 +264,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
     
     // amp parameters
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", 0.0f, 10.0f, 0.001f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", 0.0f, 10.0f, 0.001f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", 0.0f, 100.0f, 0.01f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", 0.0f, 10.0f, 0.001f));
+    juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
+    juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
+    juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    attackRange.setSkewForCentre(0.35f);
+    decayRange.setSkewForCentre(0.35f);
+    releaseRange.setSkewForCentre(0.35f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", decayRange, 1.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
 
     return { parameters.begin(), parameters.end() };
 }
