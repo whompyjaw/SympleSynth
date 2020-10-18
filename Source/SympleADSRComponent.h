@@ -11,8 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-class SympleADSRComponent : public juce::Component,
-                            private juce::Slider::Listener
+class SympleADSRComponent : public juce::Component
 {
 public:
     SympleADSRComponent(SympleSynthAudioProcessor&);
@@ -21,10 +20,13 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseValue;
 
 private:
-    void sliderValueChanged(juce::Slider* slider) override;
-    
     juce::Slider attack;
     juce::Slider decay;
     juce::Slider sustain;

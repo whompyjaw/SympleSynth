@@ -14,83 +14,62 @@
 
 SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
-    setSize (350, 100);
+    setSize (400, 100);
     
     // attack
-    attack.setSliderStyle (juce::Slider::LinearBarVertical);
-    attack.setRange (0.0, 10.0, 0.001);
-    attack.setValue (audioProcessor.getAmpParameters().attack);
-    attack.setSkewFactorFromMidPoint(0.35);
-    attack.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
-    attack.setPopupDisplayEnabled (true, false, this);
+    attack.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    attack.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    attack.setPopupDisplayEnabled(true, true, this);
     attack.setTextValueSuffix (" sec");
     addAndMakeVisible (&attack);
-    attack.addListener (this);
     
-    decay.setSliderStyle (juce::Slider::LinearBarVertical);
-    decay.setRange (0.0, 10.0, 0.001);
-    decay.setValue (audioProcessor.getAmpParameters().decay);
-    decay.setSkewFactorFromMidPoint(0.35);
-    decay.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
-    decay.setPopupDisplayEnabled (false, false, this);
+    decay.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    decay.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    decay.setPopupDisplayEnabled(true, true, this);
     decay.setTextValueSuffix (" sec");
     addAndMakeVisible (&decay);
-    decay.addListener (this);
 
-    sustain.setSliderStyle (juce::Slider::LinearBarVertical);
-    sustain.setRange (0.0, 100.0, 0.01);
-    sustain.setValue (audioProcessor.getAmpParameters().sustain * 100);
-    sustain.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
-    sustain.setPopupDisplayEnabled (false, false, this);
+    sustain.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    sustain.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    sustain.setPopupDisplayEnabled(true, true, this);
     sustain.setTextValueSuffix ("%");
     addAndMakeVisible (&sustain);
-    sustain.addListener (this);
 
-    release.setSliderStyle (juce::Slider::LinearBarVertical);
-    release.setRange (0.0, 10.0, 0.001);
-    release.setSkewFactorFromMidPoint(0.35);
-    release.setValue (audioProcessor.getAmpParameters().release);
-    release.setTextBoxStyle (juce::Slider::TextBoxAbove, false, 90, 30);
-    release.setPopupDisplayEnabled (false, false, this);
+    release.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    release.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    release.setPopupDisplayEnabled(true, true, this);
     release.setTextValueSuffix (" sec");
     addAndMakeVisible (&release);
-    release.addListener (this);
+    
+    attackValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_ATTACK", attack);
+    decayValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_DECAY", decay);
+    sustainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_SUSTAIN", sustain);
+    releaseValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_RELEASE", release);
 }
 
 SympleADSRComponent::~SympleADSRComponent()
 {
+    attackValue.reset();
+    decayValue.reset();
+    sustainValue.reset();
+    releaseValue.reset();
 }
 
 void SympleADSRComponent::paint(juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("A", 70, 55, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("D", 145, 55, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("S", 220, 55, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("R", 295, 55, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("A", 80, 60, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("D", 155, 60, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("S", 230, 60, 10, 15, juce::Justification::centred, 1);
+    g.drawFittedText ("R", 305, 60, 10, 15, juce::Justification::centred, 1);
 }
 
 void SympleADSRComponent::resized()
 {
-    attack.setBounds (50, 0, 50, 50);
-    decay.setBounds (125, 0, 50, 50);
-    sustain.setBounds (200, 0, 50, 50);
-    release.setBounds (275, 0, 50, 50);
+    int knobRadius = 70;
+    attack.setBounds (50, 0, knobRadius, knobRadius);
+    decay.setBounds (125, 0, knobRadius, knobRadius);
+    sustain.setBounds (200, 0, knobRadius, knobRadius);
+    release.setBounds (275, 0, knobRadius, knobRadius);
 }
-
-void SympleADSRComponent::sliderValueChanged(juce::Slider* slider)
-{
-    juce::ADSR::Parameters& params = audioProcessor.getAmpParameters();
-
-    params.attack = attack.getValue();
-    params.decay = decay.getValue();
-    params.sustain = sustain.getValue() / 100.0;
-    params.release = release.getValue();
-    
-    audioProcessor.setAmpParameters(params);
-}
-

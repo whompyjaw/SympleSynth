@@ -14,7 +14,8 @@
 //==============================================================================
 /**
 */
-class SympleSynthAudioProcessor : public juce::AudioProcessor
+class SympleSynthAudioProcessor : public juce::AudioProcessor,
+                                  juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -55,11 +56,13 @@ public:
     void setStateInformation(const void* data, int sizeInBytes) override;
 
     float masterGain { 0.5f }; // Q: What is this syntax? Never seen
-
+    
+    void setUpValueTreeListeners();
 
     juce::MidiKeyboardState& getKeyboardState();
     juce::ADSR::Parameters& getAmpParameters();
     void setAmpParameters(juce::ADSR::Parameters&);
+    void parameterChanged(const juce::String&, float) override;
 
     void updateFilter();
 

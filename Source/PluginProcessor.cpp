@@ -21,7 +21,8 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), tree(*this, nullptr, "PARAMETERS", createParameters()), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f))
+                       ), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f)),
+                       tree(*this, nullptr, "PARAMETERS", createParameters())
 #endif
 {
     // initialize amplifier parameters
@@ -35,6 +36,8 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
 
     synth.clearSounds();
     synth.addSound(new SineWaveSound());
+    
+    setUpValueTreeListeners();
 }
 
 SympleSynthAudioProcessor::~SympleSynthAudioProcessor()
@@ -168,17 +171,11 @@ So 44100 / 512 = 86 times per second
 void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     buffer.clear();
     keyboardState.processNextMidiBuffer(midiMessages, 0,
         buffer.getNumSamples(), true);
-
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-    {
-        buffer.clear(i, 0, buffer.getNumSamples());
-    }
 
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this process loop.
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
@@ -191,11 +188,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-    /*
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
-*/
+
     juce::dsp::AudioBlock<float> block(buffer);
     updateFilter();
     lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
@@ -244,12 +237,44 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
     }
 }
 
+void SympleSynthAudioProcessor::setUpValueTreeListeners()
+{
+    tree.addParameterListener("AMP_ATTACK", this);
+    tree.addParameterListener("AMP_DECAY", this);
+    tree.addParameterListener("AMP_SUSTAIN", this);
+    tree.addParameterListener("AMP_RELEASE", this);
+}
+
+void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
+{
+    ampParameters.attack = tree.getRawParameterValue("AMP_ATTACK")->load();
+    ampParameters.decay = tree.getRawParameterValue("AMP_DECAY")->load();
+    ampParameters.sustain = tree.getRawParameterValue("AMP_SUSTAIN")->load() / 100;
+    ampParameters.release = tree.getRawParameterValue("AMP_RELEASE")->load();
+    
+    setAmpParameters(ampParameters);
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 100.0f));
+    // filter parameters
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 20000.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
+    
+    // amp parameters
+    juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
+    juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
+    juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    attackRange.setSkewForCentre(0.35f);
+    decayRange.setSkewForCentre(0.35f);
+    releaseRange.setSkewForCentre(0.35f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", decayRange, 1.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
 
     return { parameters.begin(), parameters.end() };
 }
