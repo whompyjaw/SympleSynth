@@ -191,11 +191,11 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-
+    /*
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
+*/
     juce::dsp::AudioBlock<float> block(buffer);
     updateFilter();
     lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));

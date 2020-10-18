@@ -13,7 +13,7 @@
 
 //==============================================================================
 SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor(p),
+    : AudioProcessorEditor (&p), audioProcessor(p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
       
       amplifier(p)
@@ -36,8 +36,8 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterResDial.setPopupDisplayEnabled(true, true, this);
     addAndMakeVisible(&filterResDial);
 
-    filterCutoffValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor.getTree(), "CUTOFF", filterCutoffDial);
-    filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor.getTree(), "RESONANCE", filterResDial);
+    filterCutoffValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "CUTOFF", filterCutoffDial);
+    filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "RESONANCE", filterResDial);
     filterCutoffDial.setSkewFactorFromMidPoint(1000.0f);
 
 
