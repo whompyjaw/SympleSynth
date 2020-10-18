@@ -55,6 +55,11 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     release.setTextValueSuffix (" sec");
     addAndMakeVisible (&release);
     release.addListener (this);
+    
+    attackValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_ATTACK", attack);
+    decayValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_DECAY", decay);
+    sustainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_SUSTAIN", sustain);
+    releaseValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_RELEASE", release);
 }
 
 SympleADSRComponent::~SympleADSRComponent()
@@ -64,7 +69,7 @@ SympleADSRComponent::~SympleADSRComponent()
 void SympleADSRComponent::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+//    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
@@ -84,13 +89,13 @@ void SympleADSRComponent::resized()
 
 void SympleADSRComponent::sliderValueChanged(juce::Slider* slider)
 {
-    juce::ADSR::Parameters& params = audioProcessor.getAmpParameters();
-
-    params.attack = attack.getValue();
-    params.decay = decay.getValue();
-    params.sustain = sustain.getValue() / 100.0;
-    params.release = release.getValue();
-    
-    audioProcessor.setAmpParameters(params);
+//    juce::ADSR::Parameters& params = audioProcessor.getAmpParameters();
+//
+//    params.attack = attack.getValue();
+//    params.decay = decay.getValue();
+//    params.sustain = sustain.getValue() / 100.0;
+//    params.release = release.getValue();
+//
+//    audioProcessor.setAmpParameters(params);
 }
 

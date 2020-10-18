@@ -239,8 +239,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
+    // filter parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
+    
+    // amp parameters
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", 0.0f, 10.0f, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", 0.0f, 10.0f, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", 0.0f, 100.0f, 0.01f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", 0.0f, 10.0f, 0.001f));
 
     return { parameters.begin(), parameters.end() };
 }

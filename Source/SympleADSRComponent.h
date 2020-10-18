@@ -21,6 +21,11 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseValue;
 
 private:
     void sliderValueChanged(juce::Slider* slider) override;

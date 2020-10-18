@@ -92,7 +92,6 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
     masterGainSlider.setBounds(1100, 400, 40, 100);
