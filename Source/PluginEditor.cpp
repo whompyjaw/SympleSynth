@@ -59,29 +59,23 @@ SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
     juce::Rectangle<int> titleArea(0, 10, getWidth(), 20);
-
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colours::black);
-
-
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    juce::Rectangle <float> filterArea(25, 25, 150, 150);
     
-    // draw amplifier label
-    g.drawFittedText ("Amplifier", getWidth() - amplifier.getWidth() - 20,
-                      0, amplifier.getWidth(), 20, juce::Justification::centred, 1);
-    // Draw Filter Dials
+    g.setFont (15.0f);
     g.fillAll(juce::Colours::black);
     g.setColour(juce::Colours::white);
+
+    // Draw Filter Dials
     g.drawText("Filter", titleArea, juce::Justification::centredTop);
     g.drawText("Cutoff", 46, 70, 50, 25, juce::Justification::centredLeft);
     g.drawText("Resonance", 107, 70, 70, 25, juce::Justification::centredLeft);
 
-    juce::Rectangle <float> area(25, 25, 150, 150);
+    // draw amplifier label
+    g.drawFittedText ("Amplifier", getWidth() - amplifier.getWidth() - 20,
+                      20, amplifier.getWidth(), 40, juce::Justification::centred, 1);
 
     g.setColour(juce::Colours::yellow);
-    g.drawRoundedRectangle(area, 20.0f, 2.0f);
+    g.drawRoundedRectangle(filterArea, 20.0f, 2.0f);
 
     if (!keyboardComponent.hasKeyboardFocus (true) &&
         keyboardComponent.isVisible())
@@ -92,7 +86,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-    amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 30, amplifier.getWidth(), amplifier.getHeight());
+    amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 70, amplifier.getWidth(), amplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
     masterGainSlider.setBounds(1100, 400, 40, 100);
     filterCutoffDial.setBounds(30, 90, 70, 70);
