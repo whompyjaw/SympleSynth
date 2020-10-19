@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SynthAudioSource.h"
+#include "SineWaveOsc.h"
 
 //==============================================================================
 /**
@@ -73,10 +73,11 @@ private:
     const int VOICE_COUNT = 64;
     
     juce::Synthesiser synth;
-    SineWaveVoice* synthVoice;
+    
     juce::MidiKeyboardState keyboardState;
     
     juce::ADSR::Parameters ampParameters;
+    SineWaveVoice* synthVoice;
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
