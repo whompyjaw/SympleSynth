@@ -21,6 +21,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "Osc.h"
 
 // This code was taken from the Juce tutorial "SynthUsingMidiInputTutorial"
 
@@ -71,4 +72,5 @@ private:
     juce::ADSR amplifier;
     juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
+    Oscillator osc;
 };

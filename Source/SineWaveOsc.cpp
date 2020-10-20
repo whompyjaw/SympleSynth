@@ -13,8 +13,10 @@
 SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::ADSR& filterAmp)
     : filterAmp(filterAmp), ampParameters(ampParameters)
 {
+    osc.setMode(OSCILLATOR_MODE_SQUARE);
     amplifier.setSampleRate(getSampleRate());
     amplifier.setParameters(ampParameters);
+    osc.setSampleRate(getSampleRate());
 }
 
 bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
@@ -29,12 +31,11 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     amplifier.noteOn();
     filterAmp.noteOn();
     currentAngle = 0.0;
+    osc.startNote();
     level = velocity * 0.15;
 
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
-    auto cyclesPerSample = cyclesPerSecond / getSampleRate();
-
-    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sine tone. I 
+    osc.setFrequency(cyclesPerSecond);
 }
 
 /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
@@ -49,22 +50,23 @@ void SineWaveVoice::stopNote(float, bool allowTailOff)
 
 void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    if (angleDelta != 0.0) // Not silent
+    double buff[numSamples];
+    osc.generate(buff, numSamples);
+
+    if (amplifier.isActive()) // Not silent
     {
         while (--numSamples >= 0)
         {
-            auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
+            auto currentSample = (float)(buff[startSample] * level * amplifier.getNextSample());
 
             for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
                 outputBuffer.addSample(i, startSample, currentSample);
 
-            currentAngle += angleDelta;
             ++startSample;
 
             if (!amplifier.isActive()) {
                 clearCurrentNote();
                 amplifier.reset();
-                angleDelta = 0.0;
                 break;
             }
         }
