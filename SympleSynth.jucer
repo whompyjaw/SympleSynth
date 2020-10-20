@@ -5,6 +5,8 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="jCNErj" name="SympleSynth">
     <GROUP id="{8F8E6804-7974-401F-036C-5CF64140EF57}" name="Source">
+      <FILE id="PJBOZJ" name="Osc.cpp" compile="1" resource="0" file="Source/Osc.cpp"/>
+      <FILE id="K3TYMj" name="Osc.h" compile="0" resource="0" file="Source/Osc.h"/>
       <FILE id="KnG0AG" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="Ke6kRU" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
