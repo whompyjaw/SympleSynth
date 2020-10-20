@@ -267,7 +267,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
-    juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     attackRange.setSkewForCentre(0.35f);
     decayRange.setSkewForCentre(0.35f);
     releaseRange.setSkewForCentre(0.35f);

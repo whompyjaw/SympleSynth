@@ -18,8 +18,13 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       audioProcessor(p),
       amplifier(p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+    // int amp parameter names struct
+    SympleADSRParameterNames ampParameters;
+    ampParameters.attack = "AMP_ATTACK";
+    ampParameters.decay = "AMP_DECAY";
+    ampParameters.sustain = "AMP_SUSTAIN";
+    ampParameters.release = "AMP_RELEASE";
+    amplifier.setParameters(ampParameters);
 
     setSize(1200, 800);
     addAndMakeVisible(keyboardComponent);
