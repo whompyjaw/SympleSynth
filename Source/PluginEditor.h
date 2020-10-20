@@ -38,6 +38,7 @@ private:
     SympleSynthAudioProcessor& audioProcessor;
     
     SympleADSRComponent amplifier;
+    SympleADSRComponent filterAmplifier;
 
 
    /* juce::ComboBox midiInputList;

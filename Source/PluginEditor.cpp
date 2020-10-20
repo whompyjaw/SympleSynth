@@ -16,19 +16,29 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     : AudioProcessorEditor (&p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
       audioProcessor(p),
-      amplifier(p)
+      amplifier(p),
+      filterAmplifier(p)
 {
-    // int amp parameter names struct
+    // init amp parameter names struct
     SympleADSRParameterNames ampParameters;
     ampParameters.attack = "AMP_ATTACK";
     ampParameters.decay = "AMP_DECAY";
     ampParameters.sustain = "AMP_SUSTAIN";
     ampParameters.release = "AMP_RELEASE";
     amplifier.setParameters(ampParameters);
+    
+    // init filter amp parameter names struct
+    SympleADSRParameterNames filterAmpParameters;
+    filterAmpParameters.attack = "FILTER_ATTACK";
+    filterAmpParameters.decay = "FILTER_DECAY";
+    filterAmpParameters.sustain = "FILTER_SUSTAIN";
+    filterAmpParameters.release = "FILTER_RELEASE";
+    filterAmplifier.setParameters(filterAmpParameters);
 
     setSize(1200, 800);
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(amplifier);
+    addAndMakeVisible(filterAmplifier);
 
     //  Add Filter Dials
     filterCutoffDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
@@ -52,8 +62,6 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 20);
     masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
     addAndMakeVisible(masterGainSlider);
-    setSize (1200, 800);
-    //startTimer(400);
 }
 
 SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
@@ -79,9 +87,6 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText ("Amplifier", getWidth() - amplifier.getWidth() - 20,
                       20, amplifier.getWidth(), 40, juce::Justification::centred, 1);
 
-    g.setColour(juce::Colours::yellow);
-    g.drawRoundedRectangle(filterArea, 20.0f, 2.0f);
-
     if (!keyboardComponent.hasKeyboardFocus (true) &&
         keyboardComponent.isVisible())
     {
@@ -92,6 +97,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 void SympleSynthAudioProcessorEditor::resized()
 {
     amplifier.setBounds(getWidth() - amplifier.getWidth() - 20, 70, amplifier.getWidth(), amplifier.getHeight());
+    filterAmplifier.setBounds(-20, 160, filterAmplifier.getWidth(), filterAmplifier.getHeight());
     keyboardComponent.setBounds(0, 700, getWidth(), 100);
     masterGainSlider.setBounds(1100, 400, 40, 100);
     filterCutoffDial.setBounds(30, 90, 70, 70);
