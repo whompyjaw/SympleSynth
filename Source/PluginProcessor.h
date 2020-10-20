@@ -77,6 +77,7 @@ private:
     juce::MidiKeyboardState keyboardState;
     
     juce::ADSR::Parameters ampParameters;
+    juce::ADSR::Parameters filterAmpParameters;
     SineWaveVoice* synthVoice;
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;

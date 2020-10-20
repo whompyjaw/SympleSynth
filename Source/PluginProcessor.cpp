@@ -27,6 +27,7 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
 {
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
+    filterAmpParameters = {0.001, 1.0, 1.0, 0.2};
 
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
@@ -239,10 +240,17 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
 
 void SympleSynthAudioProcessor::setUpValueTreeListeners()
 {
+    // amp listeners
     tree.addParameterListener("AMP_ATTACK", this);
     tree.addParameterListener("AMP_DECAY", this);
     tree.addParameterListener("AMP_SUSTAIN", this);
     tree.addParameterListener("AMP_RELEASE", this);
+    
+    // filter adsr listeners
+    tree.addParameterListener("FILTER_ATTACK", this);
+    tree.addParameterListener("FILTER_DECAY", this);
+    tree.addParameterListener("FILTER_SUSTAIN", this);
+    tree.addParameterListener("FILTER_RELEASE", this);
 }
 
 void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
@@ -251,6 +259,11 @@ void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, 
     ampParameters.decay = tree.getRawParameterValue("AMP_DECAY")->load();
     ampParameters.sustain = tree.getRawParameterValue("AMP_SUSTAIN")->load() / 100;
     ampParameters.release = tree.getRawParameterValue("AMP_RELEASE")->load();
+    
+    filterAmpParameters.attack = tree.getRawParameterValue("FILTER_ATTACK")->load();
+    filterAmpParameters.decay = tree.getRawParameterValue("FILTER_DECAY")->load();
+    filterAmpParameters.sustain = tree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100;
+    filterAmpParameters.release = tree.getRawParameterValue("FILTER_RELEASE")->load();
     
     setAmpParameters(ampParameters);
 }
@@ -263,7 +276,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 20000.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
     
-    // amp parameters
+    // adsr knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
@@ -271,6 +284,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     attackRange.setSkewForCentre(0.35f);
     decayRange.setSkewForCentre(0.35f);
     releaseRange.setSkewForCentre(0.35f);
+    
+    // amp parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.001f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", decayRange, 1.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
