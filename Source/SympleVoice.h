@@ -33,9 +33,9 @@ audio rendering for a sound is done by a SynthesiserVoice.
 KEY POINT: This allows more than one SynthesiserVoice to play the same sounds at the same time
 creating polyphony.
 */
-struct SineWaveSound : public juce::SynthesiserSound
+struct SympleSound : public juce::SynthesiserSound
 {
-    SineWaveSound() {}
+    SympleSound() {}
 
     // Not sure why these are overridden functions when they don't exist in the "SynthesizerSounds" class
     bool appliesToNote(int midiNoteNumber) override { return true; }
@@ -46,9 +46,9 @@ struct SineWaveSound : public juce::SynthesiserSound
 /* Represents a voice that a Synthesiser can use to play a SynthesizerSound
 A voice plays a single sound at a time, and a synthesiser holds an array of voices so that it can
 play polyphonically */
-struct SineWaveVoice : public juce::SynthesiserVoice
+struct SympleVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice(juce::ADSR::Parameters& ampParameters);
+    SympleVoice(juce::ADSR::Parameters& ampParameters);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 

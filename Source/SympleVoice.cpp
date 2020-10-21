@@ -8,22 +8,21 @@
   ==============================================================================
 */
 
-#include "SineWaveOsc.h"
+#include "SympleVoice.h"
 
-SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters) : ampParameters(ampParameters)
+SympleVoice::SympleVoice(juce::ADSR::Parameters& ampParameters) : ampParameters(ampParameters)
 {
     amplifier.setSampleRate(getSampleRate());
     amplifier.setParameters(ampParameters);
 }
 
-bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
+bool SympleVoice::canPlaySound(juce::SynthesiserSound* sound)
 {
-    return dynamic_cast<SineWaveSound*> (sound) != nullptr; // Not sure what this does
+    return dynamic_cast<SympleSound*> (sound) != nullptr; // Not sure what this does
 }
 
-// Start the sine tone based on midi input
-
-void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
+/* Start the sine tone based on midi input converting the midi note number to a frequency */
+void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
 {
     amplifier.noteOn();
     currentAngle = 0.0;
@@ -32,23 +31,24 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
     auto cyclesPerSample = cyclesPerSecond / getSampleRate();
 
-    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sine tone. I 
+    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sone tone at that frequency
+    // this is similar to 
+    //mPhaseIncrement = mFrequency * 2 * mPI / mSampleRate;
+    // angleDelta is the same as phase increment
 }
 
 /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
-
-void SineWaveVoice::stopNote(float, bool allowTailOff)
+void SympleVoice::stopNote(float, bool allowTailOff)
 {
     amplifier.noteOff();
 }
 
-/* Renders the next block of data for this voice. */
-
-void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
+/* Renders the next block of data for this voice, and while held down. */
+void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
     if (angleDelta != 0.0) // Not silent
     {
-        while (--numSamples >= 0)
+        while (--numSamples >= 0) // note is being held down
         {
             auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
 
@@ -68,7 +68,7 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
     }
 }
 
-void SineWaveVoice::setAmpParameters(juce::ADSR::Parameters& params)
+void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)
 {
     amplifier.setParameters(params);
 }

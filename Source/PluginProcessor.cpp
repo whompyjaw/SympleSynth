@@ -31,11 +31,11 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(ampParameters));
+        synth.addVoice(new SympleVoice(ampParameters));
     }
 
     synth.clearSounds();
-    synth.addSound(new SineWaveSound());
+    synth.addSound(new SympleSound());
     
     setUpValueTreeListeners();
 }
@@ -176,8 +176,14 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     buffer.clear();
     keyboardState.processNextMidiBuffer(midiMessages, 0,
         buffer.getNumSamples(), true);
+    
+    juce::dsp::AudioBlock<float> block(buffer);
+    updateFilter();
+    lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
 
-    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this process loop.
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before the output loop process loop
+
+    /* output the processed audio */
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
@@ -189,9 +195,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     }
     midiMessages.clear();
 
-    juce::dsp::AudioBlock<float> block(buffer);
-    updateFilter();
-    lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
+
 }
 
 //==============================================================================
@@ -233,7 +237,7 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
 {
     for (int i = 0; i < synth.getNumVoices(); ++i)
     {
-        dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->setAmpParameters (params);
+        dynamic_cast<SympleVoice*>(synth.getVoice(i))->setAmpParameters (params);
     }
 }
 

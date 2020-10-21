@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SineWaveOsc.h"
+#include "SympleVoice.h"
 
 //==============================================================================
 /**
@@ -77,7 +77,7 @@ private:
     juce::MidiKeyboardState keyboardState;
     
     juce::ADSR::Parameters ampParameters;
-    SineWaveVoice* synthVoice;
+    SympleVoice* synthVoice;
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
