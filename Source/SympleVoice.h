@@ -48,6 +48,7 @@ A voice plays a single sound at a time, and a synthesiser holds an array of voic
 play polyphonically */
 struct SympleVoice : public juce::SynthesiserVoice
 {
+    // TODO: Add a method to choose the different oscillator types
     SympleVoice(juce::ADSR::Parameters& ampParameters);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
@@ -70,4 +71,30 @@ private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     juce::ADSR amplifier;
     juce::ADSR::Parameters& ampParameters;
+    SympleOscillator Osc1;
+    //SympleOscillator Osc2;
+};
+
+class SympleOscillator
+{
+public:
+    SympleOscillator() {}
+    ~SympleOscillator() {}
+
+    void prepare(const juce::dsp::ProcessSpec& spec);
+    void reset() noexcept;
+    void setLevel(Type newValue);
+    void setFrequency(Type newValue);
+    template <typename ProcessContext>
+    void process(const ProcessContext& contex) noexcept;
+
+
+private:
+
+    enum
+    {
+        oscIndex,
+        gainIndex
+    };
+    juce::dsp::ProcessorChain<juce::dsp::Oscillator<Type>, juce::dsp::Gain<Type>> processorChain;
 };

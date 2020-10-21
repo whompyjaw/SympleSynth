@@ -72,3 +72,43 @@ void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)
 {
     amplifier.setParameters(params);
 }
+
+SympleOscillator::SympleOscillator()
+{
+    auto& osc = processorChain.template get<oscIndex>();
+    osc.initialise([](Type x)
+        {
+            return juce::jmap(x,
+                Type(-juce::MathConstants<double>::pi),
+                Type(juce::MathConstants<double>::pi),
+                Type(-1),
+                Type(1));
+        }, 2);
+}
+
+/* prepares each process in the chain sequentially (calls reset for oscillator, for gain, etc */
+void SympleOscillator::prepare(const juce::dsp::ProcessSpec& spec)
+{
+    processorChain.prepare(spec);   
+}
+
+/* Calls reset for each process in the chain sequentially */
+void SympleOscillator::reset() noexcept
+{
+    processorChain.reset();
+}
+
+void SympleOscillator::setLevel(Type newValue)
+{
+    //example uses "processorChain.template get<oscIndex>(); but i feel like that is probably old
+    auto& gain = processorChain.get<gainIndex>();
+    
+    gain.setGainDecibels(newValue);
+}
+
+void SympleOscillator::setFrequency(Type newValue, bool force = false)
+{
+    auto& osc = processorChain.get<oscIndex>();
+    osc.setFrequency(newValue, force);
+
+}
