@@ -28,11 +28,12 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
     filterAmpParameters = {0.001, 1.0, 1.0, 0.2};
+    filterAmp.setParameters(filterAmpParameters);
 
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(ampParameters));
+        synth.addVoice(new SineWaveVoice(ampParameters, filterAmp));
     }
 
     synth.clearSounds();
@@ -121,6 +122,7 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
 
+    filterAmp.setSampleRate(sampleRate);
     lowPassFilter.prepare(spec);
     lowPassFilter.reset();
 }

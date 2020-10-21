@@ -78,6 +78,7 @@ private:
     
     juce::ADSR::Parameters ampParameters;
     juce::ADSR::Parameters filterAmpParameters;
+    juce::ADSR filterAmp;
     SineWaveVoice* synthVoice;
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
