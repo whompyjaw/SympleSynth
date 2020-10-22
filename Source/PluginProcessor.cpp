@@ -165,12 +165,15 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
  *  cutoff triggering. The specific code is available under the heading
  *  "Modulating the signal with an LFO" numbers 5, 6, 7 at:
  *  https://docs.juce.com/master/tutorial_dsp_introduction.html
+ *
+ *  This function processes an audio block with the filter sections
 */
-void SympleSynthAudioProcessor::filterNextBlock(juce::dsp::AudioBlock<float>& block)
+void SympleSynthAudioProcessor::filterNextBlock(juce::AudioBuffer<float>& buffer)
 {
+    juce::dsp::AudioBlock<float> block(buffer);
     size_t numSamples = block.getNumSamples();
 
-    size_t updateRate = 100;
+    size_t updateRate = FILTER_UPDATE_RATE;
     size_t updateCounter = updateRate;
     size_t read = 0;
     while (read < numSamples) {
@@ -217,8 +220,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-    juce::dsp::AudioBlock<float> block(buffer);
-    filterNextBlock(block);
+    filterNextBlock(buffer);
 }
 
 //==============================================================================

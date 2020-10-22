@@ -64,13 +64,14 @@ public:
     void setAmpParameters(juce::ADSR::Parameters&);
     void parameterChanged(const juce::String&, float) override;
 
-    void filterNextBlock(juce::dsp::AudioBlock<float>&);
+    void filterNextBlock(juce::AudioBuffer<float>&);
 
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
 
 
 private:
     const int VOICE_COUNT = 64;
+    const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
     
     juce::Synthesiser synth;
     
