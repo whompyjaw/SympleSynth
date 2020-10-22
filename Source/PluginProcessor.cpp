@@ -301,10 +301,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
+    // filter knob ranges
+    juce::NormalisableRange<float> cutoffRange = juce::NormalisableRange<float>(10.0f, 20000.0f);
+    juce::NormalisableRange<float> resRange = juce::NormalisableRange<float>(0.1f, 10.0f);
+    cutoffRange.setSkewForCentre(1000.0f);
+
     // filter parameters
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 20000.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 10.0f, 0.1f));
-    
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", cutoffRange, 20000.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 0.1f));
+
     // adsr knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
