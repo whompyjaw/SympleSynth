@@ -28,15 +28,11 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
 
-    juce::dsp::ProcessSpec spec;
-    spec.sampleRate = getSampleRate();
-    spec.maximumBlockSize = ;
-    spec.numChannels = getTotalNumOutputChannels();
     synth.clearVoices();
 
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SympleVoice(ampParameters, spec));
+        synth.addVoice(new SympleVoice(ampParameters));
     }
 
     synth.clearSounds();
@@ -117,24 +113,17 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // Use this method as the place to do any pre-playback
     // initialisation that you 
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
-    lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
-    synth.setCurrentPlaybackSampleRate(lastSampleRate);
+    lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't  // we might still need this
+    synth.setCurrentPlaybackSampleRate(lastSampleRate); // this will apply to all synth voices
 
     juce::dsp::ProcessSpec spec;
-    spec.sampleRate = sampleRate;
+    spec.sampleRate = sampleRate; //Glenn: maybe use lastSampleRate here
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
 
-    //synth.prepare(spec);
+    prepareOscillators(spec);
     lowPassFilter.prepare(spec);
     lowPassFilter.reset();
-
-    // Glenn
-    auto numVoices = synth.getNumVoices();
-    for (int i = 0; i < numVoices; ++i)
-    {
-        auto voice = synth.getVoice(i);
-    }
 }
 
 /* Gets called when the application is closed. */
@@ -169,6 +158,15 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
   #endif
 }
 #endif
+
+/* If the "spec" (buffer size, sample rate, or channels are changed, the oscillators are prepared with new data */
+void SympleSynthAudioProcessor::prepareOscillators(juce::dsp::ProcessSpec spec)
+{
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        dynamic_cast<SympleVoice*>(synth.getVoice(i))->prepareOscillators(spec);
+    }
+}
 
 void SympleSynthAudioProcessor::updateFilter()
 {

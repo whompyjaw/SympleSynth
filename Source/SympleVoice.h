@@ -85,23 +85,23 @@ private:
     // TODO: once i figure this out, then i can chain all four oscillators together.
 };
 
-class SympleOscillator
-{
-public:
-    SympleOscillator() {}
-    ~SympleOscillator() {}
-
-    enum WaveType
-    {
-        sine = 0,
-        saw = 1
-    };
-    void setWaveType(int type);
-    void setLevel(float level);
-    void setFrequency(float frequency);
-
-
-private:
-    WaveType waveTypes;
-
-};
+//class SympleOscillator
+//{
+//public:
+//    SympleOscillator() {}
+//    ~SympleOscillator() {}
+//
+//    enum WaveType
+//    {
+//        sine = 0,
+//        saw = 1
+//    };
+//    void setWaveType(int type);
+//    void setLevel(float level);
+//    void setFrequency(float frequency);
+//
+//
+//private:
+//    WaveType waveTypes;
+//
+//};

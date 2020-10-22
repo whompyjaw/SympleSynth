@@ -64,6 +64,9 @@ public:
     void setAmpParameters(juce::ADSR::Parameters&);
     void parameterChanged(const juce::String&, float) override;
 
+    // Oscillator Section
+    void prepareOscillators(juce::dsp::ProcessSpec);
+
     void updateFilter();
 
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
@@ -77,7 +80,7 @@ private:
     juce::MidiKeyboardState keyboardState;
     
     juce::ADSR::Parameters ampParameters;
-    SympleVoice* synthVoice; // why is this here?
+    SympleVoice* synthVoice; // Glenn: why is this here?
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
