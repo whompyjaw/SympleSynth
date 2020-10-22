@@ -67,12 +67,22 @@ struct SympleVoice : public juce::SynthesiserVoice
     
     void setAmpParameters(juce::ADSR::Parameters& params);
 
+    void prepareOscillators(juce::dsp::ProcessSpec spec);
+
+
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     juce::ADSR amplifier;
     juce::ADSR::Parameters& ampParameters;
-    SympleOscillator Osc1;
-    //SympleOscillator Osc2;
+    /*enum
+    {
+        oscOneIndex,
+        gainOneIndex
+    };*/
+    /* I would add oscTwoIndex and gainTwoIndex here... Maybe sawWaveIndex, triIndex, etc, but not 100% sure */
+    juce::dsp::Oscillator<float> osc1;
+    //juce::dsp::ProcessorChain<juce::dsp::Oscillator<float>, juce::dsp::Gain<float>> processorChain;
+    // TODO: once i figure this out, then i can chain all four oscillators together.
 };
 
 class SympleOscillator

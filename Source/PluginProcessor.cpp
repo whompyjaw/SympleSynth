@@ -28,10 +28,15 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
 
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = getSampleRate();
+    spec.maximumBlockSize = ;
+    spec.numChannels = getTotalNumOutputChannels();
     synth.clearVoices();
+
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SympleVoice(ampParameters));
+        synth.addVoice(new SympleVoice(ampParameters, spec));
     }
 
     synth.clearSounds();
@@ -120,8 +125,16 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
 
+    //synth.prepare(spec);
     lowPassFilter.prepare(spec);
     lowPassFilter.reset();
+
+    // Glenn
+    auto numVoices = synth.getNumVoices();
+    for (int i = 0; i < numVoices; ++i)
+    {
+        auto voice = synth.getVoice(i);
+    }
 }
 
 /* Gets called when the application is closed. */

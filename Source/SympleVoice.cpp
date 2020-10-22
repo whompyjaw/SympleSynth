@@ -12,6 +12,18 @@
 
 SympleVoice::SympleVoice(juce::ADSR::Parameters& ampParameters) : ampParameters(ampParameters)
 {
+    //initialise the oscillators here
+            osc1.initialise ([] (float x)
+        {
+            return juce::jmap (x,
+                               float (-juce::MathConstants<double>::pi),
+                               float (juce::MathConstants<double>::pi),
+                               float (-1),
+                               float (1));
+        }, 2);
+            
+            //processorChain.prepare(spec);
+    //processorChain.get<oscOneIndex>.initialise;
     amplifier.setSampleRate(getSampleRate());
     amplifier.setParameters(ampParameters);
 }
@@ -27,9 +39,12 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     amplifier.noteOn();
     currentAngle = 0.0;
     level = velocity * 0.15;
+    
 
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
     auto cyclesPerSample = cyclesPerSecond / getSampleRate();
+
+    osc1.setFrequency(cyclesPerSample);
 
     angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sone tone at that frequency
     // this is similar to 
@@ -46,6 +61,7 @@ void SympleVoice::stopNote(float, bool allowTailOff)
 /* Renders the next block of data for this voice, and while held down. */
 void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
+    // I think this is where I would call: processorChain.process();
     if (angleDelta != 0.0) // Not silent
     {
         while (--numSamples >= 0) // note is being held down
@@ -73,42 +89,47 @@ void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)
     amplifier.setParameters(params);
 }
 
-SympleOscillator::SympleOscillator()
+void SympleVoice::prepareOscillators(juce::dsp::ProcessSpec spec)
 {
-    auto& osc = processorChain.template get<oscIndex>();
-    osc.initialise([](Type x)
-        {
-            return juce::jmap(x,
-                Type(-juce::MathConstants<double>::pi),
-                Type(juce::MathConstants<double>::pi),
-                Type(-1),
-                Type(1));
-        }, 2);
+    osc1.prepare(spec);
 }
 
-/* prepares each process in the chain sequentially (calls reset for oscillator, for gain, etc */
-void SympleOscillator::prepare(const juce::dsp::ProcessSpec& spec)
-{
-    processorChain.prepare(spec);   
-}
-
-/* Calls reset for each process in the chain sequentially */
-void SympleOscillator::reset() noexcept
-{
-    processorChain.reset();
-}
-
-void SympleOscillator::setLevel(Type newValue)
-{
-    //example uses "processorChain.template get<oscIndex>(); but i feel like that is probably old
-    auto& gain = processorChain.get<gainIndex>();
-    
-    gain.setGainDecibels(newValue);
-}
-
-void SympleOscillator::setFrequency(float frequency, bool force = false)
-{
-    auto& osc = processorChain.get<oscIndex>();
-    osc.setFrequency(frequency, force);
-
-}
+//SympleOscillator::SympleOscillator()
+//{
+//    auto& osc = processorChain.template get<oscIndex>();
+//    osc.initialise([](float x)
+//        {
+//            return juce::jmap(x,
+//                float(-juce::MathConstants<double>::pi),
+//                float(juce::MathConstants<double>::pi),
+//                float(-1),
+//                float(1));
+//        }, 2);
+//}
+//
+///* prepares each process in the chain sequentially (calls reset for oscillator, for gain, etc */
+//void SympleOscillator::prepare(const juce::dsp::ProcessSpec& spec)
+//{
+//    processorChain.prepare(spec);   
+//}
+//
+///* Calls reset for each process in the chain sequentially */
+//void SympleOscillator::reset() noexcept
+//{
+//    processorChain.reset();
+//}
+//
+//void SympleOscillator::setLevel(float newValue)
+//{
+//    //example uses "processorChain.template get<oscIndex>(); but i feel like that is probably old
+//    auto& gain = processorChain.get<gainIndex>();
+//    
+//    gain.setGainDecibels(newValue);
+//}
+//
+//void SympleOscillator::setFrequency(float frequency, bool force = false)
+//{
+//    auto& osc = processorChain.get<oscIndex>();
+//    osc.setFrequency(frequency, force);
+//
+//}
