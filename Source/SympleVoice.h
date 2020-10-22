@@ -81,20 +81,17 @@ public:
     SympleOscillator() {}
     ~SympleOscillator() {}
 
-    void prepare(const juce::dsp::ProcessSpec& spec);
-    void reset() noexcept;
-    void setLevel(Type newValue);
-    void setFrequency(Type newValue);
-    template <typename ProcessContext>
-    void process(const ProcessContext& contex) noexcept;
+    enum WaveType
+    {
+        sine = 0,
+        saw = 1
+    };
+    void setWaveType(int type);
+    void setLevel(float level);
+    void setFrequency(float frequency);
 
 
 private:
+    WaveType waveTypes;
 
-    enum
-    {
-        oscIndex,
-        gainIndex
-    };
-    juce::dsp::ProcessorChain<juce::dsp::Oscillator<Type>, juce::dsp::Gain<Type>> processorChain;
 };

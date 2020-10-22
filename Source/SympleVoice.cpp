@@ -106,9 +106,9 @@ void SympleOscillator::setLevel(Type newValue)
     gain.setGainDecibels(newValue);
 }
 
-void SympleOscillator::setFrequency(Type newValue, bool force = false)
+void SympleOscillator::setFrequency(float frequency, bool force = false)
 {
     auto& osc = processorChain.get<oscIndex>();
-    osc.setFrequency(newValue, force);
+    osc.setFrequency(frequency, force);
 
 }
