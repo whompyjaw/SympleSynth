@@ -67,7 +67,7 @@ SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 //==============================================================================
 void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
- 
+    g.fillAll(juce::Colours::black);
     
 
     // draw amplifier label
