@@ -27,11 +27,13 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
 {
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
+    filterAmpParameters = {0.001, 1.0, 1.0, 0.2};
+    filterAmp.setParameters(filterAmpParameters);
 
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(ampParameters));
+        synth.addVoice(new SineWaveVoice(ampParameters, filterAmp));
     }
 
     synth.clearSounds();
@@ -120,6 +122,7 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
 
+    filterAmp.setSampleRate(sampleRate);
     lowPassFilter.prepare(spec);
     lowPassFilter.reset();
 }
@@ -157,12 +160,41 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
-void SympleSynthAudioProcessor::updateFilter()
+/*
+ *  Code for this block is adapted from the JUCE DSP tutorial for LFO filter
+ *  cutoff triggering. The specific code is available under the heading
+ *  "Modulating the signal with an LFO" numbers 5, 6, 7 at:
+ *  https://docs.juce.com/master/tutorial_dsp_introduction.html
+ *
+ *  This function processes an audio block with the filter sections
+*/
+void SympleSynthAudioProcessor::filterNextBlock(juce::AudioBuffer<float>& buffer)
 {
-    float freq = tree.getRawParameterValue("CUTOFF")->load();
-    float res = tree.getRawParameterValue("RESONANCE")->load();
-    
-    *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, freq, res);
+    juce::dsp::AudioBlock<float> block(buffer);
+    size_t numSamples = block.getNumSamples();
+
+    size_t updateRate = FILTER_UPDATE_RATE;
+    size_t updateCounter = updateRate;
+    size_t read = 0;
+    while (read < numSamples) {
+        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
+        auto subBlock = block.getSubBlock (read, max);
+
+        lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+
+        read += max;
+        updateCounter -= max;
+        float nextAmpSample = filterAmp.getNextSample();
+
+        if (updateCounter == 0)
+        {
+            updateCounter = updateRate;
+            float freq = tree.getRawParameterValue("CUTOFF")->load();
+            float res = tree.getRawParameterValue("RESONANCE")->load();
+            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, 20000.0f);
+            *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
+        }
+    }
 }
 
 /* This block gets called sampleRate / bufferSize times per second.
@@ -188,10 +220,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-
-    juce::dsp::AudioBlock<float> block(buffer);
-    updateFilter();
-    lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
+    filterNextBlock(buffer);
 }
 
 //==============================================================================
@@ -239,10 +268,17 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
 
 void SympleSynthAudioProcessor::setUpValueTreeListeners()
 {
+    // amp listeners
     tree.addParameterListener("AMP_ATTACK", this);
     tree.addParameterListener("AMP_DECAY", this);
     tree.addParameterListener("AMP_SUSTAIN", this);
     tree.addParameterListener("AMP_RELEASE", this);
+    
+    // filter adsr listeners
+    tree.addParameterListener("FILTER_ATTACK", this);
+    tree.addParameterListener("FILTER_DECAY", this);
+    tree.addParameterListener("FILTER_SUSTAIN", this);
+    tree.addParameterListener("FILTER_RELEASE", this);
 }
 
 void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
@@ -252,6 +288,12 @@ void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, 
     ampParameters.sustain = tree.getRawParameterValue("AMP_SUSTAIN")->load() / 100;
     ampParameters.release = tree.getRawParameterValue("AMP_RELEASE")->load();
     
+    filterAmpParameters.attack = tree.getRawParameterValue("FILTER_ATTACK")->load();
+    filterAmpParameters.decay = tree.getRawParameterValue("FILTER_DECAY")->load();
+    filterAmpParameters.sustain = tree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100;
+    filterAmpParameters.release = tree.getRawParameterValue("FILTER_RELEASE")->load() / 100;
+    
+    filterAmp.setParameters(filterAmpParameters);
     setAmpParameters(ampParameters);
 }
 
@@ -261,20 +303,28 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 
     // filter parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 20000.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 10.0f, 0.1f));
     
-    // amp parameters
+    // adsr knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
-    juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     attackRange.setSkewForCentre(0.35f);
     decayRange.setSkewForCentre(0.35f);
     releaseRange.setSkewForCentre(0.35f);
+    
+    // amp parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.001f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", decayRange, 1.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
+    
+    // filter amp parameters
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_ATTACK", "Attack", attackRange, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_DECAY", "Decay", decayRange, 1.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_SUSTAIN", "Sustain", sustainRange, 100.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_RELEASE", "Release", releaseRange, 0.1f));
 
     return { parameters.begin(), parameters.end() };
 }
