@@ -11,6 +11,14 @@
 #pragma once
 #include <JuceHeader.h>
 
+struct SympleADSRParameterNames {
+public:
+    std::string attack;
+    std::string decay;
+    std::string sustain;
+    std::string release;
+};
+
 class SympleADSRComponent : public juce::Component
 {
 public:
@@ -20,6 +28,7 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    void setParameters(SympleADSRParameterNames&);
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayValue;

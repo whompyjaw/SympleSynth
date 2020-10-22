@@ -48,7 +48,7 @@ A voice plays a single sound at a time, and a synthesiser holds an array of voic
 play polyphonically */
 struct SineWaveVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice(juce::ADSR::Parameters& ampParameters);
+    SineWaveVoice(juce::ADSR::Parameters&, juce::ADSR&);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 
@@ -69,5 +69,6 @@ struct SineWaveVoice : public juce::SynthesiserVoice
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     juce::ADSR amplifier;
+    juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
 };

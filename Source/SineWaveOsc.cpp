@@ -10,7 +10,8 @@
 
 #include "SineWaveOsc.h"
 
-SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters) : ampParameters(ampParameters)
+SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::ADSR& filterAmp)
+    : filterAmp(filterAmp), ampParameters(ampParameters)
 {
     amplifier.setSampleRate(getSampleRate());
     amplifier.setParameters(ampParameters);
@@ -26,6 +27,7 @@ bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
 void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
 {
     amplifier.noteOn();
+    filterAmp.noteOn();
     currentAngle = 0.0;
     level = velocity * 0.15;
 
@@ -40,6 +42,7 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
 void SineWaveVoice::stopNote(float, bool allowTailOff)
 {
     amplifier.noteOff();
+    filterAmp.noteOff();
 }
 
 /* Renders the next block of data for this voice. */

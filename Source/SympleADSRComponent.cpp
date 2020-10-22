@@ -40,11 +40,6 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     release.setPopupDisplayEnabled(true, true, this);
     release.setTextValueSuffix (" sec");
     addAndMakeVisible (&release);
-    
-    attackValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_ATTACK", attack);
-    decayValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_DECAY", decay);
-    sustainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_SUSTAIN", sustain);
-    releaseValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "AMP_RELEASE", release);
 }
 
 SympleADSRComponent::~SympleADSRComponent()
@@ -72,4 +67,11 @@ void SympleADSRComponent::resized()
     decay.setBounds (125, 0, knobRadius, knobRadius);
     sustain.setBounds (200, 0, knobRadius, knobRadius);
     release.setBounds (275, 0, knobRadius, knobRadius);
+}
+
+void SympleADSRComponent::setParameters(SympleADSRParameterNames& params) {
+    attackValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.attack, attack);
+    decayValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.decay, decay);
+    sustainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.sustain, sustain);
+    releaseValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.release, release);
 }
