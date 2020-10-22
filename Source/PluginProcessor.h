@@ -64,7 +64,7 @@ public:
     void setAmpParameters(juce::ADSR::Parameters&);
     void parameterChanged(const juce::String&, float) override;
 
-    void updateFilter();
+    void filterNextBlock(juce::dsp::AudioBlock<float>&);
 
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
 

@@ -160,12 +160,38 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
-void SympleSynthAudioProcessor::updateFilter()
+/*
+ *  Code for this block is adapted from the JUCE DSP tutorial for LFO filter
+ *  cutoff triggering. The specific code is available under the heading
+ *  "Modulating the signal with an LFO" numbers 5, 6, 7 at:
+ *  https://docs.juce.com/master/tutorial_dsp_introduction.html
+*/
+void SympleSynthAudioProcessor::filterNextBlock(juce::dsp::AudioBlock<float>& block)
 {
-    float freq = tree.getRawParameterValue("CUTOFF")->load();
-    float res = tree.getRawParameterValue("RESONANCE")->load();
-    
-    *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, freq, res);
+    size_t numSamples = block.getNumSamples();
+
+    size_t updateRate = 100;
+    size_t updateCounter = updateRate;
+    size_t read = 0;
+    while (read < numSamples) {
+        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
+        auto subBlock = block.getSubBlock (read, max);
+
+        lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+
+        read += max;
+        updateCounter -= max;
+        float nextAmpSample = filterAmp.getNextSample();
+
+        if (updateCounter == 0)
+        {
+            updateCounter = updateRate;
+            float freq = tree.getRawParameterValue("CUTOFF")->load();
+            float res = tree.getRawParameterValue("RESONANCE")->load();
+            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, 20000.0f);
+            *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
+        }
+    }
 }
 
 /* This block gets called sampleRate / bufferSize times per second.
@@ -191,33 +217,8 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-//    updateFilter();
     juce::dsp::AudioBlock<float> block(buffer);
-    size_t numSamples = block.getNumSamples();
-
-    size_t updateRate = 100;
-    size_t updateCounter = updateRate;
-    size_t read = 0;
-    while (read < numSamples) {
-        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
-        auto subBlock = block.getSubBlock (read, max);
-
-        lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
-
-        read += max;
-        updateCounter -= max;
-        float nextAmpSample = filterAmp.getNextSample();
-
-        if (updateCounter == 0)
-        {
-            updateCounter = updateRate;
-            float freq = tree.getRawParameterValue("CUTOFF")->load();
-            float res = tree.getRawParameterValue("RESONANCE")->load();
-            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, 20000.0f);
-//            juce::Logger::outputDebugString(std::to_string(cutOffFreqHz));
-            *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
-        }
-    }
+    filterNextBlock(block);
 }
 
 //==============================================================================
@@ -288,7 +289,7 @@ void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, 
     filterAmpParameters.attack = tree.getRawParameterValue("FILTER_ATTACK")->load();
     filterAmpParameters.decay = tree.getRawParameterValue("FILTER_DECAY")->load();
     filterAmpParameters.sustain = tree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100;
-    filterAmpParameters.release = tree.getRawParameterValue("FILTER_RELEASE")->load();
+    filterAmpParameters.release = tree.getRawParameterValue("FILTER_RELEASE")->load() / 100;
     
     filterAmp.setParameters(filterAmpParameters);
     setAmpParameters(ampParameters);
