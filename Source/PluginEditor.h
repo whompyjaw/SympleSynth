@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "SympleADSRComponent.h"
+#include "SympleFilterComponent.h"
 
 //==============================================================================
 /**
@@ -27,16 +28,14 @@ public:
 
     void sliderValueChanged(juce::Slider* slider) override;
 
-    juce::Slider filterCutoffDial;
-    juce::Slider filterResDial;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
+
 
 private:
     juce::MidiKeyboardComponent keyboardComponent;
     juce::Slider masterGainSlider;
     SympleSynthAudioProcessor& audioProcessor;
     
+    SympleFilterComponent filter;
     SympleADSRComponent amplifier;
     SympleADSRComponent filterAmplifier;
 
