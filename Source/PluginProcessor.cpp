@@ -191,10 +191,33 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-
+//    updateFilter();
     juce::dsp::AudioBlock<float> block(buffer);
-    updateFilter();
-    lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(block));
+    size_t numSamples = block.getNumSamples();
+
+    size_t updateRate = 100;
+    size_t updateCounter = updateRate;
+    size_t read = 0;
+    while (read < numSamples) {
+        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
+        auto subBlock = block.getSubBlock (read, max);
+
+        lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+
+        read += max;
+        updateCounter -= max;
+        float nextAmpSample = filterAmp.getNextSample();
+
+        if (updateCounter == 0)
+        {
+            updateCounter = updateRate;
+            float freq = tree.getRawParameterValue("CUTOFF")->load();
+            float res = tree.getRawParameterValue("RESONANCE")->load();
+            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, 20000.0f);
+//            juce::Logger::outputDebugString(std::to_string(cutOffFreqHz));
+            *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
+        }
+    }
 }
 
 //==============================================================================
@@ -267,6 +290,7 @@ void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, 
     filterAmpParameters.sustain = tree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100;
     filterAmpParameters.release = tree.getRawParameterValue("FILTER_RELEASE")->load();
     
+    filterAmp.setParameters(filterAmpParameters);
     setAmpParameters(ampParameters);
 }
 
@@ -276,7 +300,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 
     // filter parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", 10.0f, 20000.0f, 20000.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 1.0f, 0.1f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", 0.1f, 10.0f, 0.1f));
     
     // adsr knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
