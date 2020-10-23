@@ -80,7 +80,7 @@ private:
     juce::MidiKeyboardState keyboardState;
     
     juce::ADSR::Parameters ampParameters;
-    SympleVoice* synthVoice; // Glenn: why is this here?
+    SympleVoice* synthVoice; // Glenn: i don't think we need this
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 

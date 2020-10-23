@@ -73,6 +73,8 @@ struct SympleVoice : public juce::SynthesiserVoice
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     juce::ADSR amplifier;
+    juce::dsp::AudioBlock<float> tempBlock;
+    juce::HeapBlock<char> heapBlock; //idk if i need this
     juce::ADSR::Parameters& ampParameters;
     /*enum
     {

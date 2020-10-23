@@ -44,9 +44,9 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
     auto cyclesPerSample = cyclesPerSecond / getSampleRate();
 
-    osc1.setFrequency(cyclesPerSample);
+    osc1.setFrequency(cyclesPerSecond, true);
 
-    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sone tone at that frequency
+    //angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sone tone at that frequency
     // this is similar to 
     //mPhaseIncrement = mFrequency * 2 * mPI / mSampleRate;
     // angleDelta is the same as phase increment
@@ -61,27 +61,42 @@ void SympleVoice::stopNote(float, bool allowTailOff)
 /* Renders the next block of data for this voice, and while held down. */
 void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    // I think this is where I would call: processorChain.process();
-    if (angleDelta != 0.0) // Not silent
+    //if (!amplifier.isActive())
+    //    return;
+    //auto output = tempBlock.getSubBlock(0, (size_t)numSamples);
+    //output.clear();
+
+    for (size_t pos = 0; 0 < (size_t)numSamples;)
     {
-        while (--numSamples >= 0) // note is being held down
-        {
-            auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
-
-            for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                outputBuffer.addSample(i, startSample, currentSample);
-
-            currentAngle += angleDelta;
-            ++startSample;
-
-            if (!amplifier.isActive()) {
-                clearCurrentNote();
-                amplifier.reset();
-                angleDelta = 0.0;
-                break;
-            }
-        }
+		juce::dsp::AudioBlock<float> block(outputBuffer);
+		osc1.process(juce::dsp::ProcessContextReplacing<float> (block));
+        
     }
+	juce::dsp::AudioBlock<float> (outputBuffer)
+		.getSubBlock ((size_t) startSample, (size_t) numSamples)
+		.add (tempBlock);
+    // I think this is where I would call: processorChain.process();
+    //if (angleDelta != 0.0) // Not silent
+//	while (--numSamples >= 0) // note is being held down
+//	{
+//            auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
+
+        // I think I can get rid of all of this
+		for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
+		{
+			outputBuffer.addSample(i, startSample, currentSample);
+		}
+
+		//currentAngle += angleDelta;
+		//++startSample;
+
+		//if (!amplifier.isActive()) {
+		//	clearCurrentNote();
+		//	amplifier.reset();
+		//	angleDelta = 0.0;
+		//	break;
+		//}
+//	}
 }
 
 void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)
@@ -107,7 +122,7 @@ void SympleVoice::prepareOscillators(juce::dsp::ProcessSpec spec)
 //        }, 2);
 //}
 //
-///* prepares each process in the chain sequentially (calls reset for oscillator, for gain, etc */
+///* prepares each process in the chain sequentially (calls reset for oscillator, for gain, etc */
 //void SympleOscillator::prepare(const juce::dsp::ProcessSpec& spec)
 //{
 //    processorChain.prepare(spec);   
