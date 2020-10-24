@@ -22,14 +22,24 @@
 #pragma once
 #include <JuceHeader.h>
 
-
+class SympleSynth : juce::Synthesiser
+{
+public:
+    SympleSynth(juce::ADSR::Parameters, juce::ADSR);
+    void prepare(const juce::dsp::ProcessSpec& spec);
+    void renderNextBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&, int, int);
+private:
+    const int VOICE_COUNT = 64;
+    
+ 
+};
 
 class SympleOscillator
 {
 public:
     SympleOscillator()
     {
-        auto& osc = processorChain.template get<oscIndex>();
+        auto& osc = processorChain.get<oscIndex>();
         osc.initialise ([] (float x)
         {
             return juce::jmap (x,
@@ -42,14 +52,14 @@ public:
     }
     void setFrequency (float newValue, bool force = false)
     {
-        auto& osc = processorChain.template get<oscIndex>();
+        auto& osc = processorChain.get<oscIndex>();
         osc.setFrequency (newValue, force);
     }
 
     //==============================================================================
     void setLevel (float newValue)
     {
-        auto& gain = processorChain.template get<gainIndex>();
+        auto& gain = processorChain.get<gainIndex>();
         gain.setGainLinear (newValue);
     }
 
@@ -60,6 +70,7 @@ public:
     }
 
     //==============================================================================
+    /* Context will be an block of audio, essentially*/
     void process (const juce::dsp::ProcessContextReplacing<float>& context) noexcept
     {
         processorChain.process (context);
@@ -132,7 +143,7 @@ struct SympleVoice : public juce::SynthesiserVoice
     void setAmpParameters(juce::ADSR::Parameters& params);
     
     //============ ProcessorChain =========================
-    //void prepare(const juce::dsp::ProcessSpec);
+    void prepare(const juce::dsp::ProcessSpec&);
 
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
@@ -140,6 +151,13 @@ private:
     juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
     
+    juce::HeapBlock<char> heapBlock;
+    juce::dsp::AudioBlock<float> tempBlock;
+
+    enum
+    {
+        osc1Index
+    };
     juce::dsp::ProcessorChain<SympleOscillator> processorChain;
 };
 

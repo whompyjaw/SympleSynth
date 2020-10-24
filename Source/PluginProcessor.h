@@ -70,23 +70,21 @@ public:
 
 
 private:
-    const int VOICE_COUNT = 64;
-    const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
     
-    juce::Synthesiser synth;
+    const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
     
     juce::MidiKeyboardState keyboardState;
     
     juce::ADSR::Parameters ampParameters;
     juce::ADSR::Parameters filterAmpParameters;
     juce::ADSR filterAmp;
-    SympleVoice* synthVoice;
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
     juce::AudioProcessorValueTreeState tree;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
-
+    
+    SympleSynth sympleSynth;
     float lastSampleRate;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessor)

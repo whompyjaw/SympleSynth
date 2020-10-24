@@ -28,13 +28,11 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 {
     amplifier.noteOn();
     filterAmp.noteOn();
-    currentAngle = 0.0;
-    level = velocity * 0.15;
 
-    auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
-    auto cyclesPerSample = cyclesPerSecond / getSampleRate();
-
-    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sine tone. I 
+    auto freqHz = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+    processorChain.get<osc1Index>().setFrequency (freqHz, true);
+    processorChain.get<osc1Index>().setLevel (velocity);
+ 
 }
 
 /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
@@ -49,30 +47,72 @@ void SympleVoice::stopNote(float, bool allowTailOff)
 
 void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    if (angleDelta != 0.0) // Not silent
+    auto output = tempBlock.getSubBlock (0, (size_t) numSamples);
+    output.clear();
+
+    for (size_t pos = 0; pos < (size_t) numSamples;)
     {
-        while (--numSamples >= 0)
-        {
-            auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
+//        auto max = juce::jmin ((size_t) numSamples - pos, lfoUpdateCounter);
+//        auto block = output.getSubBlock (pos, max);
 
-            for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                outputBuffer.addSample(i, startSample, currentSample);
+        juce::dsp::ProcessContextReplacing<float> context (output);
+        processorChain.process (context);
 
-            currentAngle += angleDelta;
-            ++startSample;
+//        pos += max;
+//        lfoUpdateCounter -= max;
 
-            if (!amplifier.isActive()) {
-                clearCurrentNote();
-                amplifier.reset();
-                angleDelta = 0.0;
-                break;
-            }
-        }
+//        if (lfoUpdateCounter == 0)
+//        {
+//            lfoUpdateCounter = lfoUpdateRate;
+//            auto lfoOut = lfo.processSample (0.0f);                                 // [5]
+//            auto curoffFreqHz = juce::jmap (lfoOut, -1.0f, 1.0f, 100.0f, 2000.0f);  // [6]
+//            processorChain.get<filterIndex>().setCutoffFrequencyHz (curoffFreqHz);  // [7]
+//        }
     }
+
+    juce::dsp::AudioBlock<float> (outputBuffer)
+        .getSubBlock ((size_t) startSample, (size_t) numSamples)
+        .add (tempBlock);
+
 }
 
 void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)
 {
     amplifier.setParameters(params);
 }
+
+void SympleVoice::prepare(const juce::dsp::ProcessSpec& spec)
+{
+    tempBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
+    processorChain.prepare (spec);
+}
+
+void SympleSynth::prepare(const juce::dsp::ProcessSpec& spec)
+{
+    setCurrentPlaybackSampleRate (spec.sampleRate);
+    // prepare voices and eventually oscillators
+    for (auto* v : voices)
+        dynamic_cast<SympleVoice*> (v)->prepare (spec);
+}
+
+SympleSynth::SympleSynth(juce::ADSR::Parameters ampParams, juce::ADSR filterAmp) {
+    {
+        clearVoices();
+        for (int i = 0; i < VOICE_COUNT; ++i)
+        {
+            addVoice(new SympleVoice(ampParams, filterAmp));
+        }
+    
+        clearSounds();
+        addSound(new SympleSound());
+    }
+}
+
+void SympleSynth::renderNextBlock(juce::AudioBuffer<float> &outputAudio, juce::MidiBuffer &inputMidi, int startSample, int numSamples)
+{
+//    processNextBlock (outputAudio, inputMidi, startSample, numSamples);
+    juce::Synthesiser::renderNextBlock(outputAudio, inputMidi, startSample, numSamples);
+}
+
+
 
