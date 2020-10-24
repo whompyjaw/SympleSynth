@@ -31,7 +31,7 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 
     auto freqHz = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
     processorChain.get<osc1Index>().setFrequency (freqHz, true);
-    processorChain.get<osc1Index>().setLevel (velocity);
+    processorChain.get<osc1Index>().setLevel (0.15);
  
 }
 
@@ -40,29 +40,31 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 void SympleVoice::stopNote(float, bool allowTailOff)
 {
     amplifier.noteOff();
-//    filterAmp.noteOff();
+    filterAmp.noteOff();
 }
 
 /* Renders the next block of data for this voice. */
 
 void SympleVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
-    auto output = tempBlock.getSubBlock (startSample, (size_t) numSamples);
-    output.clear();
+    if (amplifier.isActive())
+    {
+        juce::dsp::AudioBlock<float> output (outputBuffer);
 
-    juce::dsp::ProcessContextReplacing<float> context (output);
-    processorChain.process (context);
-    
-    juce::dsp::AudioBlock<float> (outputBuffer)
-        .getSubBlock ((size_t) startSample, (size_t) numSamples)
-        .add (tempBlock);
-    amplifier.applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
-    if (!amplifier.isActive()) { // doesn't seem to do anything
+        juce::dsp::ProcessContextReplacing<float> context (output);
+        processorChain.process (context);
+
+        // set amplifier adsr to buffer
+        amplifier.applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
+        
+        // clear synth voice and adsr if note is over
+        if (!amplifier.isActive())
+        {
             clearCurrentNote();
-            processorChain.reset();
             amplifier.reset();
         }
-    //Note: Later this will be used for the LFO will need to take small chunks of the samples and apply lfo stuff to them.
+        //Note: Later this will be used for the LFO will need to take small chunks of the samples and apply lfo stuff to them.
+    }
 }
 
 void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)

@@ -55,6 +55,7 @@ public:
     //==============================================================================
     void reset() noexcept
     {
+        juce::Logger::outputDebugString("calling reset");
          processorChain.reset();
     }
 
