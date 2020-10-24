@@ -22,8 +22,73 @@
 #pragma once
 #include <JuceHeader.h>
 
-// This code was taken from the Juce tutorial "SynthUsingMidiInputTutorial"
 
+
+class SympleOscillator
+{
+public:
+    SympleOscillator()
+    {
+        auto& osc = processorChain.template get<oscIndex>();
+        osc.initialise ([] (float x)
+        {
+            return juce::jmap (x,
+                               float (-juce::MathConstants<double>::pi),
+                               float (juce::MathConstants<double>::pi),
+                               float (-1),
+                               float (1));
+        }, 2);
+
+    }
+    void setFrequency (float newValue, bool force = false)
+    {
+        auto& osc = processorChain.template get<oscIndex>();
+        osc.setFrequency (newValue, force);
+    }
+
+    //==============================================================================
+    void setLevel (float newValue)
+    {
+        auto& gain = processorChain.template get<gainIndex>();
+        gain.setGainLinear (newValue);
+    }
+
+    //==============================================================================
+    void reset() noexcept
+    {
+         processorChain.reset();
+    }
+
+    //==============================================================================
+    void process (const juce::dsp::ProcessContextReplacing<float>& context) noexcept
+    {
+        processorChain.process (context);
+    }
+
+    //==============================================================================
+    void prepare (const juce::dsp::ProcessSpec& spec)
+    {
+        processorChain.prepare (spec);
+    }
+
+private:
+    enum
+    {
+        oscIndex,
+        gainIndex
+    };
+    
+    using Osc = juce::dsp::Oscillator<float>;
+    using Gain = juce::dsp::Gain<float>;
+    juce::dsp::ProcessorChain<Osc,Gain>processorChain;
+};
+
+
+
+
+
+
+// This code was taken from the Juce tutorial "SynthUsingMidiInputTutorial"
 /*
 Describes one of the sounds that a Synthesiser can play.
 A synthesiser can contain one or more sounds, and a sound can choose which midi notes and
@@ -33,9 +98,9 @@ audio rendering for a sound is done by a SynthesiserVoice.
 KEY POINT: This allows more than one SynthesiserVoice to play the same sounds at the same time
 creating polyphony.
 */
-struct SineWaveSound : public juce::SynthesiserSound
+struct SympleSound : public juce::SynthesiserSound
 {
-    SineWaveSound() {}
+    SympleSound() {}
 
     // Not sure why these are overridden functions when they don't exist in the "SynthesizerSounds" class
     bool appliesToNote(int midiNoteNumber) override { return true; }
@@ -46,9 +111,9 @@ struct SineWaveSound : public juce::SynthesiserSound
 /* Represents a voice that a Synthesiser can use to play a SynthesizerSound
 A voice plays a single sound at a time, and a synthesiser holds an array of voices so that it can
 play polyphonically */
-struct SineWaveVoice : public juce::SynthesiserVoice
+struct SympleVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice(juce::ADSR::Parameters&, juce::ADSR&);
+    SympleVoice(juce::ADSR::Parameters&, juce::ADSR&);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 
@@ -65,10 +130,16 @@ struct SineWaveVoice : public juce::SynthesiserVoice
     void renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
     void setAmpParameters(juce::ADSR::Parameters& params);
+    
+    //============ ProcessorChain =========================
+    //void prepare(const juce::dsp::ProcessSpec);
 
 private:
     double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
     juce::ADSR amplifier;
     juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
+    
+    juce::dsp::ProcessorChain<SympleOscillator> processorChain;
 };
+

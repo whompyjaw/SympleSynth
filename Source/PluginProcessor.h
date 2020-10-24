@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SineWaveOsc.h"
+#include "SympleVoice.h"
 
 //==============================================================================
 /**
@@ -80,7 +80,7 @@ private:
     juce::ADSR::Parameters ampParameters;
     juce::ADSR::Parameters filterAmpParameters;
     juce::ADSR filterAmp;
-    SineWaveVoice* synthVoice;
+    SympleVoice* synthVoice;
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 

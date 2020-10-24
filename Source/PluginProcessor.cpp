@@ -33,11 +33,11 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(ampParameters, filterAmp));
+        synth.addVoice(new SympleVoice(ampParameters, filterAmp));
     }
 
     synth.clearSounds();
-    synth.addSound(new SineWaveSound());
+    synth.addSound(new SympleSound());
     
     setUpValueTreeListeners();
 }
@@ -115,7 +115,7 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // initialisation that you 
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
-    synth.setCurrentPlaybackSampleRate(lastSampleRate);
+    synth.setCurrentPlaybackSampleRate(sampleRate);
 
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
@@ -262,7 +262,7 @@ void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
 {
     for (int i = 0; i < synth.getNumVoices(); ++i)
     {
-        dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->setAmpParameters (params);
+        dynamic_cast<SympleVoice*>(synth.getVoice(i))->setAmpParameters (params);
     }
 }
 

@@ -16,8 +16,8 @@
             file="Source/SympleADSRComponent.cpp"/>
       <FILE id="tJLjWj" name="SympleADSRComponent.h" compile="0" resource="0"
             file="Source/SympleADSRComponent.h"/>
-      <FILE id="abe0fq" name="SineWaveOsc.cpp" compile="1" resource="0" file="Source/SineWaveOsc.cpp"/>
-      <FILE id="fMUSVC" name="SineWaveOsc.h" compile="0" resource="0" file="Source/SineWaveOsc.h"/>
+      <FILE id="abe0fq" name="SympleVoice.cpp" compile="1" resource="0" file="Source/SympleVoice.cpp"/>
+      <FILE id="fMUSVC" name="SympleVoice.h" compile="0" resource="0" file="Source/SympleVoice.h"/>
       <FILE id="oIWhoB" name="SympleFilterComponent.h" compile="0" resource="0"
             file="Source/SympleFilterComponent.h"/>
       <FILE id="mpFiPC" name="SympleFilterComponent.cpp" compile="1" resource="0"
