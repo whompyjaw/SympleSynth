@@ -50,15 +50,15 @@ void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int sta
     auto output = tempBlock.getSubBlock (0, (size_t) numSamples);
     output.clear();
 
-    for (size_t pos = 0; pos < (size_t) numSamples;)
-    {
+//    for (size_t pos = 0; pos < (size_t) numSamples;)
+//    {
 //        auto max = juce::jmin ((size_t) numSamples - pos, lfoUpdateCounter);
 //        auto block = output.getSubBlock (pos, max);
 
         juce::dsp::ProcessContextReplacing<float> context (output);
         processorChain.process (context);
 
-//        pos += max;
+        
 //        lfoUpdateCounter -= max;
 
 //        if (lfoUpdateCounter == 0)
@@ -68,8 +68,8 @@ void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int sta
 //            auto curoffFreqHz = juce::jmap (lfoOut, -1.0f, 1.0f, 100.0f, 2000.0f);  // [6]
 //            processorChain.get<filterIndex>().setCutoffFrequencyHz (curoffFreqHz);  // [7]
 //        }
-    }
-
+//    }
+//
     juce::dsp::AudioBlock<float> (outputBuffer)
         .getSubBlock ((size_t) startSample, (size_t) numSamples)
         .add (tempBlock);

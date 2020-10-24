@@ -210,6 +210,8 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     buffer.clear();
     keyboardState.processNextMidiBuffer(midiMessages, 0,
         buffer.getNumSamples(), true);
+    
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this
 
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
@@ -221,7 +223,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this
+    
     filterNextBlock(buffer);
 }
 
