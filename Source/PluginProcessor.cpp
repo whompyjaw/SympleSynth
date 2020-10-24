@@ -212,19 +212,19 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         buffer.getNumSamples(), true);
     
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this
+    //filterNextBlock(buffer);
+//    
+//    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
+//    {
+//        auto* channelData = buffer.getWritePointer(channel);
+//
+//        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+//        {
+//            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(masterGain);
+//        }
+//    }
 
-    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer(channel);
-
-        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
-        {
-            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(masterGain);
-        }
-    }
     midiMessages.clear();
-    
-    filterNextBlock(buffer);
 }
 
 //==============================================================================

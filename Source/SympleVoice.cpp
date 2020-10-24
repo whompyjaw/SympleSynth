@@ -40,40 +40,29 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 void SympleVoice::stopNote(float, bool allowTailOff)
 {
     amplifier.noteOff();
-    filterAmp.noteOff();
+//    filterAmp.noteOff();
 }
 
 /* Renders the next block of data for this voice. */
 
-void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
+void SympleVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
 {
-    auto output = tempBlock.getSubBlock (0, (size_t) numSamples);
+    auto output = tempBlock.getSubBlock (startSample, (size_t) numSamples);
     output.clear();
 
-//    for (size_t pos = 0; pos < (size_t) numSamples;)
-//    {
-//        auto max = juce::jmin ((size_t) numSamples - pos, lfoUpdateCounter);
-//        auto block = output.getSubBlock (pos, max);
-
-        juce::dsp::ProcessContextReplacing<float> context (output);
-        processorChain.process (context);
-
-        
-//        lfoUpdateCounter -= max;
-
-//        if (lfoUpdateCounter == 0)
-//        {
-//            lfoUpdateCounter = lfoUpdateRate;
-//            auto lfoOut = lfo.processSample (0.0f);                                 // [5]
-//            auto curoffFreqHz = juce::jmap (lfoOut, -1.0f, 1.0f, 100.0f, 2000.0f);  // [6]
-//            processorChain.get<filterIndex>().setCutoffFrequencyHz (curoffFreqHz);  // [7]
-//        }
-//    }
-//
+    juce::dsp::ProcessContextReplacing<float> context (output);
+    processorChain.process (context);
+    
     juce::dsp::AudioBlock<float> (outputBuffer)
         .getSubBlock ((size_t) startSample, (size_t) numSamples)
         .add (tempBlock);
-
+    amplifier.applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
+    if (!amplifier.isActive()) { // doesn't seem to do anything
+            clearCurrentNote();
+            processorChain.reset();
+            amplifier.reset();
+        }
+    //Note: Later this will be used for the LFO will need to take small chunks of the samples and apply lfo stuff to them.
 }
 
 void SympleVoice::setAmpParameters(juce::ADSR::Parameters& params)
