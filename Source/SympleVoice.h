@@ -22,17 +22,6 @@
 #pragma once
 #include <JuceHeader.h>
 
-class SympleSynth : juce::Synthesiser
-{
-public:
-    SympleSynth(juce::ADSR::Parameters, juce::ADSR);
-    void prepare(const juce::dsp::ProcessSpec& spec);
-    void renderNextBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&, int, int);
-private:
-    const int VOICE_COUNT = 64;
-    
- 
-};
 
 class SympleOscillator
 {

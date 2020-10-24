@@ -87,32 +87,5 @@ void SympleVoice::prepare(const juce::dsp::ProcessSpec& spec)
     processorChain.prepare (spec);
 }
 
-void SympleSynth::prepare(const juce::dsp::ProcessSpec& spec)
-{
-    setCurrentPlaybackSampleRate (spec.sampleRate);
-    // prepare voices and eventually oscillators
-    for (auto* v : voices)
-        dynamic_cast<SympleVoice*> (v)->prepare (spec);
-}
-
-SympleSynth::SympleSynth(juce::ADSR::Parameters ampParams, juce::ADSR filterAmp) {
-    {
-        clearVoices();
-        for (int i = 0; i < VOICE_COUNT; ++i)
-        {
-            addVoice(new SympleVoice(ampParams, filterAmp));
-        }
-    
-        clearSounds();
-        addSound(new SympleSound());
-    }
-}
-
-void SympleSynth::renderNextBlock(juce::AudioBuffer<float> &outputAudio, juce::MidiBuffer &inputMidi, int startSample, int numSamples)
-{
-//    processNextBlock (outputAudio, inputMidi, startSample, numSamples);
-    juce::Synthesiser::renderNextBlock(outputAudio, inputMidi, startSample, numSamples);
-}
-
 
 

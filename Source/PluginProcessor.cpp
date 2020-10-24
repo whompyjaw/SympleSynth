@@ -22,14 +22,25 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f)),
-                       tree(*this, nullptr, "PARAMETERS", createParameters()),
-                       sympleSynth(ampParameters, filterAmp)
+                       tree(*this, nullptr, "PARAMETERS", createParameters())
 #endif
 {
+    
+    
     // initialize amplifier parameters
     ampParameters = {0.001, 1.0, 1.0, 0.2};
     filterAmpParameters = {0.001, 1.0, 1.0, 0.2};
     filterAmp.setParameters(filterAmpParameters);
+    
+    synth.clearVoices();
+    for (int i = 0; i < VOICE_COUNT; ++i)
+    {
+        synth.addVoice(new SympleVoice(ampParameters, filterAmp));
+    }
+
+    synth.clearSounds();
+    synth.addSound(new SympleSound());
+    
     
     setUpValueTreeListeners();
 }
@@ -107,13 +118,13 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // initialisation that you 
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't
-
+    synth.setCurrentPlaybackSampleRate(sampleRate);
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
     
-    sympleSynth.prepare(spec);
+    prepareOscillators(spec);
     filterAmp.setSampleRate(sampleRate);
     lowPassFilter.prepare(spec);
     lowPassFilter.reset();
@@ -125,7 +136,6 @@ void SympleSynthAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
     keyboardState.reset();
-
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -201,7 +211,6 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     keyboardState.processNextMidiBuffer(midiMessages, 0,
         buffer.getNumSamples(), true);
 
-    sympleSynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this process loop.
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
@@ -212,6 +221,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this
     filterNextBlock(buffer);
 }
 
@@ -252,10 +262,18 @@ juce::ADSR::Parameters& SympleSynthAudioProcessor::getAmpParameters()
 
 void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
 {
-//    for (int i = 0; i < synth.getNumVoices(); ++i)
-//    {
-//        dynamic_cast<SympleVoice*>(synth.getVoice(i))->setAmpParameters (params);
-//    }
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        dynamic_cast<SympleVoice*>(synth.getVoice(i))->setAmpParameters (params);
+    }
+}
+
+void SympleSynthAudioProcessor::prepareOscillators(juce::dsp::ProcessSpec& spec)
+{
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        dynamic_cast<SympleVoice*>(synth.getVoice(i))->prepare(spec);
+    }
 }
 
 void SympleSynthAudioProcessor::setUpValueTreeListeners()

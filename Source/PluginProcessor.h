@@ -65,11 +65,13 @@ public:
     void parameterChanged(const juce::String&, float) override;
 
     void filterNextBlock(juce::AudioBuffer<float>&);
+    void prepareOscillators(juce::dsp::ProcessSpec&);
 
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
 
 
 private:
+    const int VOICE_COUNT = 64;
     
     const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
     
@@ -78,13 +80,14 @@ private:
     juce::ADSR::Parameters ampParameters;
     juce::ADSR::Parameters filterAmpParameters;
     juce::ADSR filterAmp;
+    
 
     juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
     juce::AudioProcessorValueTreeState tree;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     
-    SympleSynth sympleSynth;
+    juce::Synthesiser synth;
     float lastSampleRate;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessor)
