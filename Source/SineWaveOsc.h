@@ -72,5 +72,7 @@ private:
     juce::ADSR amplifier;
     juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
+    juce::AudioProcessorValueTreeState* oscTree;
+    //SympleSynthAudioProcessor &audioProcessor;
     Oscillator osc;
 };
