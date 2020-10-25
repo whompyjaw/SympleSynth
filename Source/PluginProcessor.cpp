@@ -119,6 +119,7 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't
     synth.setCurrentPlaybackSampleRate(sampleRate);
+//    synth.setNoteStealingEnabled(false);
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
@@ -213,16 +214,16 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this
     //filterNextBlock(buffer);
-//    
-//    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
-//    {
-//        auto* channelData = buffer.getWritePointer(channel);
-//
-//        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
-//        {
-//            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(masterGain);
-//        }
-//    }
+    
+    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
+    {
+        auto* channelData = buffer.getWritePointer(channel);
+
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(masterGain);
+        }
+    }
 
     midiMessages.clear();
 }

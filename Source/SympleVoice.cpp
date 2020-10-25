@@ -27,11 +27,11 @@ bool SympleVoice::canPlaySound(juce::SynthesiserSound* sound)
 void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
 {
     amplifier.noteOn();
-    filterAmp.noteOn();
+//    filterAmp.noteOn();
 
     auto freqHz = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
     processorChain.get<osc1Index>().setFrequency (freqHz, true);
-    processorChain.get<osc1Index>().setLevel (0.15);
+    processorChain.get<osc1Index>().setLevel (velocity*0.15);
  
 }
 
@@ -40,12 +40,12 @@ void SympleVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 void SympleVoice::stopNote(float, bool allowTailOff)
 {
     amplifier.noteOff();
-    filterAmp.noteOff();
+//    filterAmp.noteOff();
 }
 
 /* Renders the next block of data for this voice. */
 
-void SympleVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
+void SympleVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
     if (amplifier.isActive())
     {
@@ -55,9 +55,9 @@ void SympleVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         processorChain.process (context);
 
         // set amplifier adsr to buffer
-        amplifier.applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
+//        amplifier.applyEnvelopeToBuffer(outputBuffer, startSample, numSamples);
         
-        // clear synth voice and adsr if note is over
+//        // clear synth voice and adsr if note is over
         if (!amplifier.isActive())
         {
             clearCurrentNote();

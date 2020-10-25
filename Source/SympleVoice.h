@@ -128,7 +128,7 @@ struct SympleVoice : public juce::SynthesiserVoice
     void controllerMoved(int, int) override {}
 
     /* Renders the next block of data for this voice. */
-    void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
+    void renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
     void setAmpParameters(juce::ADSR::Parameters& params);
     
