@@ -244,6 +244,8 @@ void SympleSynthAudioProcessor::setUpValueTreeListeners()
     tree.addParameterListener("AMP_DECAY", this);
     tree.addParameterListener("AMP_SUSTAIN", this);
     tree.addParameterListener("AMP_RELEASE", this);
+    
+    tree.addParameterListener("OSC_OCTAVE", this);
 }
 
 void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
@@ -278,8 +280,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
 
     juce::NormalisableRange<float> oscillatorParams (-24, 24, 12);
-    juce::AudioParameterFloat oscTree ("OSC_OCTAVE", "Octave", oscillatorParams, 0, "Octave");
-//    parameters.push_back(std::make_unique<juce::AudioParameterInt>(oscillatorParams));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_OCTAVE", "Octave", oscillatorParams, 0, "Octave"));
     return { parameters.begin(), parameters.end() };
 }
 

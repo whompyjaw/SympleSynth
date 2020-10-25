@@ -41,10 +41,11 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterCutoffDial.setSkewFactorFromMidPoint(1000.0f);
 
     // Oscillator
-    addAndMakeVisible(osc1OctaveDial);
+    addAndMakeVisible(&osc1OctaveDial);
     osc1OctaveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     osc1OctaveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 70, 30);
     osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_OCTAVE", osc1OctaveDial);
 
     masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     masterGainSlider.setRange(-60.0f, 0.0f, 0.01f);
@@ -101,7 +102,7 @@ void SympleSynthAudioProcessorEditor::resized()
     masterGainSlider.setBounds(1100, 400, 40, 100);
     filterCutoffDial.setBounds(30, 90, 70, 70);
     filterResDial.setBounds(100, 90, 70, 70);
-    osc1OctaveDial.setBounds(650, 450, 200, 200);
+    osc1OctaveDial.setBounds(650, 450, 125, 125);
     
 }
 
