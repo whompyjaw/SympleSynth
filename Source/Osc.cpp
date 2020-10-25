@@ -8,6 +8,7 @@
   ==============================================================================
 */
 
+#include <JuceHeader.h>
 #include <math.h>
 #include "Osc.h"
 
@@ -34,12 +35,15 @@ void Oscillator::startNote() {
     mPhase = 0.0;
 }
 
-void Oscillator::generate(double* buffer, int nFrames) {
+void Oscillator::generate(juce::AudioSampleBuffer& buffer, int nFrames, juce::ADSR& amp) {
     const double twoPI = 2 * mPI;
     switch (mOscillatorMode) {
         case OSCILLATOR_MODE_SINE:
             for (int i = 0; i < nFrames; i++) {
-                buffer[i] = sin(mPhase);
+                auto env = amp.getNextSample();
+                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                    buffer.addSample(j, i, (float) (sin(mPhase) * env));
+                }
                 mPhase += mPhaseIncrement;
                 while (mPhase >= twoPI) {
                     mPhase -= twoPI;
@@ -48,7 +52,10 @@ void Oscillator::generate(double* buffer, int nFrames) {
             break;
         case OSCILLATOR_MODE_SAW:
             for (int i = 0; i < nFrames; i++) {
-                buffer[i] = 1.0 - (2.0 * mPhase / twoPI);
+                auto env = amp.getNextSample();
+                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI) * env));
+                }
                 mPhase += mPhaseIncrement;
                 while (mPhase >= twoPI) {
                     mPhase -= twoPI;
@@ -57,10 +64,15 @@ void Oscillator::generate(double* buffer, int nFrames) {
             break;
         case OSCILLATOR_MODE_SQUARE:
             for (int i = 0; i < nFrames; i++) {
+                auto env = amp.getNextSample();
                 if (mPhase <= mPI) {
-                    buffer[i] = 1.0;
+                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                        buffer.addSample(j, i, (float) 1.0 * env);
+                    }
                 } else {
-                    buffer[i] = -1.0;
+                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                        buffer.addSample(j, i, (float) -1.0 * env);
+                    }
                 }
                 mPhase += mPhaseIncrement;
                 while (mPhase >= twoPI) {
@@ -70,8 +82,11 @@ void Oscillator::generate(double* buffer, int nFrames) {
             break;
         case OSCILLATOR_MODE_TRIANGLE:
             for (int i = 0; i < nFrames; i++) {
+                auto env = amp.getNextSample();
                 double value = -1.0 + (2.0 * mPhase / twoPI);
-                buffer[i] = 2.0 * (fabs(value) - 0.5);
+                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                    buffer.addSample(j, i, (float)(2.0 * (fabs(value) - 0.5)) * env);
+                }
                 mPhase += mPhaseIncrement;
                 while (mPhase >= twoPI) {
                     mPhase -= twoPI;

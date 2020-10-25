@@ -50,25 +50,11 @@ void SineWaveVoice::stopNote(float, bool allowTailOff)
 
 void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    double buff[numSamples];
-    osc.generate(buff, numSamples);
-
-    if (amplifier.isActive()) // Not silent
+    if (amplifier.isActive())
     {
-        while (--numSamples >= 0)
-        {
-            auto currentSample = (float)(buff[startSample] * level * amplifier.getNextSample());
-
-            for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                outputBuffer.addSample(i, startSample, currentSample);
-
-            ++startSample;
-
-            if (!amplifier.isActive()) {
-                clearCurrentNote();
-                amplifier.reset();
-                break;
-            }
+        osc.generate(outputBuffer, numSamples, amplifier);
+        if (!amplifier.isActive()) {
+            amplifier.reset();
         }
     }
 }
