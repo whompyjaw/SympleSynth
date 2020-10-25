@@ -24,6 +24,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     SympleFilterParameterNames filterParameters;
     filterParameters.cutoff = "CUTOFF";
     filterParameters.resonance = "RESONANCE";
+    filterParameters.amount = "AMOUNT";
     filter.setParameters(filterParameters);
 
     // init amp parameter names struct
