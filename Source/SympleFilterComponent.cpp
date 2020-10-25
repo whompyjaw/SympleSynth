@@ -26,7 +26,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p) : aud
     filterResDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterResDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     filterResDial.setPopupDisplayEnabled(true, true, this);
-    //filterResDial.setTextValueSuffix("%");
+    filterResDial.setTextValueSuffix("%");
     addAndMakeVisible(&filterResDial);
 
     filterAmountDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
