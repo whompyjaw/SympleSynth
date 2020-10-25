@@ -9,6 +9,7 @@
 */
 
 #pragma once
+#include <JuceHeader.h>
 #include <math.h>
 
 enum OscillatorMode {
@@ -32,7 +33,7 @@ public:
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void startNote();
-    void generate(double* buffer, int nFrames);
+    void generate(juce::AudioSampleBuffer&, int nFrames, juce::ADSR&);
     Oscillator() :
     mOscillatorMode(OSCILLATOR_MODE_SAW),
     mPI(2*acos(0.0)),
