@@ -10,7 +10,7 @@
 
 #include "SineWaveOsc.h"
 
-SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters) : ampParameters(ampParameters)
+SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::AudioProcessorValueTreeState &tree) : ampParameters(ampParameters)
 {
     osc.setMode(OSCILLATOR_MODE_SQUARE);
     amplifier.setSampleRate(getSampleRate());
@@ -31,6 +31,7 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     osc.startNote();
     level = velocity * 0.15;
 
+    // TODO: calculate the frequency from the midi and the APVST 
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
     osc.setFrequency(cyclesPerSecond);
 }

@@ -29,6 +29,9 @@ public:
 
     juce::Slider filterCutoffDial;
     juce::Slider filterResDial;
+    juce::Slider osc1OctaveDial;
+    
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1OctaveValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
 

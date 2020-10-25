@@ -31,7 +31,8 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(ampParameters));
+        // TODO: Need to pass in the value tree here for accessing frequency, or I declare a reference to the tree in the Voice class
+        synth.addVoice(new SineWaveVoice(ampParameters, tree));
     }
 
     synth.clearSounds();
@@ -276,6 +277,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
 
+    juce::NormalisableRange<float> oscillatorParams (-24, 24, 12);
+    juce::AudioParameterFloat oscTree ("OSC_OCTAVE", "Octave", oscillatorParams, 0, "Octave");
+//    parameters.push_back(std::make_unique<juce::AudioParameterInt>(oscillatorParams));
     return { parameters.begin(), parameters.end() };
 }
 

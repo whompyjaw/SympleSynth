@@ -40,6 +40,11 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "RESONANCE", filterResDial);
     filterCutoffDial.setSkewFactorFromMidPoint(1000.0f);
 
+    // Oscillator
+    addAndMakeVisible(osc1OctaveDial);
+    osc1OctaveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    osc1OctaveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 70, 30);
+    osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
 
     masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     masterGainSlider.setRange(-60.0f, 0.0f, 0.01f);
@@ -49,6 +54,8 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(masterGainSlider);
     setSize (1200, 800);
     //startTimer(400);
+    
+    
 }
 
 SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
@@ -60,6 +67,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
     juce::Rectangle<int> titleArea(0, 10, getWidth(), 20);
     juce::Rectangle <float> filterArea(25, 25, 150, 150);
+    juce::Rectangle <float> oscSection(600, 400, 200, 200);
     
     g.setFont (15.0f);
     g.fillAll(juce::Colours::black);
@@ -76,7 +84,9 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour(juce::Colours::yellow);
     g.drawRoundedRectangle(filterArea, 20.0f, 2.0f);
-
+    g.drawRoundedRectangle(oscSection, 20.0f, 2.0f);
+    
+    //lf.setColour(Slider::textBoxOutlineColourId, Colour::red
     if (!keyboardComponent.hasKeyboardFocus (true) &&
         keyboardComponent.isVisible())
     {
@@ -91,6 +101,8 @@ void SympleSynthAudioProcessorEditor::resized()
     masterGainSlider.setBounds(1100, 400, 40, 100);
     filterCutoffDial.setBounds(30, 90, 70, 70);
     filterResDial.setBounds(100, 90, 70, 70);
+    osc1OctaveDial.setBounds(650, 450, 200, 200);
+    
 }
 
 void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
