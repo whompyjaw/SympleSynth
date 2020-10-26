@@ -40,6 +40,7 @@ SympleFilterComponent::~SympleFilterComponent()
 {
     filterCutoffValue.reset();
     filterResValue.reset();
+    filterAmountValue.reset();
 }
 
 void SympleFilterComponent::paint(juce::Graphics& g)
