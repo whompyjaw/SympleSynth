@@ -21,6 +21,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "Osc.h"
 
 // This code was taken from the Juce tutorial "SynthUsingMidiInputTutorial"
 
@@ -48,7 +49,7 @@ A voice plays a single sound at a time, and a synthesiser holds an array of voic
 play polyphonically */
 struct SineWaveVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice(juce::ADSR::Parameters&, juce::ADSR&);
+    SineWaveVoice(juce::ADSR::Parameters&, juce::ADSR&, juce::AudioProcessorValueTreeState&);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 
@@ -71,4 +72,7 @@ private:
     juce::ADSR amplifier;
     juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
+    juce::AudioProcessorValueTreeState* oscTree;
+    //SympleSynthAudioProcessor &audioProcessor;
+    Oscillator osc;
 };

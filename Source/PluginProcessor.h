@@ -70,8 +70,8 @@ public:
 
 
 private:
-    const int VOICE_COUNT = 64;
     const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
+    const int VOICE_COUNT = 5;
     
     juce::Synthesiser synth;
     

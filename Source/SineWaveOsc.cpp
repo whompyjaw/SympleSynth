@@ -10,11 +10,14 @@
 
 #include "SineWaveOsc.h"
 
-SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::ADSR& filterAmp)
+SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::ADSR& filterAmp, juce::AudioProcessorValueTreeState& tree)
     : filterAmp(filterAmp), ampParameters(ampParameters)
 {
+    osc.setMode(OSCILLATOR_MODE_SQUARE);
     amplifier.setSampleRate(getSampleRate());
     amplifier.setParameters(ampParameters);
+    osc.setSampleRate(getSampleRate());
+    oscTree = &tree;
 }
 
 bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
@@ -29,12 +32,14 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     amplifier.noteOn();
     filterAmp.noteOn();
     currentAngle = 0.0;
+    osc.startNote();
     level = velocity * 0.15;
 
+    // calculate the frequency from the midi and the APVST
+    int currentOctave = oscTree->getParameterAsValue("OSC_OCTAVE").getValue();
+    midiNoteNumber += currentOctave;
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
-    auto cyclesPerSample = cyclesPerSecond / getSampleRate();
-
-    angleDelta = cyclesPerSample * 2.0 * juce::MathConstants<double>::pi; // Creates the sine tone. I 
+    osc.setFrequency(cyclesPerSecond);
 }
 
 /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
@@ -49,24 +54,11 @@ void SineWaveVoice::stopNote(float, bool allowTailOff)
 
 void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    if (angleDelta != 0.0) // Not silent
+    if (amplifier.isActive())
     {
-        while (--numSamples >= 0)
-        {
-            auto currentSample = (float)(std::sin(currentAngle) * level * amplifier.getNextSample());
-
-            for (auto i = outputBuffer.getNumChannels(); --i >= 0;)
-                outputBuffer.addSample(i, startSample, currentSample);
-
-            currentAngle += angleDelta;
-            ++startSample;
-
-            if (!amplifier.isActive()) {
-                clearCurrentNote();
-                amplifier.reset();
-                angleDelta = 0.0;
-                break;
-            }
+        osc.generate(outputBuffer, numSamples, amplifier);
+        if (!amplifier.isActive()) {
+            amplifier.reset();
         }
     }
 }
