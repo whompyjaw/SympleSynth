@@ -37,7 +37,8 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
 
     // calculate the frequency from the midi and the APVST
     int currentOctave = oscTree->getParameterAsValue("OSC_OCTAVE").getValue();
-    midiNoteNumber += currentOctave;
+    midiNoteNumber += currentOctave * 12; //(if currentOctave = -2, -2 * 12 = -24
+//    midiNoteNumber += currentOctave;
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
     osc.setFrequency(cyclesPerSecond);
 }
