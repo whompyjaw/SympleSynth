@@ -36,9 +36,10 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     level = velocity * 0.15;
 
     // calculate the frequency from the midi and the APVST
-    int currentOctave = oscTree->getParameterAsValue("OSC_OCTAVE").getValue();
+    int currentOctave = oscTree->getParameterAsValue("OSC_1_OCTAVE").getValue();
     midiNoteNumber += currentOctave * 12; //(if currentOctave = -2, -2 * 12 = -24
-    //midiNoteNumber += semitone
+    int currentSemitone = oscTree->getParameterAsValue("OSC_1_SEMITONE").getValue();
+    midiNoteNumber += currentSemitone;
     // I think fine tune would be a float between 0 and 1? Not sure how I would add this to a whole number.
     // I think i'd need to add the float to cyclesPerSecond after midiNoteNumber
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz

@@ -123,8 +123,8 @@ void SympleSynthAudioProcessorEditor::resized()
     filterAmplifier.setBounds(350, 275, filterAmplifier.getWidth(), filterAmplifier.getHeight());
     
     // Oscillator section
-    osc1OctaveDial.setBounds(40, 310, 100, 100);
-    osc1SemitoneDial.setBounds(130, 310, 100, 100);
+    osc1OctaveDial.setBounds(50, 160, 100, 100);
+    osc1SemitoneDial.setBounds(125, 160, 100, 100);
     
 }
 
