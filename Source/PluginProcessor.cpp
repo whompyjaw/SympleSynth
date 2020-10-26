@@ -346,7 +346,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     juce::NormalisableRange<float> oscillatorSemitone (-12, 12, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_SEMITONE", "Semitone 1", oscillatorSemitone, 0, "Semitone"));
     
-    juce::NormalisableRange<float> oscillatorFineTune (-1.0f, 1.0f, .001);
+    juce::NormalisableRange<float> oscillatorFineTune (-100, 100, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_FINE_TUNE", "Fine Tune 1", oscillatorFineTune, 0, "Fine Tune"));
     return { parameters.begin(), parameters.end() };
 }
