@@ -46,7 +46,7 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     // I think i'd need to add the float to cyclesPerSecond after midiNoteNumber
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber); // convert midi note number to hertz
     // formula interpreted by https://en.wikipedia.org/wiki/Cent_(music)
-    float cent = 0.0005946 * fineTune;
+    float cent = 1.0005946 * fineTune;
     cyclesPerSecond += cent;
     osc.setFrequency(cyclesPerSecond);
 }
