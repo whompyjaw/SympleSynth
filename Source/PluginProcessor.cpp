@@ -192,7 +192,8 @@ void SympleSynthAudioProcessor::filterNextBlock(juce::AudioBuffer<float>& buffer
             float freq = tree.getRawParameterValue("CUTOFF")->load();
             float res = tree.getRawParameterValue("RESONANCE")->load() / 10;
             float amount = tree.getRawParameterValue("AMOUNT")->load() / 100;
-            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, 20000.0f) * amount;
+            float freqMax = freq + ((20000.0f - freq) * amount);
+            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, freqMax);
             *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
         }
     }
