@@ -10,7 +10,6 @@
 
 #include "SineWaveOsc.h"
 
-<<<<<<< HEAD
 SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::ADSR& filterAmp, juce::AudioProcessorValueTreeState& tree)
     : filterAmp(filterAmp), ampParameters(ampParameters)
 {
