@@ -14,7 +14,7 @@
 
 SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
-    setSize (400, 300);
+    setSize (1000, 1000);
     
     //  Add Filter Dials
     filterCutoffDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
@@ -45,7 +45,7 @@ SympleFilterComponent::~SympleFilterComponent()
 
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
-    juce::Rectangle<int> titleArea(0, 10, getWidth(), 20);
+    juce::Rectangle<int> titleArea(530, 120, 70, 20);
 
     g.setFont(15.0f);
     //g.fillAll(juce::Colours::black);
@@ -53,17 +53,18 @@ void SympleFilterComponent::paint(juce::Graphics& g)
 
     // Draw Filter Dials
     g.drawText("Filter", titleArea, juce::Justification::centredTop);
-    g.drawText("Cutoff", 46, 70, 50, 25, juce::Justification::centredLeft);
-    g.drawText("Resonance", 107, 70, 70, 25, juce::Justification::centredLeft);
-    g.drawText("Envelope Amount", 187, 70, 120, 25, juce::Justification::centredLeft);
+    g.drawRect(titleArea);
+    g.drawText("Cutoff", 415, 150, 50, 25, juce::Justification::centredLeft);
+    g.drawText("Resonance", 485, 150, 70, 25, juce::Justification::centredLeft);
+    g.drawText("Envelope Amount", 560, 150, 120, 25, juce::Justification::centredLeft);
 }
 
 void SympleFilterComponent::resized()
 {
     int knobRadius = 70;
-    filterCutoffDial.setBounds(30, 90, knobRadius, knobRadius);
-    filterResDial.setBounds(100, 90, knobRadius, knobRadius);
-    filterAmountDial.setBounds(200, 90, knobRadius, knobRadius);
+    filterCutoffDial.setBounds(400, 165, knobRadius, knobRadius);
+    filterResDial.setBounds(480, 165, knobRadius, knobRadius);
+    filterAmountDial.setBounds(560, 165, knobRadius, knobRadius);
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params) {

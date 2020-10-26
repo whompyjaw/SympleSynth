@@ -28,13 +28,23 @@ public:
 
     void sliderValueChanged(juce::Slider* slider) override;
 
+    
+    // Filter
     juce::Slider filterCutoffDial;
     juce::Slider filterResDial;
-    juce::Slider osc1OctaveDial;
-    
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1OctaveValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
+    
+    
+    // Oscillator 1 tuning section
+    juce::Slider osc1OctaveDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1OctaveValue;
+    juce::Slider osc1SemitoneDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
+    juce::Slider osc1FineTuneDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1FineTuneValue;
+    
+    
 
 private:
     juce::MidiKeyboardComponent keyboardComponent;

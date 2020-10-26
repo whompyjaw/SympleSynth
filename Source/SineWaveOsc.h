@@ -23,7 +23,7 @@
 #include <JuceHeader.h>
 #include "Osc.h"
 
-// This code was taken from the Juce tutorial "SynthUsingMidiInputTutorial"
+// The foundation of this code was adapted from the Juce tutorial "SynthUsingMidiInputTutorial"
 
 /*
 Describes one of the sounds that a Synthesiser can play.
@@ -73,6 +73,5 @@ private:
     juce::ADSR& filterAmp;
     juce::ADSR::Parameters& ampParameters;
     juce::AudioProcessorValueTreeState* oscTree;
-    //SympleSynthAudioProcessor &audioProcessor;
     Oscillator osc;
 };
