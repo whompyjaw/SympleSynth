@@ -72,7 +72,6 @@ public:
 
 private:
     const int VOICE_COUNT = 3;
-    
     const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
     
     juce::MidiKeyboardState keyboardState;
