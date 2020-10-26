@@ -190,8 +190,10 @@ void SympleSynthAudioProcessor::filterNextBlock(juce::AudioBuffer<float>& buffer
         {
             updateCounter = updateRate;
             float freq = tree.getRawParameterValue("CUTOFF")->load();
-            float res = tree.getRawParameterValue("RESONANCE")->load();
-            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, 20000.0f);
+            float res = tree.getRawParameterValue("RESONANCE")->load() / 10;
+            float amount = tree.getRawParameterValue("AMOUNT")->load() / 100;
+            float freqMax = freq + ((20000.0f - freq) * amount);
+            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, freqMax);
             *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
         }
     }
@@ -304,12 +306,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 
     // filter knob ranges
     juce::NormalisableRange<float> cutoffRange = juce::NormalisableRange<float>(10.0f, 20000.0f);
-    juce::NormalisableRange<float> resRange = juce::NormalisableRange<float>(0.1f, 10.0f);
+    juce::NormalisableRange<float> resRange = juce::NormalisableRange<float>(1.0f, 100.0f);
+    juce::NormalisableRange<float> amountRange = juce::NormalisableRange<float>(1.0f, 100.0f);
     cutoffRange.setSkewForCentre(1000.0f);
 
     // filter parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", cutoffRange, 20000.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 0.1f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 1.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", amountRange, 30.0f));
 
     // adsr knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);

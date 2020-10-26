@@ -16,6 +16,7 @@ struct SympleFilterParameterNames {
 public:
     std::string cutoff;
     std::string resonance;
+    std::string amount;
 };
 
 class SympleFilterComponent : public juce::Component
@@ -32,10 +33,13 @@ public:
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterAmountValue;
+
 
 private:
     juce::Slider filterCutoffDial;
     juce::Slider filterResDial;
+    juce::Slider filterAmountDial;
     
     SympleSynthAudioProcessor& audioProcessor;
 
