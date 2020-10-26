@@ -281,7 +281,11 @@ void SympleSynthAudioProcessor::setUpValueTreeListeners()
     tree.addParameterListener("FILTER_DECAY", this);
     tree.addParameterListener("FILTER_SUSTAIN", this);
     tree.addParameterListener("FILTER_RELEASE", this);
-    tree.addParameterListener("OSC_OCTAVE", this);
+    
+    // Oscillator
+    tree.addParameterListener("OSC_1_OCTAVE", this);
+    tree.addParameterListener("OSC_1_SEMITONE", this);
+    tree.addParameterListener("OSC_1_FINE_TUNE", this);
 }
 
 void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
@@ -336,8 +340,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_RELEASE", "Release", releaseRange, 0.1f));
 
-    juce::NormalisableRange<float> oscillatorParams (-2, 2, 1);
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_OCTAVE", "Octave", oscillatorParams, 0, "Octave"));
+    juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_OCTAVE", "Octave 1", oscillatorOctaveParams, 0, "Octave"));
+    
+    juce::NormalisableRange<float> oscillatorSemitone (-12, 12, 1);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_SEMITONE", "Semitone 1", oscillatorSemitone, 0, "Semitone"));
+    
+    juce::NormalisableRange<float> oscillatorFineTune (-1.0f, 1.0f, .001);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_FINE_TUNE", "Fine Tune 1", oscillatorFineTune, 0, "Fine Tune"));
     return { parameters.begin(), parameters.end() };
 }
 
