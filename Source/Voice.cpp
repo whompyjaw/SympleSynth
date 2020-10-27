@@ -22,11 +22,9 @@ SineWaveVoice::SineWaveVoice(juce::AudioProcessorValueTreeState& tree)
 
     // initialize amplifier envelope
     envelope.setSampleRate(getSampleRate());
-    envelope.setParameters(envelopeParameters);
     
     // intialize filter envelope
     filterEnvelope.setSampleRate(getSampleRate());
-    filterEnvelope.setParameters(filterEnvelopeParameters);
     
     // initialize filter
 //    juce::dsp::ProcessSpec spec;
@@ -83,7 +81,17 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
 {
     if (envelope.isActive())
     {
-        osc.generate(outputBuffer, numSamples, envelope);
+        // clear voice block for processing
+        voiceBlock.clear();
+        
+        // add oscillator 1 sound
+        osc.generate(voiceBlock, numSamples, envelope);
+        
+        // add voice output to main buffer
+        juce::dsp::AudioBlock<float> output(outputBuffer);
+        output.add(voiceBlock);
+        
+        // reset amp envelope if it's finished
         if (!envelope.isActive()) {
             envelope.reset();
         }
@@ -114,6 +122,8 @@ void SineWaveVoice::readParameterState()
         oscTree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100,
         oscTree.getRawParameterValue("FILTER_RELEASE")->load(),
     };
+    envelope.setParameters(envelopeParameters);
+    filterEnvelope.setParameters(filterEnvelopeParameters);
 }
 
 /*

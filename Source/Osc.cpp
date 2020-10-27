@@ -35,7 +35,7 @@ void Oscillator::startNote() {
     mPhase = 0.0;
 }
 
-void Oscillator::generate(juce::AudioSampleBuffer& buffer, int nFrames, juce::ADSR& amp) {
+void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juce::ADSR& amp) {
     const double twoPI = 2 * mPI;
     switch (mOscillatorMode) {
         case OSCILLATOR_MODE_SINE:
