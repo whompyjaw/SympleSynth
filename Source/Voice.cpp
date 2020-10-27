@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "SineWaveOsc.h"
+#include "Voice.h"
 
 SineWaveVoice::SineWaveVoice(juce::ADSR::Parameters& ampParameters, juce::ADSR& filterAmp, juce::AudioProcessorValueTreeState& tree)
     : filterAmp(filterAmp), ampParameters(ampParameters)

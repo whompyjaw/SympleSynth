@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "SympleFilterComponent.h"
+#include "Filter.h"
 
 SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
