@@ -49,7 +49,7 @@ A voice plays a single sound at a time, and a synthesiser holds an array of voic
 play polyphonically */
 struct SineWaveVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice(juce::ADSR::Parameters&, juce::ADSR&, juce::AudioProcessorValueTreeState&);
+    SineWaveVoice(juce::AudioProcessorValueTreeState&);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 
@@ -64,14 +64,17 @@ struct SineWaveVoice : public juce::SynthesiserVoice
 
     /* Renders the next block of data for this voice. */
     void renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
-    
-    void setAmpParameters(juce::ADSR::Parameters& params);
 
 private:
-    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
-    juce::ADSR amplifier;
-    juce::ADSR& filterAmp;
-    juce::ADSR::Parameters& ampParameters;
-    juce::AudioProcessorValueTreeState* oscTree;
+    double level = 0.0;
+    const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
+    juce::ADSR envelope;
+    juce::ADSR filterEnvelope;
+    juce::ADSR::Parameters envelopeParameters;
+    juce::ADSR::Parameters filterEnvelopeParameters;
+    juce::AudioProcessorValueTreeState& oscTree;
     Oscillator osc;
+    
+    void readParameterState();
+    void filterNextBlock(juce::AudioBuffer<float>&);
 };
