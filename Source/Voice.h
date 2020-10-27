@@ -64,10 +64,18 @@ struct SineWaveVoice : public juce::SynthesiserVoice
 
     /* Renders the next block of data for this voice. */
     void renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
+    
+    /* sets buffer and sample rate for juce dsp */
+    void prepare(const juce::dsp::ProcessSpec& spec);
 
 private:
     double level = 0.0;
     const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
+
+    // memory for voice processing
+    juce::HeapBlock<char> heapBlock;
+    juce::dsp::AudioBlock<float> voiceBlock;
+
     juce::ADSR envelope;
     juce::ADSR filterEnvelope;
     juce::ADSR::Parameters envelopeParameters;

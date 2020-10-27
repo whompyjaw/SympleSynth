@@ -90,6 +90,11 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
     }
 }
 
+void SineWaveVoice::prepare(const juce::dsp::ProcessSpec& spec)
+{
+    voiceBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
+}
+
 /*
  *  Reads the state of parameters in the value state tree and sets
  *  class variables that hold envelope, filter, and oscillator params

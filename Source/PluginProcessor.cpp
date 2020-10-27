@@ -108,6 +108,14 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
+    
+    // prepare voices with buffer/sample rate
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
+    
+    prepareVoices(spec);
 }
 
 /* Gets called when the application is closed. */
@@ -196,6 +204,14 @@ void SympleSynthAudioProcessor::setStateInformation (const void* data, int sizeI
 juce::MidiKeyboardState& SympleSynthAudioProcessor::getKeyboardState()
 {
     return keyboardState;
+}
+
+void SympleSynthAudioProcessor::prepareVoices(juce::dsp::ProcessSpec& spec)
+{
+    for (int i = 0; i < synth.getNumVoices(); ++i)
+    {
+        dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->prepare(spec);
+    }
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
