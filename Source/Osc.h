@@ -4,6 +4,9 @@
     Osc.h
     Created: 19 Oct 2020 10:13:11pm
     Author:  woz
+    NOTES:  This code was adapted from Martin Finke's
+            oscillator code available at:
+            http://www.martin-finke.de/blog/articles/audio-plugins-008-synthesizing-waveforms
 
   ==============================================================================
 */

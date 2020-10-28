@@ -70,7 +70,7 @@ struct SineWaveVoice : public juce::SynthesiserVoice
 
 private:
     double level = 0.0;
-    const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
+    const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing
     juce::HeapBlock<char> heapBlock;

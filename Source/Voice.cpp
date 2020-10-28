@@ -36,10 +36,17 @@ bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
 
 void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
 {
+    // read voice parameters from value state tree
     readParameterState();
+    
+    // turn on envelopes
     envelope.noteOn();
     filterEnvelope.noteOn();
+    
+    // reset oscillator phase
     osc.startNote();
+    
+    // reduce note amplitude
     level = velocity * 0.15;
 
     // calculate the frequency from the midi and the APVST
@@ -62,6 +69,7 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
 
 void SineWaveVoice::stopNote(float, bool allowTailOff)
 {
+    // set envelopes to release stage
     envelope.noteOff();
     filterEnvelope.noteOff();
 }
@@ -81,8 +89,11 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
         // clear voice block for processing
         voiceBlock.clear();
         
-        size_t updateCounter = FILTER_UPDATE_RATE;
+        // init counters
+        size_t updateCounter = PARAM_UPDATE_RATE;
         size_t read = 0;
+        
+        // process every sample
         while (read < numSamples) {
             auto max = juce::jmin((size_t) numSamples - read, updateCounter);
             auto subBlock = voiceBlock.getSubBlock (read, max);
@@ -100,12 +111,19 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
 
             if (updateCounter == 0)
             {
-                updateCounter = FILTER_UPDATE_RATE;
+                // reset the amount of samples to process
+                updateCounter = PARAM_UPDATE_RATE;
+
+                // get filter params from state tree
                 float freq = oscTree.getRawParameterValue("CUTOFF")->load();
                 float res = oscTree.getRawParameterValue("RESONANCE")->load() / 100;
                 float amount = oscTree.getRawParameterValue("AMOUNT")->load() / 100;
+
+                // calculate max cutoff from envelope
                 float freqMax = freq + ((20000.0f - freq) * amount);
                 auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
+
+                // reset filter values
                 filter.setCutoffFrequencyHz(cutOffFreqHz);
                 filter.setResonance(res);
             }
