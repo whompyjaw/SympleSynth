@@ -66,7 +66,6 @@ private:
     
     juce::Synthesiser synth;
     juce::MidiKeyboardState keyboardState;
-    SineWaveVoice* synthVoice;
 
     juce::AudioProcessorValueTreeState tree;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();

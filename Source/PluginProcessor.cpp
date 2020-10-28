@@ -27,11 +27,11 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(tree));
+        synth.addVoice(new SynthVoice(tree));
     }
 
     synth.clearSounds();
-    synth.addSound(new SineWaveSound());
+    synth.addSound(new SynthSound());
 }
 
 SympleSynthAudioProcessor::~SympleSynthAudioProcessor()
@@ -210,7 +210,7 @@ void SympleSynthAudioProcessor::prepareVoices(juce::dsp::ProcessSpec& spec)
 {
     for (int i = 0; i < synth.getNumVoices(); ++i)
     {
-        dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->prepare(spec);
+        dynamic_cast<SynthVoice*>(synth.getVoice(i))->prepare(spec);
     }
 }
 

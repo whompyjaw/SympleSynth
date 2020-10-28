@@ -10,7 +10,7 @@
 
 #include "Voice.h"
 
-SineWaveVoice::SineWaveVoice(juce::AudioProcessorValueTreeState& tree)
+SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
     : oscTree(tree)
 {
     // initialize all ADSR parameters
@@ -27,14 +27,14 @@ SineWaveVoice::SineWaveVoice(juce::AudioProcessorValueTreeState& tree)
     filterEnvelope.setSampleRate(getSampleRate());
 }
 
-bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
+bool SynthVoice::canPlaySound(juce::SynthesiserSound* sound)
 {
-    return dynamic_cast<SineWaveSound*> (sound) != nullptr; // Not sure what this does
+    return dynamic_cast<SynthSound*> (sound) != nullptr; // Not sure what this does
 }
 
 // Start the sine tone based on midi input
 
-void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
+void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
 {
     // read voice parameters from value state tree
     readParameterState();
@@ -67,7 +67,7 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
 
 /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
 
-void SineWaveVoice::stopNote(float, bool allowTailOff)
+void SynthVoice::stopNote(float, bool allowTailOff)
 {
     // set envelopes to release stage
     envelope.noteOff();
@@ -82,7 +82,7 @@ void SineWaveVoice::stopNote(float, bool allowTailOff)
  *
  *  This function generates sound and applies audio filters
 */
-void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
+void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
     if (envelope.isActive())
     {
@@ -140,7 +140,7 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
     }
 }
 
-void SineWaveVoice::prepare(const juce::dsp::ProcessSpec& spec)
+void SynthVoice::prepare(const juce::dsp::ProcessSpec& spec)
 {
     voiceBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
     filter.prepare(spec);
@@ -156,7 +156,7 @@ void SineWaveVoice::prepare(const juce::dsp::ProcessSpec& spec)
  *  Reads the state of parameters in the value state tree and sets
  *  class variables that hold envelope, filter, and oscillator params
  */
-void SineWaveVoice::readParameterState()
+void SynthVoice::readParameterState()
 {
     envelopeParameters = {
         oscTree.getRawParameterValue("AMP_ATTACK")->load(),
