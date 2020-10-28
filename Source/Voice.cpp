@@ -25,15 +25,6 @@ SineWaveVoice::SineWaveVoice(juce::AudioProcessorValueTreeState& tree)
     
     // intialize filter envelope
     filterEnvelope.setSampleRate(getSampleRate());
-    
-    // initialize filter
-//    juce::dsp::ProcessSpec spec;
-//    spec.sampleRate = sampleRate;
-//    spec.maximumBlockSize = samplesPerBlock;
-//    spec.numChannels = getTotalNumOutputChannels();
-//
-//    lowPassFilter.prepare(spec);
-//    lowPassFilter.reset();
 }
 
 bool SineWaveVoice::canPlaySound(juce::SynthesiserSound* sound)
@@ -56,10 +47,10 @@ void SineWaveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     midiNoteNumber += currentOctave * 12; //(if currentOctave = -2, -2 * 12 = -24
     int currentSemitone = oscTree.getParameterAsValue("OSC_1_SEMITONE").getValue();
     midiNoteNumber += currentSemitone;
-    
+
     // turn midi note number into hertz
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
-    
+
     // adjust the frequency with value from the fine tune knob
     float fineTune = oscTree.getParameterAsValue("OSC_1_FINE_TUNE").getValue();
     // cents formula adapted from http://hyperphysics.phy-astr.gsu.edu/hbase/Music/cents.html
@@ -75,8 +66,14 @@ void SineWaveVoice::stopNote(float, bool allowTailOff)
     filterEnvelope.noteOff();
 }
 
-/* Renders the next block of data for this voice. */
-
+/*
+ *  Code for this block is adapted from the JUCE DSP tutorial for LFO filter
+ *  cutoff triggering. The specific code is available under the heading
+ *  "Modulating the signal with an LFO" numbers 5, 6, 7 at:
+ *  https://docs.juce.com/master/tutorial_dsp_introduction.html
+ *
+ *  This function generates sound and applies audio filters
+*/
 void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
     if (envelope.isActive())
@@ -84,10 +81,36 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
         // clear voice block for processing
         voiceBlock.clear();
         
-        // add oscillator 1 sound
-        osc.generate(voiceBlock, numSamples, envelope);
-        filterNextBlock(voiceBlock);
-        
+        size_t updateCounter = FILTER_UPDATE_RATE;
+        size_t read = 0;
+        while (read < numSamples) {
+            auto max = juce::jmin((size_t) numSamples - read, updateCounter);
+            auto subBlock = voiceBlock.getSubBlock (read, max);
+
+            // add oscillator 1 sound
+            osc.generate(subBlock, (int) subBlock.getNumSamples(), envelope);
+
+            // filter sound
+            filter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+
+            // set counters
+            read += max;
+            updateCounter -= max;
+            float nextFilterEnvSample = filterEnvelope.getNextSample();
+
+            if (updateCounter == 0)
+            {
+                updateCounter = FILTER_UPDATE_RATE;
+                float freq = oscTree.getRawParameterValue("CUTOFF")->load();
+                float res = oscTree.getRawParameterValue("RESONANCE")->load() / 100;
+                float amount = oscTree.getRawParameterValue("AMOUNT")->load() / 100;
+                float freqMax = freq + ((20000.0f - freq) * amount);
+                auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
+                filter.setCutoffFrequencyHz(cutOffFreqHz);
+                filter.setResonance(res);
+            }
+        }
+
         // add voice output to main buffer
         juce::dsp::AudioBlock<float> output(outputBuffer);
         output.add(voiceBlock);
@@ -125,50 +148,11 @@ void SineWaveVoice::readParameterState()
     };
     
     filterEnvelopeParameters = {
-        oscTree.getRawParameterValue("FILTER_ATTACK")->load(),
-        oscTree.getRawParameterValue("FILTER_DECAY")->load(),
+        oscTree.getRawParameterValue("FILTER_ATTACK")->load() / 100,
+        oscTree.getRawParameterValue("FILTER_DECAY")->load() / 100,
         oscTree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100,
-        oscTree.getRawParameterValue("FILTER_RELEASE")->load(),
+        oscTree.getRawParameterValue("FILTER_RELEASE")->load() / 100,
     };
     envelope.setParameters(envelopeParameters);
     filterEnvelope.setParameters(filterEnvelopeParameters);
-}
-
-/*
- *  Code for this block is adapted from the JUCE DSP tutorial for LFO filter
- *  cutoff triggering. The specific code is available under the heading
- *  "Modulating the signal with an LFO" numbers 5, 6, 7 at:
- *  https://docs.juce.com/master/tutorial_dsp_introduction.html
- *
- *  This function processes an audio block with the filter sections
-*/
-void SineWaveVoice::filterNextBlock(juce::dsp::AudioBlock<float>& block)
-{
-    size_t numSamples = block.getNumSamples();
-
-    size_t updateRate = FILTER_UPDATE_RATE;
-    size_t updateCounter = updateRate;
-    size_t read = 0;
-    while (read < numSamples) {
-        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
-        auto subBlock = block.getSubBlock (read, max);
-
-        filter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
-
-        read += max;
-        updateCounter -= max;
-        float nextAmpSample = filterEnvelope.getNextSample();
-
-        if (updateCounter == 0)
-        {
-            updateCounter = updateRate;
-            float freq = oscTree.getRawParameterValue("CUTOFF")->load();
-            float res = oscTree.getRawParameterValue("RESONANCE")->load() / 10;
-            float amount = oscTree.getRawParameterValue("AMOUNT")->load() / 100;
-            float freqMax = freq + ((20000.0f - freq) * amount);
-            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, freqMax);
-            filter.setCutoffFrequencyHz(cutOffFreqHz);
-            filter.setResonance(res);
-        }
-    }
 }
