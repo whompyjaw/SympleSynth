@@ -82,7 +82,8 @@ private:
     juce::ADSR::Parameters filterEnvelopeParameters;
     juce::AudioProcessorValueTreeState& oscTree;
     Oscillator osc;
+    juce::dsp::LadderFilter<float> filter;
     
     void readParameterState();
-    void filterNextBlock(juce::AudioBuffer<float>&);
+    void filterNextBlock(juce::dsp::AudioBlock<float>&);
 };

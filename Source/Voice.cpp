@@ -86,6 +86,7 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
         
         // add oscillator 1 sound
         osc.generate(voiceBlock, numSamples, envelope);
+        filterNextBlock(voiceBlock);
         
         // add voice output to main buffer
         juce::dsp::AudioBlock<float> output(outputBuffer);
@@ -101,6 +102,13 @@ void SineWaveVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int s
 void SineWaveVoice::prepare(const juce::dsp::ProcessSpec& spec)
 {
     voiceBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
+    filter.prepare(spec);
+    
+    // initialize filter
+    float freq = oscTree.getRawParameterValue("CUTOFF")->load();
+    float res = oscTree.getRawParameterValue("RESONANCE")->load() / 10;
+    filter.setCutoffFrequencyHz(freq);
+    filter.setResonance(res);
 }
 
 /*
@@ -134,33 +142,33 @@ void SineWaveVoice::readParameterState()
  *
  *  This function processes an audio block with the filter sections
 */
-void SineWaveVoice::filterNextBlock(juce::AudioBuffer<float>& buffer)
+void SineWaveVoice::filterNextBlock(juce::dsp::AudioBlock<float>& block)
 {
-//    juce::dsp::AudioBlock<float> block(buffer);
-//    size_t numSamples = block.getNumSamples();
-//
-//    size_t updateRate = FILTER_UPDATE_RATE;
-//    size_t updateCounter = updateRate;
-//    size_t read = 0;
-//    while (read < numSamples) {
-//        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
-//        auto subBlock = block.getSubBlock (read, max);
-//
-//        lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
-//
-//        read += max;
-//        updateCounter -= max;
-//        float nextAmpSample = filterAmp.getNextSample();
-//
-//        if (updateCounter == 0)
-//        {
-//            updateCounter = updateRate;
-//            float freq = tree.getRawParameterValue("CUTOFF")->load();
-//            float res = tree.getRawParameterValue("RESONANCE")->load() / 10;
-//            float amount = tree.getRawParameterValue("AMOUNT")->load() / 100;
-//            float freqMax = freq + ((20000.0f - freq) * amount);
-//            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, freqMax);
-//            *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
-//        }
-//    }
+    size_t numSamples = block.getNumSamples();
+
+    size_t updateRate = FILTER_UPDATE_RATE;
+    size_t updateCounter = updateRate;
+    size_t read = 0;
+    while (read < numSamples) {
+        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
+        auto subBlock = block.getSubBlock (read, max);
+
+        filter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+
+        read += max;
+        updateCounter -= max;
+        float nextAmpSample = filterEnvelope.getNextSample();
+
+        if (updateCounter == 0)
+        {
+            updateCounter = updateRate;
+            float freq = oscTree.getRawParameterValue("CUTOFF")->load();
+            float res = oscTree.getRawParameterValue("RESONANCE")->load() / 10;
+            float amount = oscTree.getRawParameterValue("AMOUNT")->load() / 100;
+            float freqMax = freq + ((20000.0f - freq) * amount);
+            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, freqMax);
+            filter.setCutoffFrequencyHz(cutOffFreqHz);
+            filter.setResonance(res);
+        }
+    }
 }
