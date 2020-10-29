@@ -34,9 +34,9 @@ audio rendering for a sound is done by a SynthesiserVoice.
 KEY POINT: This allows more than one SynthesiserVoice to play the same sounds at the same time
 creating polyphony.
 */
-struct SineWaveSound : public juce::SynthesiserSound
+struct SynthSound : public juce::SynthesiserSound
 {
-    SineWaveSound() {}
+    SynthSound() {}
 
     // Not sure why these are overridden functions when they don't exist in the "SynthesizerSounds" class
     bool appliesToNote(int midiNoteNumber) override { return true; }
@@ -47,9 +47,9 @@ struct SineWaveSound : public juce::SynthesiserSound
 /* Represents a voice that a Synthesiser can use to play a SynthesizerSound
 A voice plays a single sound at a time, and a synthesiser holds an array of voices so that it can
 play polyphonically */
-struct SineWaveVoice : public juce::SynthesiserVoice
+struct SynthVoice : public juce::SynthesiserVoice
 {
-    SineWaveVoice(juce::ADSR::Parameters&, juce::ADSR&, juce::AudioProcessorValueTreeState&);
+    SynthVoice(juce::AudioProcessorValueTreeState&);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 
@@ -65,13 +65,24 @@ struct SineWaveVoice : public juce::SynthesiserVoice
     /* Renders the next block of data for this voice. */
     void renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
-    void setAmpParameters(juce::ADSR::Parameters& params);
+    /* sets buffer and sample rate for juce dsp */
+    void prepare(const juce::dsp::ProcessSpec& spec);
 
 private:
-    double currentAngle = 0.0, angleDelta = 0.0, level = 0.0;
-    juce::ADSR amplifier;
-    juce::ADSR& filterAmp;
-    juce::ADSR::Parameters& ampParameters;
-    juce::AudioProcessorValueTreeState* oscTree;
+    double level = 0.0;
+    const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
+
+    // memory for voice processing
+    juce::HeapBlock<char> heapBlock;
+    juce::dsp::AudioBlock<float> voiceBlock;
+
+    juce::ADSR envelope;
+    juce::ADSR filterEnvelope;
+    juce::ADSR::Parameters envelopeParameters;
+    juce::ADSR::Parameters filterEnvelopeParameters;
+    juce::AudioProcessorValueTreeState& oscTree;
     Oscillator osc;
+    juce::dsp::LadderFilter<float> filter;
+    
+    void readParameterState();
 };

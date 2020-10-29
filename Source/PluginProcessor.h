@@ -14,8 +14,7 @@
 //==============================================================================
 /**
 */
-class SympleSynthAudioProcessor : public juce::AudioProcessor,
-                                  juce::AudioProcessorValueTreeState::Listener
+class SympleSynthAudioProcessor : public juce::AudioProcessor
 {
 public:
     //==============================================================================
@@ -56,33 +55,17 @@ public:
     void setStateInformation(const void* data, int sizeInBytes) override;
 
     float masterGain { 0.5f }; // Q: What is this syntax? Never seen
-    
-    void setUpValueTreeListeners();
 
     juce::MidiKeyboardState& getKeyboardState();
-    juce::ADSR::Parameters& getAmpParameters();
-    void setAmpParameters(juce::ADSR::Parameters&);
-    void parameterChanged(const juce::String&, float) override;
-
-    void filterNextBlock(juce::AudioBuffer<float>&);
-
+    void prepareVoices(juce::dsp::ProcessSpec&);
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
 
 
 private:
-    const int FILTER_UPDATE_RATE = 100; // the number of samples each filter setting will process
     const int VOICE_COUNT = 5;
     
     juce::Synthesiser synth;
-    
     juce::MidiKeyboardState keyboardState;
-    
-    juce::ADSR::Parameters ampParameters;
-    juce::ADSR::Parameters filterAmpParameters;
-    juce::ADSR filterAmp;
-    SineWaveVoice* synthVoice;
-
-    juce::dsp::ProcessorDuplicator <juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients <float>> lowPassFilter;
 
     juce::AudioProcessorValueTreeState tree;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();

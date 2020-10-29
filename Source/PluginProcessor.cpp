@@ -21,25 +21,17 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), lowPassFilter(juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 0.1f)),
-                       tree(*this, nullptr, "PARAMETERS", createParameters())
+                       ), tree(*this, nullptr, "PARAMETERS", createParameters())
 #endif
 {
-    // initialize amplifier parameters
-    ampParameters = {0.001, 1.0, 1.0, 0.2};
-    filterAmpParameters = {0.001, 1.0, 1.0, 0.2};
-    filterAmp.setParameters(filterAmpParameters);
-
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SineWaveVoice(ampParameters, filterAmp, tree));
+        synth.addVoice(new SynthVoice(tree));
     }
 
     synth.clearSounds();
-    synth.addSound(new SineWaveSound());
-    
-    setUpValueTreeListeners();
+    synth.addSound(new SynthSound());
 }
 
 SympleSynthAudioProcessor::~SympleSynthAudioProcessor()
@@ -116,15 +108,14 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     juce::ignoreUnused(samplesPerBlock); // clear out any unused samples from last key press
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
-
+    
+    // prepare voices with buffer/sample rate
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
-
-    filterAmp.setSampleRate(sampleRate);
-    lowPassFilter.prepare(spec);
-    lowPassFilter.reset();
+    
+    prepareVoices(spec);
 }
 
 /* Gets called when the application is closed. */
@@ -160,45 +151,6 @@ bool SympleSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
-/*
- *  Code for this block is adapted from the JUCE DSP tutorial for LFO filter
- *  cutoff triggering. The specific code is available under the heading
- *  "Modulating the signal with an LFO" numbers 5, 6, 7 at:
- *  https://docs.juce.com/master/tutorial_dsp_introduction.html
- *
- *  This function processes an audio block with the filter sections
-*/
-void SympleSynthAudioProcessor::filterNextBlock(juce::AudioBuffer<float>& buffer)
-{
-    juce::dsp::AudioBlock<float> block(buffer);
-    size_t numSamples = block.getNumSamples();
-
-    size_t updateRate = FILTER_UPDATE_RATE;
-    size_t updateCounter = updateRate;
-    size_t read = 0;
-    while (read < numSamples) {
-        auto max = juce::jmin((size_t) numSamples - read, updateCounter);
-        auto subBlock = block.getSubBlock (read, max);
-
-        lowPassFilter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
-
-        read += max;
-        updateCounter -= max;
-        float nextAmpSample = filterAmp.getNextSample();
-
-        if (updateCounter == 0)
-        {
-            updateCounter = updateRate;
-            float freq = tree.getRawParameterValue("CUTOFF")->load();
-            float res = tree.getRawParameterValue("RESONANCE")->load() / 10;
-            float amount = tree.getRawParameterValue("AMOUNT")->load() / 100;
-            float freqMax = freq + ((20000.0f - freq) * amount);
-            auto cutOffFreqHz = juce::jmap (nextAmpSample, 0.0f, 1.0f, freq, freqMax);
-            *lowPassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(lastSampleRate, cutOffFreqHz, res);
-        }
-    }
-}
-
 /* This block gets called sampleRate / bufferSize times per second.
 So 44100 / 512 = 86 times per second
 44100 / 64 = 689 times per second */
@@ -222,7 +174,6 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         }
     }
     midiMessages.clear();
-    filterNextBlock(buffer);
 }
 
 //==============================================================================
@@ -255,53 +206,12 @@ juce::MidiKeyboardState& SympleSynthAudioProcessor::getKeyboardState()
     return keyboardState;
 }
 
-juce::ADSR::Parameters& SympleSynthAudioProcessor::getAmpParameters()
-{
-    return ampParameters;
-}
-
-void SympleSynthAudioProcessor::setAmpParameters(juce::ADSR::Parameters& params)
+void SympleSynthAudioProcessor::prepareVoices(juce::dsp::ProcessSpec& spec)
 {
     for (int i = 0; i < synth.getNumVoices(); ++i)
     {
-        dynamic_cast<SineWaveVoice*>(synth.getVoice(i))->setAmpParameters (params);
+        dynamic_cast<SynthVoice*>(synth.getVoice(i))->prepare(spec);
     }
-}
-
-void SympleSynthAudioProcessor::setUpValueTreeListeners()
-{
-    // amp listeners
-    tree.addParameterListener("AMP_ATTACK", this);
-    tree.addParameterListener("AMP_DECAY", this);
-    tree.addParameterListener("AMP_SUSTAIN", this);
-    tree.addParameterListener("AMP_RELEASE", this);
-    
-    // filter adsr listeners
-    tree.addParameterListener("FILTER_ATTACK", this);
-    tree.addParameterListener("FILTER_DECAY", this);
-    tree.addParameterListener("FILTER_SUSTAIN", this);
-    tree.addParameterListener("FILTER_RELEASE", this);
-    
-    // Oscillator
-    tree.addParameterListener("OSC_1_OCTAVE", this);
-    tree.addParameterListener("OSC_1_SEMITONE", this);
-    tree.addParameterListener("OSC_1_FINE_TUNE", this);
-}
-
-void SympleSynthAudioProcessor::parameterChanged(const juce::String& paramName, float newValue)
-{
-    ampParameters.attack = tree.getRawParameterValue("AMP_ATTACK")->load();
-    ampParameters.decay = tree.getRawParameterValue("AMP_DECAY")->load();
-    ampParameters.sustain = tree.getRawParameterValue("AMP_SUSTAIN")->load() / 100;
-    ampParameters.release = tree.getRawParameterValue("AMP_RELEASE")->load();
-    
-    filterAmpParameters.attack = tree.getRawParameterValue("FILTER_ATTACK")->load();
-    filterAmpParameters.decay = tree.getRawParameterValue("FILTER_DECAY")->load();
-    filterAmpParameters.sustain = tree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100;
-    filterAmpParameters.release = tree.getRawParameterValue("FILTER_RELEASE")->load() / 100;
-    
-    filterAmp.setParameters(filterAmpParameters);
-    setAmpParameters(ampParameters);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()

@@ -4,6 +4,9 @@
     Osc.cpp
     Created: 19 Oct 2020 10:13:17pm
     Author:  woz
+    NOTES:  This code was adapted from Martin Finke's
+            oscillator code available at:
+            http://www.martin-finke.de/blog/articles/audio-plugins-008-synthesizing-waveforms
 
   ==============================================================================
 */
@@ -35,7 +38,7 @@ void Oscillator::startNote() {
     mPhase = 0.0;
 }
 
-void Oscillator::generate(juce::AudioSampleBuffer& buffer, int nFrames, juce::ADSR& amp) {
+void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juce::ADSR& amp) {
     const double twoPI = 2 * mPI;
     switch (mOscillatorMode) {
         case OSCILLATOR_MODE_SINE:
