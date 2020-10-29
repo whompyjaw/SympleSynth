@@ -4,17 +4,7 @@
     SineWaveOsc.h
     Created: 18 Oct 2020 7:41:04pm
     Author:  whompyjaw
-
-  ==============================================================================
-*/
-
-#pragma once
-/*
-  ==============================================================================
-
-    SynthAudioSource.h
-    Created: 13 Oct 2020 11:31:47pm
-    Author:  whompyjaw
+    Notes: The foundation of this code was adapted from the Juce tutorial "SynthUsingMidiInputTutorial"
 
   ==============================================================================
 */
@@ -22,8 +12,6 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Osc.h"
-
-// The foundation of this code was adapted from the Juce tutorial "SynthUsingMidiInputTutorial"
 
 /*
 Describes one of the sounds that a Synthesiser can play.
@@ -38,15 +26,13 @@ struct SynthSound : public juce::SynthesiserSound
 {
     SynthSound() {}
 
-    // Not sure why these are overridden functions when they don't exist in the "SynthesizerSounds" class
     bool appliesToNote(int midiNoteNumber) override { return true; }
     bool appliesToChannel(int midiNoteNumber) override { return true; }
 };
 
 
 /* Represents a voice that a Synthesiser can use to play a SynthesizerSound
-A voice plays a single sound at a time, and a synthesiser holds an array of voices so that it can
-play polyphonically */
+A voice plays a single sound at a time, and a synthesiser holds an array of voices so that it can play polyphonically. The Synthesiser controls the voices */
 struct SynthVoice : public juce::SynthesiserVoice
 {
     SynthVoice(juce::AudioProcessorValueTreeState&);
@@ -70,6 +56,7 @@ struct SynthVoice : public juce::SynthesiserVoice
 
 private:
     double level = 0.0;
+    int oscModeInt = 0;
     const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing

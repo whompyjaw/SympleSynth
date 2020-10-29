@@ -43,6 +43,8 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
     juce::Slider osc1FineTuneDial;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1FineTuneValue;
+    juce::Slider osc1WaveTypeDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1WaveTypeValue;
     
     
 
@@ -54,11 +56,6 @@ private:
     SympleFilterComponent filter;
     SympleADSRComponent amplifier;
     SympleADSRComponent filterAmplifier;
-
-
-   /* juce::ComboBox midiInputList;
-    juce::Label midiInputListLabel;
-    int lastInputIndex = 0;*/
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessorEditor)
 };

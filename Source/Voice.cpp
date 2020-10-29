@@ -16,8 +16,11 @@ SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
     // initialize all ADSR parameters
     readParameterState();
 
-    // initialize oscillator
-    osc.setMode(OSCILLATOR_MODE_SQUARE);
+    // initialize oscillator with Saw wave
+    // this is actually already set when the oscillator is instantiated.
+//    oscMode = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
+//    OscillatorMode mode = static_cast<OscillatorMode> (oscMode);
+//    osc.setMode(mode);
     osc.setSampleRate(getSampleRate());
 
     // initialize amplifier envelope
@@ -84,6 +87,7 @@ void SynthVoice::stopNote(float, bool allowTailOff)
 */
 void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
+    OscillatorMode oscMode;
     if (envelope.isActive())
     {
         // clear voice block for processing
@@ -99,6 +103,9 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             auto subBlock = voiceBlock.getSubBlock (read, max);
 
             // add oscillator 1 sound
+            oscModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
+            oscMode = static_cast<OscillatorMode> (oscModeInt);
+            osc.setMode(oscMode);
             osc.generate(subBlock, (int) subBlock.getNumSamples(), envelope);
 
             // filter sound
