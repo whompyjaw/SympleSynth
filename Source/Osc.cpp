@@ -58,7 +58,7 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juc
             for (int i = 0; i < nFrames; i++) {
                 auto env = amp.getNextSample();
                 for (int j = 0; j < buffer.getNumChannels(); ++j) {
-                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI) * env));
+                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI)) * env);
                 }
                 mPhase += mPhaseIncrement;
                 while (mPhase >= twoPI) {
