@@ -24,6 +24,7 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
                        ), tree(*this, nullptr, "PARAMETERS", createParameters())
 #endif
 {
+    // initialize the synth with x number of voices
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
@@ -162,8 +163,9 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     buffer.clear();
     keyboardState.processNextMidiBuffer(midiMessages, 0,
         buffer.getNumSamples(), true);
-
-    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples()); // This needs to be before this process loop.
+    
+    // This needs to be before this process loop.
+    synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
@@ -229,7 +231,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 1.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", amountRange, 30.0f));
 
-    // adsr knob ranges
+    // envelope knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
@@ -238,18 +240,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     decayRange.setSkewForCentre(0.35f);
     releaseRange.setSkewForCentre(0.35f);
     
-    // amp parameters
+    // amp envelope parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.001f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", decayRange, 1.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
     
-    // filter amp parameters
+    // filter envelope parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_ATTACK", "Attack", attackRange, 0.001f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_DECAY", "Decay", decayRange, 1.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_RELEASE", "Release", releaseRange, 0.1f));
 
+    // oscillator 1 defaults
     juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_OCTAVE", "Octave 1", oscillatorOctaveParams, 0, "Octave"));
     
@@ -258,6 +261,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     
     juce::NormalisableRange<float> oscillatorFineTune (-100, 100, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_FINE_TUNE", "Fine Tune 1", oscillatorFineTune, 0, "Fine Tune"));
+    
+    juce::NormalisableRange<float> oscillatorWaveType (0, 3, 1);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_WAVE_TYPE", "Wave Type 1", oscillatorWaveType, 1, "Wave Type"));
+    
     return { parameters.begin(), parameters.end() };
 }
 

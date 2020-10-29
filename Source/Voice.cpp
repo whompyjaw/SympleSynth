@@ -17,6 +17,7 @@ SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
     readParameterState();
 
     // initialize oscillator
+    // oscTree.getValue.voiceType (just needs to be an int)
     osc.setMode(OSCILLATOR_MODE_SQUARE);
     osc.setSampleRate(getSampleRate());
 

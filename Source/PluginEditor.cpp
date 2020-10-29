@@ -49,26 +49,37 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(filterAmplifier);
 
     
-    // Oscillator
+    // octave dial
     addAndMakeVisible(&osc1OctaveDial);
     osc1OctaveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     osc1OctaveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 70, 30);
     osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
     osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", osc1OctaveDial);
     
-    // Semitone dial
+    // semitone dial
     addAndMakeVisible(&osc1SemitoneDial);
     osc1SemitoneDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     osc1SemitoneDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
     osc1SemitoneDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
     osc1SemitoneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_SEMITONE", osc1SemitoneDial);
     
+    // fine tune dial
     addAndMakeVisible(&osc1FineTuneDial);
     osc1FineTuneDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     osc1FineTuneDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
     osc1FineTuneDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
     osc1FineTuneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_FINE_TUNE", osc1FineTuneDial);
 
+    // osc wave type dial
+    
+    addAndMakeVisible(&osc1WaveTypeDial);
+    osc1WaveTypeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    osc1WaveTypeDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 100, 30);
+    osc1WaveTypeDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    osc1WaveTypeDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::yellow);
+    osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", osc1WaveTypeDial);
+    
+    
     // Master Slider
     addAndMakeVisible(masterGainSlider);
     masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
@@ -129,9 +140,11 @@ void SympleSynthAudioProcessorEditor::resized()
     filterAmplifier.setBounds(350, 275, filterAmplifier.getWidth(), filterAmplifier.getHeight());
     
     // Oscillator section
+    osc1WaveTypeDial.setBounds(0, 350, 300, 300);
     osc1OctaveDial.setBounds(50, 160, 100, 100);
     osc1SemitoneDial.setBounds(125, 160, 100, 100);
     osc1FineTuneDial.setBounds(200, 160, 100, 100);
+    
     
 }
 
