@@ -56,6 +56,7 @@ struct SynthVoice : public juce::SynthesiserVoice
 
 private:
     double level = 0.0;
+    int oscModeInt = 0;
     const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing
