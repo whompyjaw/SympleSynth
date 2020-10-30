@@ -13,8 +13,8 @@
       <FILE id="ZBJCU5" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="PJBOZJ" name="Osc.cpp" compile="1" resource="0" file="Source/Osc.cpp"/>
       <FILE id="K3TYMj" name="Osc.h" compile="0" resource="0" file="Source/Osc.h"/>
-      <FILE id="hWX73p" name="OscEditor.cpp" compile="1" resource="0" file="Source/OscEditor.cpp"/>
-      <FILE id="cVJGoS" name="OscEditor.h" compile="0" resource="0" file="Source/OscEditor.h"/>
+      <FILE id="hWX73p" name="OscUI.cpp" compile="1" resource="0" file="Source/OscUI.cpp"/>
+      <FILE id="cVJGoS" name="OscUI.h" compile="0" resource="0" file="Source/OscUI.h"/>
       <FILE id="KnG0AG" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="Ke6kRU" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

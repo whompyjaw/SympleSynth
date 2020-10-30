@@ -58,6 +58,7 @@ public:
 
     juce::MidiKeyboardState& getKeyboardState();
     void prepareVoices(juce::dsp::ProcessSpec&);
+    void setOscParams(std::vector<std::unique_ptr<juce::RangedAudioParameter>>&);
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
 
 

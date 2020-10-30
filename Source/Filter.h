@@ -47,9 +47,10 @@ private:
     juce::Slider filterAmountDial;
     juce::Label amountLabel;
 
-    SympleADSRComponent amplifier;
+    
     
     SympleSynthAudioProcessor& audioProcessor;
+    SympleADSRComponent amplifier;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleFilterComponent)
 };

@@ -252,6 +252,20 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_RELEASE", "Release", releaseRange, 0.1f));
 
+    setOscParams(parameters);
+    
+    return { parameters.begin(), parameters.end() };
+}
+
+//==============================================================================
+// This creates new instances of the plugin..
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    return new SympleSynthAudioProcessor();
+}
+
+void SympleSynthAudioProcessor::setOscParams(std::vector<std::unique_ptr<juce::RangedAudioParameter>>& parameters)
+{
     // oscillator 1 defaults
     juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_OCTAVE", "Octave 1", oscillatorOctaveParams, 0, "Octave"));
@@ -264,13 +278,4 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     
     juce::NormalisableRange<float> oscillatorWaveType (0, 3, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_WAVE_TYPE", "Wave Type 1", oscillatorWaveType, 1, "Wave Type"));
-    
-    return { parameters.begin(), parameters.end() };
-}
-
-//==============================================================================
-// This creates new instances of the plugin..
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
-    return new SympleSynthAudioProcessor();
 }
