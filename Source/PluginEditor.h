@@ -55,7 +55,7 @@ private:
     
     SympleFilterComponent filter;
     SympleADSRComponent amplifier;
-    SympleADSRComponent filterAmplifier;
+    //SympleADSRComponent filterAmplifier;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessorEditor)
 };

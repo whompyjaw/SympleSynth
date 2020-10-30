@@ -16,25 +16,28 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
 {
     setSize (400, 100);
     
-    // attack
+    // Draw Attack Slider
     attack.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     attack.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     attack.setPopupDisplayEnabled(true, true, this);
     attack.setTextValueSuffix (" sec");
     addAndMakeVisible (&attack);
     
+    // Draw Decay Slider
     decay.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     decay.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     decay.setPopupDisplayEnabled(true, true, this);
     decay.setTextValueSuffix (" sec");
     addAndMakeVisible (&decay);
 
+    // Draw Sustain Slider
     sustain.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     sustain.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     sustain.setPopupDisplayEnabled(true, true, this);
     sustain.setTextValueSuffix ("%");
     addAndMakeVisible (&sustain);
 
+    // Draw Release Slider
     release.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     release.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     release.setPopupDisplayEnabled(true, true, this);
@@ -62,7 +65,11 @@ void SympleADSRComponent::paint(juce::Graphics& g)
 
 void SympleADSRComponent::resized()
 {
-    int knobRadius = 70;
+    auto area = getLocalBounds();
+    auto knobRadius = 70;
+    auto knobMargin = 5;
+
+    // attack.setBounds(area.removeFromLeft(knobRadius).reduced(knobMargin));
     attack.setBounds (50, 0, knobRadius, knobRadius);
     decay.setBounds (125, 0, knobRadius, knobRadius);
     sustain.setBounds (200, 0, knobRadius, knobRadius);
