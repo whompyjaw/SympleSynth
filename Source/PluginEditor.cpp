@@ -87,12 +87,12 @@ void SympleSynthAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds();
     auto componentWidth = getWidth() / 3;
-    auto margin = 20;
-    auto labelHeight = 75;
+    auto margin = 30;
+    auto labelHeight = titleLabel.getHeight() + 2 * margin;
 
     // Set Keyboard & Title Bounds
     keyboardComponent.setBounds(area.removeFromBottom(70));
-    titleLabel.setBounds(area.removeFromTop(labelHeight).reduced(margin));
+    titleLabel.setBounds(area.removeFromTop(labelHeight));
 
     // Seperate component area into 3 columns
     auto oscArea = area.removeFromLeft(componentWidth);
