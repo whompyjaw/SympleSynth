@@ -27,6 +27,7 @@ MasterAmp::MasterAmp(SympleSynthAudioProcessor& p)
     ampParameters.release = "AMP_RELEASE";
     amplifier.setParameters(ampParameters);
 
+    // Add Amp & Label
     addAndMakeVisible(amplifier);
 
     addAndMakeVisible(ampLabel);
@@ -34,7 +35,7 @@ MasterAmp::MasterAmp(SympleSynthAudioProcessor& p)
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
 
-    // Master Gain Slider
+    // Add Master Gain & Label
     addAndMakeVisible(masterGainSlider);
     masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     masterGainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -54,7 +55,6 @@ MasterAmp::~MasterAmp()
 
 void MasterAmp::paint (juce::Graphics& g)
 {
-    // g.fillAll(juce::Colours::darkgrey);
 }
 
 void MasterAmp::resized()
@@ -63,14 +63,15 @@ void MasterAmp::resized()
     auto margin = 5;
     auto labelMargin = gainLabel.getHeight();
 
+    // Set Amp Bounds
     auto ampArea = area.removeFromBottom(area.getHeight() / 2).reduced(margin);
     auto ampHeight = ampArea.getHeight() - labelMargin;
     auto ampY = ampArea.getY() + labelMargin;
     amplifier.setBounds(ampArea.getX(), ampY, ampArea.getWidth(), ampHeight);
 
+    // Set Master Gain Bounds
     auto gainArea = area.removeFromBottom(area.getHeight()).reduced(margin);
     masterGainSlider.setBounds(gainArea.getX(), gainArea.getY() + labelMargin, gainArea.getWidth(), ampHeight);
-    //amplifier.setBounds(ampArea.getX(), ampArea.getY() + labelMargin, ampArea.getWidth(), 100);
 }
 
 void MasterAmp::setParameters(MasterAmpParameterNames& params) 

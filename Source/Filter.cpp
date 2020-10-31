@@ -18,7 +18,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
 {
     setSize (400, 400);
     
-    //  Add Filter Dials & Labels
+    //  Add Filter Cutoff Dial & Label
     addAndMakeVisible(&filterCutoffDial);
     filterCutoffDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterCutoffDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -29,7 +29,8 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     cutoffLabel.setText("Cutoff", juce::dontSendNotification);
     cutoffLabel.setJustificationType(juce::Justification::centred);
     cutoffLabel.attachToComponent(&filterCutoffDial, false);
-    
+
+    //  Add Filter Res Dial & Label
     addAndMakeVisible(&filterResDial);
     filterResDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterResDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -41,6 +42,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     resLabel.setJustificationType(juce::Justification::centred);
     resLabel.attachToComponent(&filterResDial, false);
 
+    //  Add Env Amount Dial & Label
     addAndMakeVisible(&filterAmountDial);
     filterAmountDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterAmountDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -52,7 +54,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&filterAmountDial, false);
 
-    // init filter amp parameter names struct
+    // init amp parameter names struct
     SympleADSRParameterNames ampParameters;
     ampParameters.attack = "FILTER_ATTACK";
     ampParameters.decay = "FILTER_DECAY";
@@ -60,6 +62,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     ampParameters.release = "FILTER_RELEASE";
     amplifier.setParameters(ampParameters);
 
+    //  Add Amp & Label
     addAndMakeVisible(amplifier);
 
     addAndMakeVisible(ampLabel);
@@ -77,7 +80,6 @@ SympleFilterComponent::~SympleFilterComponent()
 
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
-    //g.fillAll(juce::Colours::darkgrey);
 }
 
 void SympleFilterComponent::resized()
@@ -87,12 +89,14 @@ void SympleFilterComponent::resized()
     auto margin = 5;
     auto labelMargin = amountLabel.getHeight();
 
+    // Set Amp Bounds
     auto ampArea = area.removeFromBottom(getHeight() / 2).reduced(margin);
     auto ampHeight = ampArea.getHeight() - labelMargin;
     auto ampY = ampArea.getY() + labelMargin;
 
     amplifier.setBounds(ampArea.getX(), ampY, ampArea.getWidth(), ampHeight);
 
+    // Set Filter Dial Bounds
     auto cutoffArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto resArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto amountArea = area.removeFromLeft(filterWidth).reduced(margin);

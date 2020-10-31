@@ -28,7 +28,7 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     attackLabel.setJustificationType(juce::Justification::centred);
     attackLabel.attachToComponent(&attack, false);
     
-    // Draw Decay Slider
+    // Draw Decay Slider & Label
     decay.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     decay.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     decay.setPopupDisplayEnabled(true, true, this);
@@ -40,7 +40,7 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     decayLabel.setJustificationType(juce::Justification::centred);
     decayLabel.attachToComponent(&decay, false);
 
-    // Draw Sustain Slider
+    // Draw Sustain Slider & Label
     sustain.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     sustain.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     sustain.setPopupDisplayEnabled(true, true, this);
@@ -52,7 +52,7 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     sustainLabel.setJustificationType(juce::Justification::centred);
     sustainLabel.attachToComponent(&sustain, false);
 
-    // Draw Release Slider
+    // Draw Release Slider & Label
     release.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     release.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     release.setPopupDisplayEnabled(true, true, this);
@@ -75,7 +75,6 @@ SympleADSRComponent::~SympleADSRComponent()
 
 void SympleADSRComponent::paint(juce::Graphics& g)
 {
-    //g.fillAll(juce::Colours::midnightblue);
 }
 
 void SympleADSRComponent::resized()
@@ -85,6 +84,7 @@ void SympleADSRComponent::resized()
     auto margin = 5;
     auto labelMargin = attackLabel.getHeight();
 
+    // Set Dial Bounds
     auto attackArea = area.removeFromLeft(knobWidth).reduced(margin);
     auto decayArea = area.removeFromLeft(knobWidth).reduced(margin);
     auto sustainArea = area.removeFromLeft(knobWidth).reduced(margin);
