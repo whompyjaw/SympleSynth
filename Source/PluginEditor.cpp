@@ -33,6 +33,11 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterParameters.amount = "AMOUNT";
     filter.setParameters(filterParameters);
 
+    // init gain parameter names struct
+    MasterAmpParameterNames ampParameters;
+    ampParameters.gain = "MASTER_GAIN";
+    amplifier.setParameters(ampParameters);
+
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(filter);
     addAndMakeVisible(amplifier);
@@ -67,16 +72,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     osc1WaveTypeDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::white);
     osc1WaveTypeDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::yellow);
     osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", osc1WaveTypeDial);
-    
-    
-    // Master Slider
-    addAndMakeVisible(masterGainSlider);
-    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    masterGainSlider.setRange(-60.0f, 0.0f, 0.1f);
-    masterGainSlider.setValue(-20.0f);
-    masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 30);
-    masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
-    
+        
     setSize (1200, 800);
     
 }
@@ -114,10 +110,7 @@ void SympleSynthAudioProcessorEditor::resized()
 
     titleLabel.setBounds(ampArea.removeFromTop(labelHeight).reduced(margin));
     amplifier.setBounds(ampArea.removeFromTop(componentHeight - labelHeight).reduced(margin));
-    filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));
-
-    masterGainSlider.setBounds(1000, 400, 40, 150);
-    
+    filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));    
     
     // Oscillator section
     int dialSpacing = 75;
@@ -128,10 +121,11 @@ void SympleSynthAudioProcessorEditor::resized()
 }
 
 void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
-{
+{/*
     // If the passed in slider is masterGainSlider (if the addresses are equal
     if (slider == &masterGainSlider)
     {
         audioProcessor.masterGain = masterGainSlider.getValue();
     }
+    */
 }

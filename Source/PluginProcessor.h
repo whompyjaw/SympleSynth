@@ -54,8 +54,6 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
-    float masterGain { 0.5f }; // Q: What is this syntax? Never seen
-
     juce::MidiKeyboardState& getKeyboardState();
     void prepareVoices(juce::dsp::ProcessSpec&);
     juce::AudioProcessorValueTreeState& getTree() { return tree; }

@@ -33,10 +33,21 @@ MasterAmp::MasterAmp(SympleSynthAudioProcessor& p)
     ampLabel.setText("Amplifier", juce::dontSendNotification);
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
+
+    // Master Slider
+    addAndMakeVisible(masterGainSlider);
+    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    masterGainSlider.setRange(-60.0f, 0.0f, 0.1f);
+    //masterGainSlider.setValue(-20.0f);
+    masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 30);
+    masterGainSlider.setTextValueSuffix(" db");
+
+    //masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
 }
 
 MasterAmp::~MasterAmp()
 {
+    masterGainValue.reset();
 }
 
 void MasterAmp::paint (juce::Graphics& g)
@@ -53,5 +64,11 @@ void MasterAmp::resized()
 
     auto ampArea = area.removeFromBottom(ampHeight).reduced(margin);
 
+    masterGainSlider.setBounds(area.removeFromBottom(ampHeight).reduced(margin));
     amplifier.setBounds(ampArea.getX(), ampArea.getY() + labelMargin, ampArea.getWidth(), 100);
+}
+
+void MasterAmp::setParameters(MasterAmpParameterNames& params) 
+{
+    masterGainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.gain, masterGainSlider);
 }

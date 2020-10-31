@@ -16,6 +16,12 @@
 //==============================================================================
 /*
 */
+struct MasterAmpParameterNames {
+public:
+    std::string gain;
+};
+
+
 class MasterAmp  : public juce::Component
 {
 public:
@@ -24,10 +30,17 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void setParameters(MasterAmpParameterNames&);
+
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> masterGainValue;
 
 private:
     SympleADSRComponent amplifier;
     juce::Label ampLabel;
+
+    juce::Slider masterGainSlider;
+    juce::Label gainLabel;
 
     SympleSynthAudioProcessor& audioProcessor;
 

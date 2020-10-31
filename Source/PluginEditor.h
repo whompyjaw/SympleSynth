@@ -26,10 +26,8 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-
     void sliderValueChanged(juce::Slider* slider) override;
 
-    
     // Filter
     juce::Slider filterCutoffDial;
     juce::Slider filterResDial;
@@ -51,7 +49,6 @@ public:
 
 private:
     juce::MidiKeyboardComponent keyboardComponent;
-    juce::Slider masterGainSlider;
     SympleSynthAudioProcessor& audioProcessor;
     
     SympleFilterComponent filter;

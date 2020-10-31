@@ -18,7 +18,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
 {
     setSize (400, 200);
     
-    //  Add Filter Dials
+    //  Add Filter Dials & Labels
     addAndMakeVisible(&filterCutoffDial);
     filterCutoffDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterCutoffDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
