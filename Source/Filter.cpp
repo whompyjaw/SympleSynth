@@ -101,9 +101,9 @@ void SympleFilterComponent::resized()
     auto resArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto amountArea = area.removeFromLeft(filterWidth).reduced(margin);
 
-    filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), 100);
-    filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), 100);
-    filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), 100);
+    filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), ampHeight);
+    filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), ampHeight);
+    filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), ampHeight);
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params) {

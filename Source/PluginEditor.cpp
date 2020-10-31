@@ -42,8 +42,15 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(filter);
     addAndMakeVisible(amplifier);
+    addAndMakeVisible(oscUI);
 
     // Add Labels
+    addAndMakeVisible(osc1Label);
+    osc1Label.setText("OSCILLATOR 1", juce::dontSendNotification);
+    osc1Label.setFont(juce::Font(18.0, juce::Font::bold));
+    osc1Label.setJustificationType(juce::Justification::centred);
+    osc1Label.attachToComponent(&oscUI, false);
+
     addAndMakeVisible(filter1Label);
     filter1Label.setText("FILTER 1", juce::dontSendNotification);
     filter1Label.setFont(juce::Font(18.0, juce::Font::bold));
@@ -55,9 +62,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     ampLabel.setFont(juce::Font(18.0, juce::Font::bold));
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
-        
-    addAndMakeVisible(oscUI);
-    
+
     setSize (1200, 800); 
     
 }
@@ -82,12 +87,12 @@ void SympleSynthAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds();
     auto componentWidth = getWidth() / 3;
-    auto margin = 20;
-    auto labelHeight = 75;
+    auto margin = 30;
+    auto labelHeight = titleLabel.getHeight() + 2 * margin;
 
     // Set Keyboard & Title Bounds
     keyboardComponent.setBounds(area.removeFromBottom(70));
-    titleLabel.setBounds(area.removeFromTop(labelHeight).reduced(margin));
+    titleLabel.setBounds(area.removeFromTop(labelHeight));
 
     // Seperate component area into 3 columns
     auto oscArea = area.removeFromLeft(componentWidth);
@@ -96,12 +101,10 @@ void SympleSynthAudioProcessorEditor::resized()
     auto componentHeight = oscArea.getHeight() / 2;
 
     // Set Component Bounds
+    oscUI.setBounds(oscArea.removeFromTop(componentHeight).reduced(margin));
+    filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));
     amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
-    filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));    
-    
-    // Oscillator section
-    oscUI.setBounds(0, 0, oscUI.getWidth(), oscUI.getHeight());
-}
+ }
 
 void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
 {
