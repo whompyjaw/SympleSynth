@@ -17,8 +17,9 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     // Add Octave Dial & Label
     addAndMakeVisible(&octDial);
     octDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    octDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    octDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    octDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    octDial.setPopupDisplayEnabled(true, true, this);
+    octDial.setTextValueSuffix(" octave");
     osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", octDial);
     
     addAndMakeVisible(octLabel);
@@ -29,8 +30,9 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     // Add Semitone Dial & Label
     addAndMakeVisible(&semiDial);
     semiDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    semiDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    semiDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    semiDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    semiDial.setPopupDisplayEnabled(true, true, this);
+    semiDial.setTextValueSuffix(" semitones");
     osc1SemitoneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_SEMITONE", semiDial);
 
     addAndMakeVisible(semiLabel);
@@ -41,8 +43,9 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     // Add Fine Tune Dial & Label
     addAndMakeVisible(&fineDial);
     fineDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    fineDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    fineDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    fineDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    fineDial.setPopupDisplayEnabled(true, true, this);
+    fineDial.setTextValueSuffix(" cents");
     osc1FineTuneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_FINE_TUNE", fineDial);
 
     addAndMakeVisible(fineLabel);
@@ -53,9 +56,9 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     // Add Wave Type Dial & Label
     addAndMakeVisible(&waveDial);
     waveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    waveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    waveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::white);
-    waveDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::yellow);
+    waveDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    waveDial.setPopupDisplayEnabled(true, true, this);
+    waveDial.setTextValueSuffix(" wave");
     osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", waveDial);
 
     addAndMakeVisible(waveLabel);
