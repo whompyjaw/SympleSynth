@@ -48,6 +48,7 @@ private:
     juce::Label amountLabel;
 
     SympleADSRComponent amplifier;
+    juce::Label ampLabel;
     
     SympleSynthAudioProcessor& audioProcessor;
 

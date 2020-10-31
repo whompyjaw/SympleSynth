@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Envelope.h"
 #include "Filter.h"
+#include "MasterAmp.h"
 
 //==============================================================================
 /**
@@ -54,7 +55,8 @@ private:
     SympleSynthAudioProcessor& audioProcessor;
     
     SympleFilterComponent filter;
-    SympleADSRComponent amplifier;
+    //SympleADSRComponent amplifier;
+    MasterAmp amplifier;
     //SympleADSRComponent filterAmplifier;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessorEditor)
