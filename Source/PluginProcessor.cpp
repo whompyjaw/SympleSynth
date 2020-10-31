@@ -218,7 +218,7 @@ void SympleSynthAudioProcessor::prepareVoices(juce::dsp::ProcessSpec& spec)
 
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
 {
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+//    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     juce::NormalisableRange<float> masterGainRange = juce::NormalisableRange<float>(-60.0f, 0.0f);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MASTER_GAIN", "MasterGain", masterGainRange, -20.0f));

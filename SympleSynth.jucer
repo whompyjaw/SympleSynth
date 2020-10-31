@@ -15,8 +15,9 @@
       <FILE id="TZNHZQ" name="MasterAmp.h" compile="0" resource="0" file="Source/MasterAmp.h"/>
       <FILE id="PJBOZJ" name="Osc.cpp" compile="1" resource="0" file="Source/Osc.cpp"/>
       <FILE id="K3TYMj" name="Osc.h" compile="0" resource="0" file="Source/Osc.h"/>
-      <FILE id="hWX73p" name="OscEditor.cpp" compile="1" resource="0" file="Source/OscEditor.cpp"/>
-      <FILE id="cVJGoS" name="OscEditor.h" compile="0" resource="0" file="Source/OscEditor.h"/>
+      <FILE id="hWX73p" name="OscInterface.cpp" compile="1" resource="0"
+            file="Source/OscInterface.cpp"/>
+      <FILE id="cVJGoS" name="OscInterface.h" compile="0" resource="0" file="Source/OscInterface.h"/>
       <FILE id="KnG0AG" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="Ke6kRU" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

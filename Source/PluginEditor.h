@@ -13,6 +13,7 @@
 #include "Envelope.h"
 #include "Filter.h"
 #include "MasterAmp.h"
+#include "OscInterface.h"
 
 //==============================================================================
 /**
@@ -35,23 +36,12 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
     
-    
-    // Oscillator 1 tuning section
-    juce::Slider osc1OctaveDial;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1OctaveValue;
-    juce::Slider osc1SemitoneDial;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
-    juce::Slider osc1FineTuneDial;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1FineTuneValue;
-    juce::Slider osc1WaveTypeDial;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1WaveTypeValue;
-    
-    
 
 private:
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;
     
+    OscInterface oscUI;
     SympleFilterComponent filter;
     MasterAmp amplifier;
 
