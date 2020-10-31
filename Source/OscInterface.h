@@ -20,19 +20,24 @@ public:
     
     void paint (juce::Graphics&) override;
     void resized() override;
-
-    
-    
-    
+   
 private:
     using TreeSliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-    juce::Slider osc1OctaveDial;
+    juce::Slider octDial;
+    juce::Label octLabel;
+
     std::unique_ptr<TreeSliderAttachment> osc1OctaveValue;
-    juce::Slider osc1SemitoneDial;
+    juce::Slider semiDial;
+    juce::Label semiLabel;
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
-    juce::Slider osc1FineTuneDial;
+    juce::Slider fineDial;
+    juce::Label fineLabel;
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1FineTuneValue;
-    juce::Slider osc1WaveTypeDial;
+    juce::Slider waveDial;
+    juce::Label waveLabel;
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1WaveTypeValue;
     
 //    void setLayoutParams();

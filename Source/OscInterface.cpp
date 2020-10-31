@@ -13,35 +13,55 @@
 OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
 {
     setSize(400, 600);
-    addAndMakeVisible(&osc1OctaveDial);
-    osc1OctaveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    osc1OctaveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
-    osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", osc1OctaveDial);
-    
-    // semitone dial
-    addAndMakeVisible(&osc1SemitoneDial);
-    osc1SemitoneDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    osc1SemitoneDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    osc1SemitoneDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
-    osc1SemitoneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_SEMITONE", osc1SemitoneDial);
-    
-    // fine tune dial
-    addAndMakeVisible(&osc1FineTuneDial);
-    osc1FineTuneDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    osc1FineTuneDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    osc1FineTuneDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
-    osc1FineTuneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_FINE_TUNE", osc1FineTuneDial);
 
-    // osc wave type dial
+    // Add Octave Dial & Label
+    addAndMakeVisible(&octDial);
+    octDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    octDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
+    octDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", octDial);
     
-    addAndMakeVisible(&osc1WaveTypeDial);
-    osc1WaveTypeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    osc1WaveTypeDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    osc1WaveTypeDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::white);
-    osc1WaveTypeDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::yellow);
-    osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", osc1WaveTypeDial);
-    
+    addAndMakeVisible(octLabel);
+    octLabel.setText("Octave", juce::dontSendNotification);
+    octLabel.setJustificationType(juce::Justification::centred);
+    octLabel.attachToComponent(&octDial, false);
+
+    // Add Semitone Dial & Label
+    addAndMakeVisible(&semiDial);
+    semiDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    semiDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
+    semiDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    osc1SemitoneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_SEMITONE", semiDial);
+
+    addAndMakeVisible(semiLabel);
+    semiLabel.setText("Semitone", juce::dontSendNotification);
+    semiLabel.setJustificationType(juce::Justification::centred);
+    semiLabel.attachToComponent(&semiDial, false);
+
+    // Add Fine Tune Dial & Label
+    addAndMakeVisible(&fineDial);
+    fineDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    fineDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
+    fineDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+    osc1FineTuneValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_FINE_TUNE", fineDial);
+
+    addAndMakeVisible(fineLabel);
+    fineLabel.setText("Fine Tune", juce::dontSendNotification);
+    fineLabel.setJustificationType(juce::Justification::centred);
+    fineLabel.attachToComponent(&fineDial, false);
+
+    // Add Wave Type Dial & Label
+    addAndMakeVisible(&waveDial);
+    waveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    waveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
+    waveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::white);
+    waveDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::yellow);
+    osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", waveDial);
+
+    addAndMakeVisible(octLabel);
+    octLabel.setText("Cutoff", juce::dontSendNotification);
+    octLabel.setJustificationType(juce::Justification::centred);
+    octLabel.attachToComponent(&octDial, false);
 }
 
 OscInterface::~OscInterface()
@@ -66,10 +86,10 @@ void OscInterface::paint(juce::Graphics &g)
 void OscInterface::resized()
 {
     int dialSpacing = 75;
-    osc1WaveTypeDial.setBounds(0, 160, 100, 100);
-    osc1OctaveDial.setBounds(osc1WaveTypeDial.getX() + dialSpacing, 160, 100, 100);
-    osc1SemitoneDial.setBounds(osc1OctaveDial.getX() + dialSpacing, 160, 100, 100);
-    osc1FineTuneDial.setBounds(osc1SemitoneDial.getX() + dialSpacing, 160, 100, 100);
+    waveDial.setBounds(0, 160, 100, 100);
+    octDial.setBounds(waveDial.getX() + dialSpacing, 160, 100, 100);
+    semiDial.setBounds(octDial.getX() + dialSpacing, 160, 100, 100);
+    fineDial.setBounds(semiDial.getX() + dialSpacing, 160, 100, 100);
 }
 
 //void OscInterface::setLayoutParams()
