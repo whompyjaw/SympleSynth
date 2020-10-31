@@ -18,9 +18,14 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       audioProcessor(p),
       oscUI(p),
       filter(p),
-      amplifier(p),
-      filterAmplifier(p)
+      amplifier(p)
 {
+    // Add Title Label
+    addAndMakeVisible(titleLabel);
+    titleLabel.setText("SYMPLESYNTH 1.0", juce::dontSendNotification);
+    titleLabel.setFont(juce::Font(36.0, juce::Font::bold));
+    titleLabel.setJustificationType(juce::Justification::centred);
+
     // init filter parameter names struct
     SympleFilterParameterNames filterParameters;
     filterParameters.cutoff = "CUTOFF";
@@ -28,41 +33,32 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterParameters.amount = "AMOUNT";
     filter.setParameters(filterParameters);
 
-    // init amp parameter names struct
-    SympleADSRParameterNames ampParameters;
-    ampParameters.attack = "AMP_ATTACK";
-    ampParameters.decay = "AMP_DECAY";
-    ampParameters.sustain = "AMP_SUSTAIN";
-    ampParameters.release = "AMP_RELEASE";
+    // init gain parameter names struct
+    MasterAmpParameterNames ampParameters;
+    ampParameters.gain = "MASTER_GAIN";
     amplifier.setParameters(ampParameters);
-    
-    // init filter amp parameter names struct
-    SympleADSRParameterNames filterAmpParameters;
-    filterAmpParameters.attack = "FILTER_ATTACK";
-    filterAmpParameters.decay = "FILTER_DECAY";
-    filterAmpParameters.sustain = "FILTER_SUSTAIN";
-    filterAmpParameters.release = "FILTER_RELEASE";
-    filterAmplifier.setParameters(filterAmpParameters);
 
-    addAndMakeVisible(filter);
+    // Add Components
     addAndMakeVisible(keyboardComponent);
+    addAndMakeVisible(filter);
     addAndMakeVisible(amplifier);
-    addAndMakeVisible(filterAmplifier);
 
+    // Add Labels
+    addAndMakeVisible(filter1Label);
+    filter1Label.setText("FILTER 1", juce::dontSendNotification);
+    filter1Label.setFont(juce::Font(18.0, juce::Font::bold));
+    filter1Label.setJustificationType(juce::Justification::centred);
+    filter1Label.attachToComponent(&filter, false);
+
+    addAndMakeVisible(ampLabel);
+    ampLabel.setText("AMPLIFIER", juce::dontSendNotification);
+    ampLabel.setFont(juce::Font(18.0, juce::Font::bold));
+    ampLabel.setJustificationType(juce::Justification::centred);
+    ampLabel.attachToComponent(&amplifier, false);
+        
     addAndMakeVisible(oscUI);
     
-    
-    
-    
-    // Master Slider
-    addAndMakeVisible(masterGainSlider);
-    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    masterGainSlider.setRange(-60.0f, 0.0f, 0.1f);
-    masterGainSlider.setValue(-20.0f);
-    masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 30);
-    masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
-    
-    setSize (1100, 700);
+    setSize (1200, 800); 
     
 }
 
@@ -73,24 +69,8 @@ SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 //==============================================================================
 void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    juce::Rectangle<int> ampTitleArea(getWidth() - amplifier.getWidth() + 150, 120, 70, 20);
-    juce::Rectangle <float> filterArea(400, 150, 300, 200);
-    juce::Rectangle <float> ampSection(700, 150, 375, 100);
-    
-    g.setFont (15.0f);
     g.fillAll(juce::Colours::black);
-    
-
-    // draw amplifier label
-    g.setColour(juce::Colours::white);
-    g.drawFittedText ("Amplifier", ampTitleArea, juce::Justification::centred, 1);
-    g.drawRect(ampTitleArea);
-
-
-    g.setColour(juce::Colours::yellow);
-    g.drawRoundedRectangle(filterArea, 5.0f, 2.0f);
-    g.drawRoundedRectangle(ampSection, 5.0f, 2.0f);
-    
+  
     if (!keyboardComponent.hasKeyboardFocus (true) &&
         keyboardComponent.isVisible())
     {
@@ -100,13 +80,24 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 
 void SympleSynthAudioProcessorEditor::resized()
 {
-    amplifier.setBounds(getWidth() - amplifier.getWidth(), 150, amplifier.getWidth(), amplifier.getHeight());
-    
-    keyboardComponent.setBounds(0, 630, getWidth(), 70);
-    
-    masterGainSlider.setBounds(1000, 400, 40, 150);
-    
-    filterAmplifier.setBounds(350, 275, filterAmplifier.getWidth(), filterAmplifier.getHeight());
+    auto area = getLocalBounds();
+    auto componentWidth = getWidth() / 3;
+    auto margin = 20;
+    auto labelHeight = 75;
+
+    // Set Keyboard & Title Bounds
+    keyboardComponent.setBounds(area.removeFromBottom(70));
+    titleLabel.setBounds(area.removeFromTop(labelHeight).reduced(margin));
+
+    // Seperate component area into 3 columns
+    auto oscArea = area.removeFromLeft(componentWidth);
+    auto filterArea = area.removeFromLeft(componentWidth);
+    auto ampArea = area.removeFromLeft(componentWidth);
+    auto componentHeight = oscArea.getHeight() / 2;
+
+    // Set Component Bounds
+    amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
+    filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));    
     
     // Oscillator section
     oscUI.setBounds(0, 0, oscUI.getWidth(), oscUI.getHeight());
@@ -114,9 +105,4 @@ void SympleSynthAudioProcessorEditor::resized()
 
 void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
 {
-    // If the passed in slider is masterGainSlider (if the addresses are equal
-    if (slider == &masterGainSlider)
-    {
-        audioProcessor.masterGain = masterGainSlider.getValue();
-    }
 }

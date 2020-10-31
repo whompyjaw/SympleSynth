@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Envelope.h"
 #include "Filter.h"
+#include "MasterAmp.h"
 #include "OscInterface.h"
 
 //==============================================================================
@@ -26,10 +27,9 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-
+    
     void sliderValueChanged(juce::Slider* slider) override;
 
-    
     // Filter
     juce::Slider filterCutoffDial;
     juce::Slider filterResDial;
@@ -39,13 +39,19 @@ public:
 
 private:
     juce::MidiKeyboardComponent keyboardComponent;
-    juce::Slider masterGainSlider;
     SympleSynthAudioProcessor& audioProcessor;
     
     OscInterface oscUI;
     SympleFilterComponent filter;
-    SympleADSRComponent amplifier;
-    SympleADSRComponent filterAmplifier;
+    MasterAmp amplifier;
+
+    juce::Label titleLabel;
+    juce::Label osc1Label;
+    juce::Label osc2Label;
+    juce::Label filter1Label;
+    juce::Label filter2Label;
+    juce::Label ampLabel;
+    juce::Label lfoLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessorEditor)
 };

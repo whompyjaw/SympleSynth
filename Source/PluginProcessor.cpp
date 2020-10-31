@@ -166,13 +166,13 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     // This needs to be before this process loop.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    float gainValue = tree.getParameterAsValue("MASTER_GAIN").getValue();
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
-            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(masterGain);
+            channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(gainValue);
         }
     }
     midiMessages.clear();
@@ -219,6 +219,9 @@ void SympleSynthAudioProcessor::prepareVoices(juce::dsp::ProcessSpec& spec)
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
 {
 //    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    juce::NormalisableRange<float> masterGainRange = juce::NormalisableRange<float>(-60.0f, 0.0f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MASTER_GAIN", "MasterGain", masterGainRange, -20.0f));
 
     // filter knob ranges
     juce::NormalisableRange<float> cutoffRange = juce::NormalisableRange<float>(10.0f, 20000.0f);

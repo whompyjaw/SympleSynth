@@ -10,6 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "Envelope.h"
 
 
 struct SympleFilterParameterNames {
@@ -38,8 +39,16 @@ public:
 
 private:
     juce::Slider filterCutoffDial;
+    juce::Label cutoffLabel;
+
     juce::Slider filterResDial;
+    juce::Label resLabel;
+
     juce::Slider filterAmountDial;
+    juce::Label amountLabel;
+
+    SympleADSRComponent amplifier;
+    juce::Label ampLabel;
     
     SympleSynthAudioProcessor& audioProcessor;
 

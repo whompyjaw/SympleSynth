@@ -37,9 +37,16 @@ public:
 
 private:
     juce::Slider attack;
+    juce::Label attackLabel;
+
     juce::Slider decay;
+    juce::Label decayLabel;
+
     juce::Slider sustain;
+    juce::Label sustainLabel;
+
     juce::Slider release;
+    juce::Label releaseLabel;
     
     SympleSynthAudioProcessor& audioProcessor;
 
