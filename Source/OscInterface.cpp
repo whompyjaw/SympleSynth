@@ -19,6 +19,8 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
     osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", osc1OctaveDial);
     
+//    setLayoutParams();
+    
 }
 
 OscInterface::~OscInterface()
@@ -47,9 +49,9 @@ void OscInterface::resized()
     
 }
 
-void OscInterface::setParams()
-{
-    juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
-    audioProcessor.parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_OCTAVE", "Octave 1", oscillatorOctaveParams, 0, "Octave"));
-}
+//void OscInterface::setLayoutParams()
+//{
+//    juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
+//    audioProcessor.parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_OCTAVE", "Octave 1", oscillatorOctaveParams, 0, "Octave"));
+//}
 

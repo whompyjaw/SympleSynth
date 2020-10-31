@@ -20,12 +20,18 @@ public:
     
     void paint (juce::Graphics&) override;
     void resized() override;
-    void setParams();
+
     
-    using TreeSliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-    std::unique_ptr<TreeSliderAttachment> osc1OctaveValue;
+    
     
 private:
+    using TreeSliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<TreeSliderAttachment> osc1OctaveValue;
     juce::Slider osc1OctaveDial;
+//    std::unique_prt<TreeSliderAttachment> osc1WaveTypeValue;
+    
+//    void setLayoutParams();
+    
+    
     SympleSynthAudioProcessor& audioProcessor;
 };
