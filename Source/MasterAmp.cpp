@@ -30,7 +30,7 @@ MasterAmp::MasterAmp(SympleSynthAudioProcessor& p)
     addAndMakeVisible(amplifier);
 
     addAndMakeVisible(ampLabel);
-    ampLabel.setText("Amplifier", juce::dontSendNotification);
+    ampLabel.setText("Amplifier Envelope", juce::dontSendNotification);
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
 
@@ -54,21 +54,23 @@ MasterAmp::~MasterAmp()
 
 void MasterAmp::paint (juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::darkgrey);
+    // g.fillAll(juce::Colours::darkgrey);
 }
 
 void MasterAmp::resized()
 {
     juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
     auto margin = 5;
-    auto labelMargin = 30;
-    auto ampHeight = getHeight() / 2;
+    auto labelMargin = gainLabel.getHeight();
 
-    auto ampArea = area.removeFromBottom(ampHeight).reduced(margin);
-    auto gainArea = area.removeFromBottom(ampHeight).reduced(margin);
+    auto ampArea = area.removeFromBottom(area.getHeight() / 2).reduced(margin);
+    auto ampHeight = ampArea.getHeight() - labelMargin;
+    auto ampY = ampArea.getY() + labelMargin;
+    amplifier.setBounds(ampArea.getX(), ampY, ampArea.getWidth(), ampHeight);
 
-    masterGainSlider.setBounds(gainArea.getX(), gainArea.getY() + labelMargin, gainArea.getWidth(), 100);
-    amplifier.setBounds(ampArea.getX(), ampArea.getY() + labelMargin, ampArea.getWidth(), 100);
+    auto gainArea = area.removeFromBottom(area.getHeight()).reduced(margin);
+    masterGainSlider.setBounds(gainArea.getX(), gainArea.getY() + labelMargin, gainArea.getWidth(), ampHeight);
+    //amplifier.setBounds(ampArea.getX(), ampArea.getY() + labelMargin, ampArea.getWidth(), 100);
 }
 
 void MasterAmp::setParameters(MasterAmpParameterNames& params) 

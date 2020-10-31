@@ -14,14 +14,19 @@
 
 SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
-    setSize (400, 100);
+    setSize (400, 300);
     
-    // Draw Attack Slider
+    // Draw Attack Slider & Label
     attack.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     attack.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     attack.setPopupDisplayEnabled(true, true, this);
     attack.setTextValueSuffix (" sec");
     addAndMakeVisible (&attack);
+
+    addAndMakeVisible(attackLabel);
+    attackLabel.setText("Attack", juce::dontSendNotification);
+    attackLabel.setJustificationType(juce::Justification::centred);
+    attackLabel.attachToComponent(&attack, false);
     
     // Draw Decay Slider
     decay.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
@@ -30,6 +35,11 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     decay.setTextValueSuffix (" sec");
     addAndMakeVisible (&decay);
 
+    addAndMakeVisible(decayLabel);
+    decayLabel.setText("Decay", juce::dontSendNotification);
+    decayLabel.setJustificationType(juce::Justification::centred);
+    decayLabel.attachToComponent(&decay, false);
+
     // Draw Sustain Slider
     sustain.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     sustain.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -37,12 +47,22 @@ SympleADSRComponent::SympleADSRComponent(SympleSynthAudioProcessor& p) : audioPr
     sustain.setTextValueSuffix ("%");
     addAndMakeVisible (&sustain);
 
+    addAndMakeVisible(sustainLabel);
+    sustainLabel.setText("Sustain", juce::dontSendNotification);
+    sustainLabel.setJustificationType(juce::Justification::centred);
+    sustainLabel.attachToComponent(&sustain, false);
+
     // Draw Release Slider
     release.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     release.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     release.setPopupDisplayEnabled(true, true, this);
     release.setTextValueSuffix (" sec");
     addAndMakeVisible (&release);
+
+    addAndMakeVisible(releaseLabel);
+    releaseLabel.setText("Release", juce::dontSendNotification);
+    releaseLabel.setJustificationType(juce::Justification::centred);
+    releaseLabel.attachToComponent(&release, false);
 }
 
 SympleADSRComponent::~SympleADSRComponent()
@@ -55,25 +75,28 @@ SympleADSRComponent::~SympleADSRComponent()
 
 void SympleADSRComponent::paint(juce::Graphics& g)
 {
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("A", 80, 60, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("D", 155, 60, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("S", 230, 60, 10, 15, juce::Justification::centred, 1);
-    g.drawFittedText ("R", 305, 60, 10, 15, juce::Justification::centred, 1);
+    //g.fillAll(juce::Colours::midnightblue);
 }
 
 void SympleADSRComponent::resized()
 {
-    auto area = getLocalBounds();
-    auto knobRadius = 70;
-    auto knobMargin = 5;
+    juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
+    auto knobWidth = getWidth() / 4;
+    auto margin = 5;
+    auto labelMargin = attackLabel.getHeight();
 
-    // attack.setBounds(area.removeFromLeft(knobRadius).reduced(knobMargin));
-    attack.setBounds (50, 0, knobRadius, knobRadius);
-    decay.setBounds (125, 0, knobRadius, knobRadius);
-    sustain.setBounds (200, 0, knobRadius, knobRadius);
-    release.setBounds (275, 0, knobRadius, knobRadius);
+    auto attackArea = area.removeFromLeft(knobWidth).reduced(margin);
+    auto decayArea = area.removeFromLeft(knobWidth).reduced(margin);
+    auto sustainArea = area.removeFromLeft(knobWidth).reduced(margin);
+    auto releaseArea = area.removeFromLeft(knobWidth).reduced(margin);
+
+    auto knobHeight = attackArea.getHeight() - labelMargin;
+    auto knobY = attackArea.getY() + labelMargin;
+
+    attack.setBounds(attackArea.getX(), knobY, attackArea.getWidth(), knobHeight);
+    decay.setBounds(decayArea.getX(), knobY, decayArea.getWidth(), knobHeight);
+    sustain.setBounds(sustainArea.getX(), knobY, sustainArea.getWidth(), knobHeight);
+    release.setBounds(releaseArea.getX(), knobY, releaseArea.getWidth(), knobHeight);
 }
 
 void SympleADSRComponent::setParameters(SympleADSRParameterNames& params) {

@@ -20,7 +20,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       amplifier(p)
 {
 
-    // Add Labels
+    // Add Title Label
     addAndMakeVisible(titleLabel);
     titleLabel.setText("SYMPLESYNTH 1.0", juce::dontSendNotification);
     titleLabel.setFont(juce::Font(36.0, juce::Font::bold));
@@ -38,9 +38,23 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     ampParameters.gain = "MASTER_GAIN";
     amplifier.setParameters(ampParameters);
 
+    // Add Components
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(filter);
     addAndMakeVisible(amplifier);
+
+    // Add Labels
+    addAndMakeVisible(filter1Label);
+    filter1Label.setText("FILTER 1", juce::dontSendNotification);
+    filter1Label.setFont(juce::Font(18.0, juce::Font::bold));
+    filter1Label.setJustificationType(juce::Justification::centred);
+    filter1Label.attachToComponent(&filter, false);
+
+    addAndMakeVisible(ampLabel);
+    ampLabel.setText("AMPLIFIER", juce::dontSendNotification);
+    ampLabel.setFont(juce::Font(18.0, juce::Font::bold));
+    ampLabel.setJustificationType(juce::Justification::centred);
+    ampLabel.attachToComponent(&amplifier, false);
 
     
     // octave dial
@@ -99,17 +113,17 @@ void SympleSynthAudioProcessorEditor::resized()
 
     auto componentWidth = getWidth() / 3;
     auto margin = 20;
+    auto labelHeight = 75;
 
     keyboardComponent.setBounds(area.removeFromBottom(70));
+    titleLabel.setBounds(area.removeFromTop(labelHeight).reduced(margin));
 
     auto oscArea = area.removeFromLeft(componentWidth);
     auto filterArea = area.removeFromLeft(componentWidth);
     auto ampArea = area.removeFromLeft(componentWidth);
-    auto labelHeight = 75;
     auto componentHeight = oscArea.getHeight() / 2;
 
-    titleLabel.setBounds(ampArea.removeFromTop(labelHeight).reduced(margin));
-    amplifier.setBounds(ampArea.removeFromTop(componentHeight - labelHeight).reduced(margin));
+    amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
     filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));    
     
     // Oscillator section

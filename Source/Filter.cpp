@@ -16,7 +16,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     :   audioProcessor(p),
         amplifier(p)
 {
-    setSize (400, 200);
+    setSize (400, 400);
     
     //  Add Filter Dials & Labels
     addAndMakeVisible(&filterCutoffDial);
@@ -63,7 +63,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     addAndMakeVisible(amplifier);
 
     addAndMakeVisible(ampLabel);
-    ampLabel.setText("Amplifier", juce::dontSendNotification);
+    ampLabel.setText("Filter Envelope", juce::dontSendNotification);
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
 }
@@ -77,7 +77,7 @@ SympleFilterComponent::~SympleFilterComponent()
 
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::darkgrey);
+    //g.fillAll(juce::Colours::darkgrey);
 }
 
 void SympleFilterComponent::resized()
@@ -85,11 +85,13 @@ void SympleFilterComponent::resized()
     juce::Rectangle<int> area(0,0, getWidth(), getHeight());
     auto filterWidth = getWidth() / 3;
     auto margin = 5;
-    auto labelMargin = 30;
-    auto ampHeight = getHeight() / 2;
+    auto labelMargin = amountLabel.getHeight();
 
-    auto ampArea = area.removeFromBottom(ampHeight).reduced(margin);
-    amplifier.setBounds(ampArea.getX(), ampArea.getY() + labelMargin, ampArea.getWidth(), 100);
+    auto ampArea = area.removeFromBottom(getHeight() / 2).reduced(margin);
+    auto ampHeight = ampArea.getHeight() - labelMargin;
+    auto ampY = ampArea.getY() + labelMargin;
+
+    amplifier.setBounds(ampArea.getX(), ampY, ampArea.getWidth(), ampHeight);
 
     auto cutoffArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto resArea = area.removeFromLeft(filterWidth).reduced(margin);
