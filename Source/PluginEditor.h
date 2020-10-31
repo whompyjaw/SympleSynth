@@ -55,9 +55,15 @@ private:
     SympleSynthAudioProcessor& audioProcessor;
     
     SympleFilterComponent filter;
-    //SympleADSRComponent amplifier;
     MasterAmp amplifier;
-    //SympleADSRComponent filterAmplifier;
+
+    juce::Label titleLabel;
+    juce::Label osc1Label;
+    juce::Label osc2Label;
+    juce::Label filter1Label;
+    juce::Label filter2Label;
+    juce::Label ampLabel;
+    juce::Label lfoLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessorEditor)
 };
