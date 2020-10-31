@@ -58,10 +58,10 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     waveDial.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::yellow);
     osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", waveDial);
 
-    addAndMakeVisible(octLabel);
-    octLabel.setText("Cutoff", juce::dontSendNotification);
-    octLabel.setJustificationType(juce::Justification::centred);
-    octLabel.attachToComponent(&octDial, false);
+    addAndMakeVisible(waveLabel);
+    waveLabel.setText("Cutoff", juce::dontSendNotification);
+    waveLabel.setJustificationType(juce::Justification::centred);
+    waveLabel.attachToComponent(&waveDial, false);
 }
 
 OscInterface::~OscInterface()
@@ -71,16 +71,6 @@ OscInterface::~OscInterface()
 
 void OscInterface::paint(juce::Graphics &g)
 {
-    juce::Rectangle <int> oscTitleArea(50, 125, 70, 20);
-    juce::Rectangle <float> oscSection(25, 150, 300, 400);
-    
-    g.setColour(juce::Colours::white);
-    g.drawFittedText ("Oscillator", oscTitleArea, juce::Justification::centred, 1);
-    g.drawRect(oscTitleArea);
-    
-    g.setColour(juce::Colours::yellow);
-    g.drawRoundedRectangle(oscSection, 5.0f, 2.0f);
-    
 }
 
 void OscInterface::resized()
