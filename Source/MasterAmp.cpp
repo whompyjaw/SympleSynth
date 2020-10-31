@@ -36,8 +36,8 @@ MasterAmp::MasterAmp(SympleSynthAudioProcessor& p)
 
     // Master Slider
     addAndMakeVisible(masterGainSlider);
-    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    masterGainSlider.setRange(-60.0f, 0.0f, 0.1f);
+    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+    //masterGainSlider.setRange(-60.0f, 0.0f, 0.1f);
     //masterGainSlider.setValue(-20.0f);
     masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 30);
     masterGainSlider.setTextValueSuffix(" db");
