@@ -218,7 +218,7 @@ void SympleSynthAudioProcessor::prepareVoices(juce::dsp::ProcessSpec& spec)
 
 juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::createParameters()
 {
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+//    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     // filter knob ranges
     juce::NormalisableRange<float> cutoffRange = juce::NormalisableRange<float>(10.0f, 20000.0f);
