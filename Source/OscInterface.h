@@ -26,9 +26,14 @@ public:
     
 private:
     using TreeSliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-    std::unique_ptr<TreeSliderAttachment> osc1OctaveValue;
     juce::Slider osc1OctaveDial;
-//    std::unique_prt<TreeSliderAttachment> osc1WaveTypeValue;
+    std::unique_ptr<TreeSliderAttachment> osc1OctaveValue;
+    juce::Slider osc1SemitoneDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
+    juce::Slider osc1FineTuneDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1FineTuneValue;
+    juce::Slider osc1WaveTypeDial;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1WaveTypeValue;
     
 //    void setLayoutParams();
     
