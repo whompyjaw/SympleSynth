@@ -34,15 +34,17 @@ MasterAmp::MasterAmp(SympleSynthAudioProcessor& p)
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
 
-    // Master Slider
+    // Master Gain Slider
     addAndMakeVisible(masterGainSlider);
-    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-    //masterGainSlider.setRange(-60.0f, 0.0f, 0.1f);
-    //masterGainSlider.setValue(-20.0f);
-    masterGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 30);
+    masterGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    masterGainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    masterGainSlider.setPopupDisplayEnabled(true, true, this);
     masterGainSlider.setTextValueSuffix(" db");
 
-    //masterGainSlider.addListener(this); // Make sure this is set or the slider won't work.
+    addAndMakeVisible(gainLabel);
+    gainLabel.setText("Master Gain", juce::dontSendNotification);
+    gainLabel.setJustificationType(juce::Justification::centred);
+    gainLabel.attachToComponent(&masterGainSlider, false);
 }
 
 MasterAmp::~MasterAmp()
@@ -63,8 +65,9 @@ void MasterAmp::resized()
     auto ampHeight = getHeight() / 2;
 
     auto ampArea = area.removeFromBottom(ampHeight).reduced(margin);
+    auto gainArea = area.removeFromBottom(ampHeight).reduced(margin);
 
-    masterGainSlider.setBounds(area.removeFromBottom(ampHeight).reduced(margin));
+    masterGainSlider.setBounds(gainArea.getX(), gainArea.getY() + labelMargin, gainArea.getWidth(), 100);
     amplifier.setBounds(ampArea.getX(), ampArea.getY() + labelMargin, ampArea.getWidth(), 100);
 }
 
