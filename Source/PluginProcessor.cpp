@@ -166,13 +166,12 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     // This needs to be before this process loop.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    float gainValue = tree.getParameterAsValue("MASTER_GAIN").getValue();
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
-            float gainValue = tree.getParameterAsValue("MASTER_GAIN").getValue();
             channelData[sample] = channelData[sample] * juce::Decibels::decibelsToGain(gainValue);
         }
     }
