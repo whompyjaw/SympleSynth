@@ -22,6 +22,8 @@ public:
     void resized() override;
    
 private:
+    juce::Label tuningLabel;
+
     using TreeSliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     juce::Slider octDial;
     juce::Label octLabel;

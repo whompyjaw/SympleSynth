@@ -85,10 +85,10 @@ void SympleADSRComponent::resized()
     auto labelMargin = attackLabel.getHeight();
 
     // Set Dial Bounds
-    auto attackArea = area.removeFromLeft(knobWidth).reduced(margin);
-    auto decayArea = area.removeFromLeft(knobWidth).reduced(margin);
-    auto sustainArea = area.removeFromLeft(knobWidth).reduced(margin);
-    auto releaseArea = area.removeFromLeft(knobWidth).reduced(margin);
+    auto attackArea = area.removeFromLeft(knobWidth);
+    auto decayArea = area.removeFromLeft(knobWidth);
+    auto sustainArea = area.removeFromLeft(knobWidth);
+    auto releaseArea = area.removeFromLeft(knobWidth);
 
     auto knobHeight = attackArea.getHeight() - labelMargin;
     auto knobY = attackArea.getY() + labelMargin;

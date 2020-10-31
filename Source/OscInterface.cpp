@@ -62,14 +62,17 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     osc1WaveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_WAVE_TYPE", waveDial);
 
     addAndMakeVisible(waveLabel);
-    waveLabel.setText("Cutoff", juce::dontSendNotification);
+    waveLabel.setText("Wave Type", juce::dontSendNotification);
     waveLabel.setJustificationType(juce::Justification::centred);
     waveLabel.attachToComponent(&waveDial, false);
+
+    addAndMakeVisible(tuningLabel);
+    tuningLabel.setText("Tuning", juce::dontSendNotification);
+    tuningLabel.setJustificationType(juce::Justification::centred);
 }
 
 OscInterface::~OscInterface()
 {
-    
 }
 
 void OscInterface::paint(juce::Graphics &g)
@@ -78,11 +81,32 @@ void OscInterface::paint(juce::Graphics &g)
 
 void OscInterface::resized()
 {
-    int dialSpacing = 75;
-    waveDial.setBounds(0, 160, 100, 100);
-    octDial.setBounds(waveDial.getX() + dialSpacing, 160, 100, 100);
-    semiDial.setBounds(octDial.getX() + dialSpacing, 160, 100, 100);
-    fineDial.setBounds(semiDial.getX() + dialSpacing, 160, 100, 100);
+    juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
+    auto dialAreaWidth = getWidth() / 3;
+    auto margin = 5;
+    auto labelMargin = octLabel.getHeight();
+
+    // Set Wave Bounds
+    auto waveArea = area.removeFromTop(getHeight() / 2).reduced(margin);
+    auto waveHeight = waveArea.getHeight() - labelMargin;
+    auto waveY = waveArea.getY() + labelMargin;
+
+    waveDial.setBounds(waveArea.getX(), waveY, waveArea.getWidth(), waveHeight);
+
+    // Set Tuning Label Bounds
+    tuningLabel.setBounds(area.removeFromTop(labelMargin));
+
+    // Set Tuning Dial Bounds
+    auto dialWidth = (area.getWidth() - labelMargin) / 4;
+
+    auto octArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
+    auto semiArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
+    auto fineArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
+
+    octDial.setBounds(octArea.getX(), octArea.getY() + labelMargin, dialWidth, dialWidth);
+    semiDial.setBounds(semiArea.getX(), semiArea.getY() + labelMargin, dialWidth, dialWidth);
+    fineDial.setBounds(fineArea.getX(), fineArea.getY() + labelMargin, dialWidth, dialWidth);
+
 }
 
 //void OscInterface::setLayoutParams()
