@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Envelope.h"
 #include "Filter.h"
+#include "OscInterface.h"
 
 //==============================================================================
 /**
@@ -37,8 +38,8 @@ public:
     
     
     // Oscillator 1 tuning section
-    juce::Slider osc1OctaveDial;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1OctaveValue;
+//    juce::Slider osc1OctaveDial;
+//    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1OctaveValue;
     juce::Slider osc1SemitoneDial;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
     juce::Slider osc1FineTuneDial;
@@ -53,6 +54,7 @@ private:
     juce::Slider masterGainSlider;
     SympleSynthAudioProcessor& audioProcessor;
     
+    OscInterface oscUI;
     SympleFilterComponent filter;
     SympleADSRComponent amplifier;
     SympleADSRComponent filterAmplifier;

@@ -16,6 +16,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     : AudioProcessorEditor (&p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
       audioProcessor(p),
+      oscUI(p),
       filter(p),
       amplifier(p),
       filterAmplifier(p)
@@ -48,13 +49,13 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(amplifier);
     addAndMakeVisible(filterAmplifier);
 
-    
+    addAndMakeVisible(oscUI);
     // octave dial
-    addAndMakeVisible(&osc1OctaveDial);
-    osc1OctaveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    osc1OctaveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
-    osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
-    osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", osc1OctaveDial);
+//    addAndMakeVisible(&osc1OctaveDial);
+//    osc1OctaveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+//    osc1OctaveDial.setTextBoxStyle(juce::Slider::TextBoxAbove, true, 30, 30);
+//    osc1OctaveDial.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::black);
+//    osc1OctaveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "OSC_1_OCTAVE", osc1OctaveDial);
     
     // semitone dial
     addAndMakeVisible(&osc1SemitoneDial);
@@ -100,9 +101,9 @@ SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
     juce::Rectangle<int> ampTitleArea(getWidth() - amplifier.getWidth() + 150, 120, 70, 20);
-    juce::Rectangle <int> oscTitleArea(50, 125, 70, 20);
+//    juce::Rectangle <int> oscTitleArea(50, 125, 70, 20);
     juce::Rectangle <float> filterArea(400, 150, 300, 200);
-    juce::Rectangle <float> oscSection(25, 150, 300, 400);
+//    juce::Rectangle <float> oscSection(25, 150, 300, 400);
     juce::Rectangle <float> ampSection(700, 150, 375, 100);
     
     g.setFont (15.0f);
@@ -113,13 +114,13 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
     g.setColour(juce::Colours::white);
     g.drawFittedText ("Amplifier", ampTitleArea, juce::Justification::centred, 1);
     g.drawRect(ampTitleArea);
-    g.drawFittedText ("Oscillator", oscTitleArea, juce::Justification::centred, 1);
-    g.drawRect(oscTitleArea);
+//    g.drawFittedText ("Oscillator", oscTitleArea, juce::Justification::centred, 1);
+//    g.drawRect(oscTitleArea);
 
 
     g.setColour(juce::Colours::yellow);
     g.drawRoundedRectangle(filterArea, 5.0f, 2.0f);
-    g.drawRoundedRectangle(oscSection, 5.0f, 2.0f);
+//    g.drawRoundedRectangle(oscSection, 5.0f, 2.0f);
     g.drawRoundedRectangle(ampSection, 5.0f, 2.0f);
     
     if (!keyboardComponent.hasKeyboardFocus (true) &&
@@ -140,10 +141,11 @@ void SympleSynthAudioProcessorEditor::resized()
     filterAmplifier.setBounds(350, 275, filterAmplifier.getWidth(), filterAmplifier.getHeight());
     
     // Oscillator section
+    oscUI.setBounds(0, 0, oscUI.getWidth(), oscUI.getHeight());
     int dialSpacing = 75;
     osc1WaveTypeDial.setBounds(0, 160, 100, 100);
-    osc1OctaveDial.setBounds(osc1WaveTypeDial.getX() + dialSpacing, 160, 100, 100);
-    osc1SemitoneDial.setBounds(osc1OctaveDial.getX() + dialSpacing, 160, 100, 100);
+//    osc1OctaveDial.setBounds(osc1WaveTypeDial.getX() + dialSpacing, 160, 100, 100);
+    osc1SemitoneDial.setBounds(75 + dialSpacing, 160, 100, 100);
     osc1FineTuneDial.setBounds(osc1SemitoneDial.getX() + dialSpacing, 160, 100, 100);
 }
 
