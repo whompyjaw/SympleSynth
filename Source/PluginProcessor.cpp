@@ -225,13 +225,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 
     // filter knob ranges
     juce::NormalisableRange<float> cutoffRange = juce::NormalisableRange<float>(10.0f, 20000.0f);
-    juce::NormalisableRange<float> resRange = juce::NormalisableRange<float>(1.0f, 100.0f);
-    juce::NormalisableRange<float> amountRange = juce::NormalisableRange<float>(1.0f, 100.0f);
+    juce::NormalisableRange<float> resRange = juce::NormalisableRange<float>(0.0f, 100.0f);
+    juce::NormalisableRange<float> amountRange = juce::NormalisableRange<float>(0.0f, 100.0f);
     cutoffRange.setSkewForCentre(1000.0f);
 
     // filter parameters
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", cutoffRange, 20000.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 1.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 0.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", amountRange, 30.0f));
 
     // envelope knob ranges
