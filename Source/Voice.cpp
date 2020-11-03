@@ -95,11 +95,11 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         
         // init counters
         size_t updateCounter = PARAM_UPDATE_RATE;
-        size_t read = 0;
+        size_t read = startSample;
         
         // process every sample
-        while (read < numSamples) {
-            auto max = juce::jmin((size_t) numSamples - read, updateCounter);
+        while (read < (startSample + numSamples)) {
+            auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);
             auto subBlock = voiceBlock.getSubBlock (read, max);
 
             // add oscillator 1 sound
