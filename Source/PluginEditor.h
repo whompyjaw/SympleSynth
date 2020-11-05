@@ -11,7 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Envelope.h"
-#include "FilterUI.h"
+#include "FilterInterface.h"
 #include "MasterAmp.h"
 #include "OscInterface.h"
 
@@ -35,6 +35,7 @@ public:
     juce::Slider filterResDial;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
+    SympleFilterParameterNames filterParameters;
     
 
 private:
@@ -43,7 +44,6 @@ private:
     
     OscInterface osc1;
     OscInterface osc2;
-
     SympleFilterComponent filter;
     MasterAmp amplifier;
 

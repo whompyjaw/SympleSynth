@@ -10,13 +10,23 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "FilterUI.h"
+#include "FilterInterface.h"
 
 SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p) 
     :   audioProcessor(p),
-        amplifier(p)
+        envelope(p)
 {
     setSize (400, 400);
+    
+    addAndMakeVisible(&filterModeDial);
+    filterModeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    filterModeDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    filterModeDial.setPopupDisplayEnabled(true, true, this);
+    
+    addAndMakeVisible(filterModeLabel);
+    filterModeLabel.setText("Filter Mode", juce::dontSendNotification);
+    filterModeLabel.setJustificationType(juce::Justification::centred);
+    filterModeLabel.attachToComponent(&filterModeDial, false);
     
     //  Add Filter Cutoff Dial & Label
     addAndMakeVisible(&filterCutoffDial);
@@ -53,22 +63,24 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     amountLabel.setText("Env Amount", juce::dontSendNotification);
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&filterAmountDial, false);
+    
+
 
     // init amp parameter names struct
-    SympleADSRParameterNames ampParameters;
-    ampParameters.attack = "FILTER_ATTACK";
-    ampParameters.decay = "FILTER_DECAY";
-    ampParameters.sustain = "FILTER_SUSTAIN";
-    ampParameters.release = "FILTER_RELEASE";
-    amplifier.setParameters(ampParameters);
+    SympleADSRParameterNames envParameters;
+    envParameters.attack = "FILTER_ATTACK";
+    envParameters.decay = "FILTER_DECAY";
+    envParameters.sustain = "FILTER_SUSTAIN";
+    envParameters.release = "FILTER_RELEASE";
+    envelope.setParameters(envParameters);
 
     //  Add Amp & Label
-    addAndMakeVisible(amplifier);
+    addAndMakeVisible(envelope);
 
-    addAndMakeVisible(ampLabel);
-    ampLabel.setText("Filter Envelope", juce::dontSendNotification);
-    ampLabel.setJustificationType(juce::Justification::centred);
-    ampLabel.attachToComponent(&amplifier, false);
+    addAndMakeVisible(envLabel);
+    envLabel.setText("Filter Envelope", juce::dontSendNotification);
+    envLabel.setJustificationType(juce::Justification::centred);
+    envLabel.attachToComponent(&envelope, false);
 }
 
 SympleFilterComponent::~SympleFilterComponent()
@@ -76,38 +88,44 @@ SympleFilterComponent::~SympleFilterComponent()
     filterCutoffValue.reset();
     filterResValue.reset();
     filterAmountValue.reset();
+    filterModeValue.reset();
 }
 
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
+    g.fillAll(juce::Colours::grey);
 }
 
 void SympleFilterComponent::resized()
 {
     juce::Rectangle<int> area(0,0, getWidth(), getHeight());
-    auto filterWidth = getWidth() / 3;
+    auto filterWidth = getWidth() / 4;
     auto margin = 5;
     auto labelMargin = amountLabel.getHeight();
 
     // Set Amp Bounds
-    auto ampArea = area.removeFromBottom(getHeight() / 2).reduced(margin);
-    auto ampHeight = ampArea.getHeight() - labelMargin;
-    auto ampY = ampArea.getY() + labelMargin;
+    auto envArea = area.removeFromBottom(getHeight() / 2).reduced(margin);
+    auto envHeight = envArea.getHeight() - labelMargin;
+    auto envY = envArea.getY() + labelMargin;
 
-    amplifier.setBounds(ampArea.getX(), ampY, ampArea.getWidth(), ampHeight);
+    envelope.setBounds(envArea.getX(), envY, envArea.getWidth(), envHeight);
 
     // Set Filter Dial Bounds
+    auto modeArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto cutoffArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto resArea = area.removeFromLeft(filterWidth).reduced(margin);
     auto amountArea = area.removeFromLeft(filterWidth).reduced(margin);
 
-    filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), ampHeight);
-    filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), ampHeight);
-    filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), ampHeight);
+
+    filterModeDial.setBounds(modeArea.getX(), modeArea.getY() + labelMargin, modeArea.getWidth(), envHeight);
+    filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), envHeight);
+    filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), envHeight);
+    filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), envHeight);
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params) {
     filterCutoffValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.cutoff, filterCutoffDial);
     filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.resonance, filterResDial);
     filterAmountValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.amount, filterAmountDial);
+    filterModeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.mode, filterModeDial);
 }

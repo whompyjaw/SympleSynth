@@ -44,10 +44,10 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     osc2.setParameters(osc2Parameters);
 
     // init filter parameter names struct
-    SympleFilterParameterNames filterParameters;
     filterParameters.cutoff = "CUTOFF";
     filterParameters.resonance = "RESONANCE";
     filterParameters.amount = "AMOUNT";
+    filterParameters.mode = "FILTER_1_MODE";
     filter.setParameters(filterParameters);
 
     // init gain parameter names struct
