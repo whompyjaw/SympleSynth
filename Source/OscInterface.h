@@ -12,6 +12,15 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+struct SympleOscParameterNames {
+public:
+    std::string octave;
+    std::string semitone;
+    std::string finetune;
+    std::string wavetype;
+};
+
+
 class OscInterface : public juce::Component
 {
 public:
@@ -20,7 +29,13 @@ public:
     
     void paint (juce::Graphics&) override;
     void resized() override;
-   
+    void setParameters(SympleOscParameterNames&);
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> octValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> semiValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> fineValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> waveValue;
+
 private:
     juce::Label tuningLabel;
 

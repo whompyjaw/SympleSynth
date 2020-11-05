@@ -41,15 +41,20 @@ private:
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;
     
-    OscInterface oscUI;
+    OscInterface osc1;
+    OscInterface osc2;
+
     SympleFilterComponent filter;
     MasterAmp amplifier;
 
     juce::Label titleLabel;
+
     juce::Label osc1Label;
     juce::Label osc2Label;
+
     juce::Label filter1Label;
     juce::Label filter2Label;
+
     juce::Label ampLabel;
     juce::Label lfoLabel;
 

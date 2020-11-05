@@ -258,16 +258,20 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     // oscillator 1 defaults
     juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_OCTAVE", "Octave 1", oscillatorOctaveParams, 0, "Octave"));
-    
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_OCTAVE", "Octave 2", oscillatorOctaveParams, 0, "Octave"));
+
     juce::NormalisableRange<float> oscillatorSemitone (-12, 12, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_SEMITONE", "Semitone 1", oscillatorSemitone, 0, "Semitone"));
-    
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_SEMITONE", "Semitone 2", oscillatorSemitone, 0, "Semitone"));
+
     juce::NormalisableRange<float> oscillatorFineTune (-100, 100, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_FINE_TUNE", "Fine Tune 1", oscillatorFineTune, 0, "Fine Tune"));
-    
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_FINE_TUNE", "Fine Tune 2", oscillatorFineTune, 0, "Fine Tune"));
+
     juce::NormalisableRange<float> oscillatorWaveType (0, 3, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_WAVE_TYPE", "Wave Type 1", oscillatorWaveType, 1, "Wave Type"));
-    
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_WAVE_TYPE", "Wave Type 2", oscillatorWaveType, 1, "Wave Type"));
+
     return { parameters.begin(), parameters.end() };
 }
 

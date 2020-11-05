@@ -16,7 +16,8 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     : AudioProcessorEditor (&p),
       keyboardComponent (p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard),
       audioProcessor(p),
-      oscUI(p),
+      osc1(p),
+      osc2(p),
       filter(p),
       amplifier(p)
 {
@@ -25,6 +26,22 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     titleLabel.setText("SYMPLESYNTH 1.0", juce::dontSendNotification);
     titleLabel.setFont(juce::Font(36.0, juce::Font::bold));
     titleLabel.setJustificationType(juce::Justification::centred);
+
+    // init osc1 parameter names struct
+    SympleOscParameterNames osc1Parameters;
+    osc1Parameters.octave = "OSC_1_OCTAVE";
+    osc1Parameters.semitone = "OSC_1_SEMITONE";
+    osc1Parameters.finetune = "OSC_1_FINE_TUNE";
+    osc1Parameters.wavetype = "OSC_1_WAVE_TYPE";
+    osc1.setParameters(osc1Parameters);
+
+    // init osc2 parameter names struct
+    SympleOscParameterNames osc2Parameters;
+    osc2Parameters.octave = "OSC_2_OCTAVE";
+    osc2Parameters.semitone = "OSC_2_SEMITONE";
+    osc2Parameters.finetune = "OSC_2_FINE_TUNE";
+    osc2Parameters.wavetype = "OSC_2_WAVE_TYPE";
+    osc2.setParameters(osc2Parameters);
 
     // init filter parameter names struct
     SympleFilterParameterNames filterParameters;
@@ -39,17 +56,24 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     amplifier.setParameters(ampParameters);
 
     // Add Components
+    addAndMakeVisible(osc1);
+    addAndMakeVisible(osc2);
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(filter);
     addAndMakeVisible(amplifier);
-    addAndMakeVisible(oscUI);
 
     // Add Labels
     addAndMakeVisible(osc1Label);
     osc1Label.setText("OSCILLATOR 1", juce::dontSendNotification);
     osc1Label.setFont(juce::Font(18.0, juce::Font::bold));
     osc1Label.setJustificationType(juce::Justification::centred);
-    osc1Label.attachToComponent(&oscUI, false);
+    osc1Label.attachToComponent(&osc1, false);
+
+    addAndMakeVisible(osc2Label);
+    osc1Label.setText("OSCILLATOR 2", juce::dontSendNotification);
+    osc1Label.setFont(juce::Font(18.0, juce::Font::bold));
+    osc1Label.setJustificationType(juce::Justification::centred);
+    osc1Label.attachToComponent(&osc2, false);
 
     addAndMakeVisible(filter1Label);
     filter1Label.setText("FILTER 1", juce::dontSendNotification);
@@ -86,6 +110,7 @@ void SympleSynthAudioProcessorEditor::paint (juce::Graphics& g)
 void SympleSynthAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds();
+
     auto componentWidth = getWidth() / 3;
     auto margin = 30;
     auto labelHeight = titleLabel.getHeight() + 2 * margin;
@@ -101,7 +126,9 @@ void SympleSynthAudioProcessorEditor::resized()
     auto componentHeight = oscArea.getHeight() / 2;
 
     // Set Component Bounds
-    oscUI.setBounds(oscArea.removeFromTop(componentHeight).reduced(margin));
+    osc1.setBounds(oscArea.removeFromTop(componentHeight).reduced(margin));
+    osc2.setBounds(oscArea.removeFromTop(componentHeight).reduced(margin));
+
     filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));
     amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
  }
