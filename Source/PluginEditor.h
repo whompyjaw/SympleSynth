@@ -14,6 +14,7 @@
 #include "FilterInterface.h"
 #include "MasterAmp.h"
 #include "OscInterface.h"
+#include "LfoInterface.h"
 
 //==============================================================================
 /**
@@ -46,6 +47,7 @@ private:
     OscInterface osc2;
     SympleFilterComponent filter;
     MasterAmp amplifier;
+    LfoInterface lfo;
 
     juce::Label titleLabel;
 

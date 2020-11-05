@@ -275,6 +275,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     juce::NormalisableRange<float> filterMode(0, 5, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_MODE", "Filter 1 Mode", filterMode, 0));
 
+    // lfo parameters
+    juce::NormalisableRange<float> lfoFrequencyRange = juce::NormalisableRange<float>(0.0f, 200.0f);
+    lfoFrequencyRange.setSkewForCentre(10.0f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_FREQUENCY", "LFO Frequency", lfoFrequencyRange, 0.0f));
+
     return { parameters.begin(), parameters.end() };
 }
 
