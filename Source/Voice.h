@@ -74,5 +74,4 @@ private:
 
     juce::dsp::LadderFilter<float> filter;
     
-    void readParameterState();
 };

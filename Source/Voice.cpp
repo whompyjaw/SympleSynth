@@ -13,14 +13,6 @@
 SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
     : oscTree(tree)
 {
-    // initialize all ADSR parameters
-    readParameterState();
-
-    // initialize oscillator with Saw wave
-    // this is actually already set when the oscillator is instantiated.
-//    oscMode = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
-//    OscillatorMode mode = static_cast<OscillatorMode> (oscMode);
-//    osc.setMode(mode);
     osc1.setSampleRate(getSampleRate());
     osc2.setSampleRate(getSampleRate());
 
@@ -39,10 +31,7 @@ bool SynthVoice::canPlaySound(juce::SynthesiserSound* sound)
 // Start the sine tone based on midi input
 
 void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
-{
-    // read voice parameters from value state tree
-    readParameterState();
-    
+{    
     // turn on envelopes
     envelope.noteOn();
     filterEnvelope.noteOn();
@@ -182,27 +171,4 @@ void SynthVoice::prepare(const juce::dsp::ProcessSpec& spec)
     float res = oscTree.getRawParameterValue("RESONANCE")->load() / 10;
     filter.setCutoffFrequencyHz(freq);
     filter.setResonance(res);
-}
-
-/*
- *  Reads the state of parameters in the value state tree and sets
- *  class variables that hold envelope, filter, and oscillator params
- */
-void SynthVoice::readParameterState()
-{
-    envelopeParameters = {
-        oscTree.getRawParameterValue("AMP_ATTACK")->load(),
-        oscTree.getRawParameterValue("AMP_DECAY")->load(),
-        oscTree.getRawParameterValue("AMP_SUSTAIN")->load() / 100,
-        oscTree.getRawParameterValue("AMP_RELEASE")->load()
-    };
-    
-    filterEnvelopeParameters = {
-        oscTree.getRawParameterValue("FILTER_ATTACK")->load() / 100,
-        oscTree.getRawParameterValue("FILTER_DECAY")->load() / 100,
-        oscTree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100,
-        oscTree.getRawParameterValue("FILTER_RELEASE")->load() / 100,
-    };
-    envelope.setParameters(envelopeParameters);
-    filterEnvelope.setParameters(filterEnvelopeParameters);
 }
