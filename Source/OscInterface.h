@@ -39,24 +39,19 @@ public:
 private:
     juce::Label tuningLabel;
 
-    using TreeSliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     juce::Slider octDial;
     juce::Label octLabel;
 
-    std::unique_ptr<TreeSliderAttachment> osc1OctaveValue;
     juce::Slider semiDial;
     juce::Label semiLabel;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1SemitoneValue;
     juce::Slider fineDial;
     juce::Label fineLabel;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1FineTuneValue;
     juce::Slider waveDial;
     juce::Label waveLabel;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> osc1WaveTypeValue;
-    
+   
 //    void setLayoutParams();
     
     

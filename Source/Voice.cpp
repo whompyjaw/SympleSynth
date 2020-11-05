@@ -43,9 +43,6 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     // reduce note amplitude
     level = velocity * 0.15;
 
-    // turn midi note number into hertz
-    auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
-
     // calculate the frequency from the midi and the APVST
     int currentOctave1 = oscTree.getParameterAsValue("OSC_1_OCTAVE").getValue();
     int currentOctave2 = oscTree.getParameterAsValue("OSC_2_OCTAVE").getValue();
@@ -53,21 +50,18 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     auto twelthRoot = pow(2, (1 / 12));
 
     int currentSemitone1 = oscTree.getParameterAsValue("OSC_1_SEMITONE").getValue();
-    currentSemitone1 = pow(twelthRoot, currentSemitone1);
-
     int currentSemitone2 = oscTree.getParameterAsValue("OSC_2_SEMITONE").getValue();
-    currentSemitone2 = pow(twelthRoot, currentSemitone2);
 
     // adjust the frequency with value from the fine tune knob
     float fineTune1 = oscTree.getParameterAsValue("OSC_1_FINE_TUNE").getValue();
     float fineTune2 = oscTree.getParameterAsValue("OSC_2_FINE_TUNE").getValue();
 
-    float hertz1 = cyclesPerSecond * currentSemitone1;
-    float hertz2 = cyclesPerSecond * currentSemitone1;
+    auto hertz1 = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber + currentSemitone1);
+    auto hertz2 = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber + currentSemitone2);
 
     // cents formula adapted from http://hyperphysics.phy-astr.gsu.edu/hbase/Music/cents.html
-    auto pow1 = (currentOctave1) + (fineTune1 / 1200);
-    auto pow2 = (currentOctave2) + (fineTune2 / 1200);
+    auto pow1 = currentOctave1 + (fineTune1 / 1200);
+    auto pow2 = currentOctave2 + (fineTune2 / 1200);
 
     auto adjustedFreq1 = 2 * pow(2, pow1) * hertz1;
     auto adjustedFreq2 = 2 * pow(2, pow2) * hertz2;
