@@ -73,5 +73,6 @@ private:
     Oscillator osc2;
 
     juce::dsp::LadderFilter<float> filter;
-    
+
+    void readParameterState();   
 };

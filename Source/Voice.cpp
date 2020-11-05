@@ -13,6 +13,8 @@
 SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
     : oscTree(tree)
 {
+    readParameterState();
+
     osc1.setSampleRate(getSampleRate());
     osc2.setSampleRate(getSampleRate());
 
@@ -36,6 +38,8 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     envelope.noteOn();
     filterEnvelope.noteOn();
     
+    readParameterState();
+
     // reset oscillator phase
     osc1.startNote();
     osc2.startNote();
@@ -165,4 +169,27 @@ void SynthVoice::prepare(const juce::dsp::ProcessSpec& spec)
     float res = oscTree.getRawParameterValue("RESONANCE")->load() / 10;
     filter.setCutoffFrequencyHz(freq);
     filter.setResonance(res);
+}
+
+/*
+ *  Reads the state of parameters in the value state tree and sets
+ *  class variables that hold envelope, filter, and oscillator params
+ */
+void SynthVoice::readParameterState()
+{
+    envelopeParameters = {
+        oscTree.getRawParameterValue("AMP_ATTACK")->load(),
+        oscTree.getRawParameterValue("AMP_DECAY")->load(),
+        oscTree.getRawParameterValue("AMP_SUSTAIN")->load() / 100,
+        oscTree.getRawParameterValue("AMP_RELEASE")->load()
+    };
+
+    filterEnvelopeParameters = {
+        oscTree.getRawParameterValue("FILTER_ATTACK")->load() / 100,
+        oscTree.getRawParameterValue("FILTER_DECAY")->load() / 100,
+        oscTree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100,
+        oscTree.getRawParameterValue("FILTER_RELEASE")->load() / 100,
+    };
+    envelope.setParameters(envelopeParameters);
+    filterEnvelope.setParameters(filterEnvelopeParameters);
 }
