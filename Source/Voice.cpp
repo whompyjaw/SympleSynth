@@ -143,6 +143,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                 auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
 
                 // reset filter values
+                filter.setMode(juce::dsp::LadderFilterMode(4));
                 filter.setCutoffFrequencyHz(cutOffFreqHz);
                 filter.setResonance(res);
             }

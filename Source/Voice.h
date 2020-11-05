@@ -55,6 +55,7 @@ struct SynthVoice : public juce::SynthesiserVoice
     void prepare(const juce::dsp::ProcessSpec& spec);
 
 private:
+    juce::dsp::LadderFilterMode FilterModes;
     double level = 0.0;
     int osc1ModeInt = 0;
     int osc2ModeInt = 0;
@@ -73,6 +74,5 @@ private:
     Oscillator osc2;
 
     juce::dsp::LadderFilter<float> filter;
-
-    void readParameterState();   
+    void readParameterState();
 };

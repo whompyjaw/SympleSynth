@@ -11,7 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Envelope.h"
-#include "Filter.h"
+#include "FilterUI.h"
 #include "MasterAmp.h"
 #include "OscInterface.h"
 
