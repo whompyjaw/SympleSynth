@@ -93,7 +93,7 @@ void SynthVoice::stopNote(float, bool allowTailOff)
 */
 void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    OscillatorMode oscMode;
+
     if (envelope.isActive())
     {
         // clear voice block for processing
@@ -143,7 +143,9 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                 auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
 
                 // reset filter values
-                filter.setMode(juce::dsp::LadderFilterMode(4));
+                filterModeInt = oscTree.getParameterAsValue("FILTER_1_MODE").getValue();
+                filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
+                filter.setMode(filterMode);
                 filter.setCutoffFrequencyHz(cutOffFreqHz);
                 filter.setResonance(res);
             }
