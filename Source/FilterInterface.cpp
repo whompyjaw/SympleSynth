@@ -93,7 +93,7 @@ SympleFilterComponent::~SympleFilterComponent()
 
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::grey);
+//    g.fillAll(juce::Colours::grey);
 }
 
 void SympleFilterComponent::resized()
