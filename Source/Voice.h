@@ -56,7 +56,8 @@ struct SynthVoice : public juce::SynthesiserVoice
 
 private:
     double level = 0.0;
-    int oscModeInt = 0;
+    int osc1ModeInt = 0;
+    int osc2ModeInt = 0;
     const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing
@@ -68,7 +69,9 @@ private:
     juce::ADSR::Parameters envelopeParameters;
     juce::ADSR::Parameters filterEnvelopeParameters;
     juce::AudioProcessorValueTreeState& oscTree;
-    Oscillator osc;
+    Oscillator osc1;
+    Oscillator osc2;
+
     juce::dsp::LadderFilter<float> filter;
     
     void readParameterState();

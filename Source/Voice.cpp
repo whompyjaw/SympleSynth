@@ -21,7 +21,8 @@ SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
 //    oscMode = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
 //    OscillatorMode mode = static_cast<OscillatorMode> (oscMode);
 //    osc.setMode(mode);
-    osc.setSampleRate(getSampleRate());
+    osc1.setSampleRate(getSampleRate());
+    osc2.setSampleRate(getSampleRate());
 
     // initialize amplifier envelope
     envelope.setSampleRate(getSampleRate());
@@ -47,25 +48,43 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     filterEnvelope.noteOn();
     
     // reset oscillator phase
-    osc.startNote();
+    osc1.startNote();
+    osc2.startNote();
     
     // reduce note amplitude
     level = velocity * 0.15;
 
-    // calculate the frequency from the midi and the APVST
-    int currentOctave = oscTree.getParameterAsValue("OSC_1_OCTAVE").getValue();
-    midiNoteNumber += currentOctave * 12; //(if currentOctave = -2, -2 * 12 = -24
-    int currentSemitone = oscTree.getParameterAsValue("OSC_1_SEMITONE").getValue();
-    midiNoteNumber += currentSemitone;
-
     // turn midi note number into hertz
     auto cyclesPerSecond = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
+    // calculate the frequency from the midi and the APVST
+    int currentOctave1 = oscTree.getParameterAsValue("OSC_1_OCTAVE").getValue();
+    int currentOctave2 = oscTree.getParameterAsValue("OSC_2_OCTAVE").getValue();
+
+    auto twelthRoot = pow(2, (1 / 12));
+
+    int currentSemitone1 = oscTree.getParameterAsValue("OSC_1_SEMITONE").getValue();
+    currentSemitone1 = pow(twelthRoot, currentSemitone1);
+
+    int currentSemitone2 = oscTree.getParameterAsValue("OSC_2_SEMITONE").getValue();
+    currentSemitone2 = pow(twelthRoot, currentSemitone2);
+
     // adjust the frequency with value from the fine tune knob
-    float fineTune = oscTree.getParameterAsValue("OSC_1_FINE_TUNE").getValue();
+    float fineTune1 = oscTree.getParameterAsValue("OSC_1_FINE_TUNE").getValue();
+    float fineTune2 = oscTree.getParameterAsValue("OSC_2_FINE_TUNE").getValue();
+
+    float hertz1 = cyclesPerSecond * currentSemitone1;
+    float hertz2 = cyclesPerSecond * currentSemitone1;
+
     // cents formula adapted from http://hyperphysics.phy-astr.gsu.edu/hbase/Music/cents.html
-    auto adjustedFreq = 2 * pow(2, fineTune/1200) * cyclesPerSecond;
-    osc.setFrequency(adjustedFreq);
+    auto pow1 = (currentOctave1) + (fineTune1 / 1200);
+    auto pow2 = (currentOctave2) + (fineTune2 / 1200);
+
+    auto adjustedFreq1 = 2 * pow(2, pow1) * hertz1;
+    auto adjustedFreq2 = 2 * pow(2, pow2) * hertz2;
+
+    osc1.setFrequency(adjustedFreq1);
+    osc2.setFrequency(adjustedFreq2);
 }
 
 /* Stops the voice by the owning synthesiser calling this function, which must be overriden*/
@@ -103,10 +122,16 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             auto subBlock = voiceBlock.getSubBlock (read, max);
 
             // add oscillator 1 sound
-            oscModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
-            oscMode = static_cast<OscillatorMode> (oscModeInt);
-            osc.setMode(oscMode);
-            osc.generate(subBlock, (int) subBlock.getNumSamples(), envelope);
+            osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
+            oscMode = static_cast<OscillatorMode> (osc1ModeInt);
+            osc1.setMode(oscMode);
+            osc1.generate(subBlock, (int) subBlock.getNumSamples(), envelope);
+
+            // add oscillator 2 sound
+            osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
+            oscMode = static_cast<OscillatorMode> (osc2ModeInt);
+            osc2.setMode(oscMode);
+            osc2.generate(subBlock, (int)subBlock.getNumSamples(), envelope);
 
             // filter sound
             filter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
