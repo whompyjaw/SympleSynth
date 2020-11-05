@@ -69,6 +69,10 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
 
 OscInterface::~OscInterface()
 {
+    octValue.reset();
+    semiValue.reset();
+    fineValue.reset();
+    waveValue.reset();
 }
 
 void OscInterface::paint(juce::Graphics &g)
