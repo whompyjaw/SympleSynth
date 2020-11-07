@@ -58,7 +58,9 @@ public:
     void prepareVoices(juce::dsp::ProcessSpec&);
     juce::AudioProcessorValueTreeState& getTree() { return tree; }
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
-
+    
+    Oscillator lfo;
+    juce::dsp::AudioBlock<float> lfoBuffer;
 
 private:
     const int VOICE_COUNT = 5;

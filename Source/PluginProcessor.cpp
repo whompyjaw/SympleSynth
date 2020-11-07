@@ -110,6 +110,10 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
     
+    // prepare lfo
+    lfo.setSampleRate(sampleRate);
+    lfo.setFrequency(tree.getParameterAsValue("LFO_FREQUENCY").getValue());
+    
     // prepare voices with buffer/sample rate
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;

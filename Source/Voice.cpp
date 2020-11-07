@@ -51,8 +51,6 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     int currentOctave1 = oscTree.getParameterAsValue("OSC_1_OCTAVE").getValue();
     int currentOctave2 = oscTree.getParameterAsValue("OSC_2_OCTAVE").getValue();
 
-    auto twelthRoot = pow(2, (1 / 12));
-
     int currentSemitone1 = oscTree.getParameterAsValue("OSC_1_SEMITONE").getValue();
     int currentSemitone2 = oscTree.getParameterAsValue("OSC_2_SEMITONE").getValue();
 
