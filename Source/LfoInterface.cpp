@@ -45,8 +45,13 @@ void LfoInterface::resized()
     juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
     auto margin = 5;
     auto labelMargin = frequencyLabel.getHeight();
+    auto rowHeight = area.getHeight() / 2;
+    auto colWidth = area.getWidth() / 3;
 
-    auto frequencyArea = area.removeFromBottom(area.getHeight() / 2).reduced(margin);
-    auto frequencyHeight = frequencyArea.getHeight() - labelMargin;
-    frequencyDial.setBounds(frequencyArea.getX(), frequencyArea.getY() + labelMargin, frequencyArea.getWidth() / 3, frequencyHeight);
+    auto oscArea = area.removeFromTop(rowHeight).reduced(margin);
+    auto paramsArea = area.removeFromTop(rowHeight).reduced(margin);
+    auto knobHeight = paramsArea.getHeight() - labelMargin;
+    
+    auto frequencyArea = paramsArea.removeFromLeft(colWidth);
+    frequencyDial.setBounds(frequencyArea.getX(), frequencyArea.getY() + labelMargin, colWidth, knobHeight);
 }
