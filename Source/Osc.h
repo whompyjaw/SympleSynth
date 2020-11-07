@@ -36,7 +36,7 @@ public:
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void startNote();
-    void generate(juce::dsp::AudioBlock<float>&, int nFrames, juce::ADSR&);
+    void generate(juce::dsp::AudioBlock<float>&, int nFrames);
     Oscillator() :
     mOscillatorMode(OSCILLATOR_MODE_SAW),
     mPI(2*acos(0.0)),
