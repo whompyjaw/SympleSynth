@@ -65,6 +65,8 @@ private:
     juce::dsp::AudioBlock<float> voiceBlock;
 
     juce::ADSR envelope;
+    juce::dsp::LadderFilterMode filterMode;
+    int filterModeInt;
     juce::ADSR filterEnvelope;
     juce::ADSR::Parameters envelopeParameters;
     juce::ADSR::Parameters filterEnvelopeParameters;
@@ -73,6 +75,7 @@ private:
     Oscillator osc2;
 
     juce::dsp::LadderFilter<float> filter;
+    OscillatorMode oscMode;
 
-    void readParameterState();   
+    void readParameterState();
 };

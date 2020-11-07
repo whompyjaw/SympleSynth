@@ -18,6 +18,7 @@ public:
     std::string cutoff;
     std::string resonance;
     std::string amount;
+    std::string mode;
 };
 
 class SympleFilterComponent : public juce::Component
@@ -35,6 +36,7 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterAmountValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterModeValue;
 
 
 private:
@@ -46,9 +48,12 @@ private:
 
     juce::Slider filterAmountDial;
     juce::Label amountLabel;
+    
+    juce::Slider filterModeDial;
+    juce::Label filterModeLabel;
 
-    SympleADSRComponent amplifier;
-    juce::Label ampLabel;
+    SympleADSRComponent envelope;
+    juce::Label envLabel;
     
     SympleSynthAudioProcessor& audioProcessor;
 
