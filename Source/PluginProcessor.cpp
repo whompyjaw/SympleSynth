@@ -273,7 +273,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_WAVE_TYPE", "Wave Type 2", oscillatorWaveType, 1, "Wave Type"));
 
     juce::NormalisableRange<float> filterMode(0, 5, 1);
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_MODE", "Filter 1 Mode", filterMode, 1));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_MODE", "Filter 1 Mode", filterMode, 0));
 
     return { parameters.begin(), parameters.end() };
 }
