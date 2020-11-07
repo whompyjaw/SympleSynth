@@ -72,6 +72,7 @@ private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
     float lastSampleRate;
+    juce::HeapBlock<char> heapBlock;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleSynthAudioProcessor)
 };

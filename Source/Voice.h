@@ -35,7 +35,7 @@ struct SynthSound : public juce::SynthesiserSound
 A voice plays a single sound at a time, and a synthesiser holds an array of voices so that it can play polyphonically. The Synthesiser controls the voices */
 struct SynthVoice : public juce::SynthesiserVoice
 {
-    SynthVoice(juce::AudioProcessorValueTreeState&);
+    SynthVoice(juce::AudioProcessorValueTreeState&, juce::dsp::AudioBlock<float>&);
 
     bool canPlaySound(juce::SynthesiserSound* sound) override;
 
@@ -63,6 +63,7 @@ private:
     // memory for voice processing
     juce::HeapBlock<char> heapBlock;
     juce::dsp::AudioBlock<float> voiceBlock;
+    juce::dsp::AudioBlock<float>& lfoBuffer;
 
     juce::ADSR envelope;
     juce::dsp::LadderFilterMode filterMode;

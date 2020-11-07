@@ -10,8 +10,8 @@
 
 #include "Voice.h"
 
-SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree)
-    : oscTree(tree)
+SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree, juce::dsp::AudioBlock<float>& lfoBuffer)
+    : oscTree(tree), lfoBuffer(lfoBuffer)
 {
     readParameterState();
 
@@ -91,7 +91,6 @@ void SynthVoice::stopNote(float, bool allowTailOff)
 */
 void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-
     if (envelope.isActive())
     {
         // clear voice block for processing
@@ -128,9 +127,10 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             read += max;
             updateCounter -= max;
             float nextFilterEnvSample;
+            int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
 
             // advance the filter envelope for the amount of processed samples
-            // and keep the most recent setting 
+            // and keep the most recent setting
             while (max-- > 0)
                  filterEnvelope.getNextSample();
             nextFilterEnvSample = filterEnvelope.getNextSample();
@@ -147,13 +147,14 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
                 // calculate max cutoff from envelope
                 float freqMax = freq + ((20000.0f - freq) * amount);
+                float lfoCutoffFreqHz = juce::jmap (lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, freqMax);
                 auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
 
                 // reset filter values
                 filterModeInt = oscTree.getParameterAsValue("FILTER_1_MODE").getValue();
                 filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
                 filter.setMode(filterMode);
-                filter.setCutoffFrequencyHz(cutOffFreqHz);
+                filter.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
                 filter.setResonance(res);
             }
         }
