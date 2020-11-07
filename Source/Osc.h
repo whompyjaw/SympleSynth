@@ -24,23 +24,45 @@ enum OscillatorMode {
 
 class Oscillator {
 private:
-    OscillatorMode mOscillatorMode;
-    const double mPI;
-    double mFrequency;
-    double mPhase;
-    double mSampleRate;
-    double mPhaseIncrement;
-    void updateIncrement();
+    double polyBlep();
+
 public:
+
     void setMode(OscillatorMode mode);
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
     void startNote();
     void generate(juce::dsp::AudioBlock<float>&, int nFrames, juce::ADSR&);
+
     Oscillator() :
     mOscillatorMode(OSCILLATOR_MODE_SAW),
     mPI(2*acos(0.0)),
+    twoPI(2 * mPI),
     mFrequency(440.0),
     mPhase(0.0),
     mSampleRate(44100.0) { updateIncrement(); };
+    
+    ~Oscillator();
+protected:
+    OscillatorMode mOscillatorMode;
+    double naiveWaveformForMode(OscillatorMode mode);
+    const double mPI;
+    const double twoPI;
+    double mFrequency;
+    double mPhase;
+    double mSampleRate;
+    double mPhaseIncrement;
+    
+    void updateIncrement();
 };
+//
+//class PolyBLEPOscillator : public Oscillator
+//{
+//public:
+//    PolyBLEPOscillator() : lastOutput(0.0) {updateIncrement();};
+//    ~PolyBLEPOscillator();
+//    double nextSample();
+//private:
+//    double poly_blep(double t); // will generate the ripples at the edges
+//    double lastOutput; // needed by triangle wave
+//};

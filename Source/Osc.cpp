@@ -7,6 +7,8 @@
     NOTES:  This code was adapted from Martin Finke's
             oscillator code available at:
             http://www.martin-finke.de/blog/articles/audio-plugins-008-synthesizing-waveforms
+            The PolyBLEP (removing aliasing) feature was adapted from
+            http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
 
   ==============================================================================
 */
@@ -40,7 +42,6 @@ void Oscillator::startNote() {
 
 void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juce::ADSR& amp)
 {
-    const double twoPI = 2 * mPI;
     switch (mOscillatorMode) {
         case OSCILLATOR_MODE_SINE:
             for (int i = 0; i < nFrames; i++) {
@@ -99,3 +100,74 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juc
             break;
     }
 }
+
+double Oscillator::naiveWaveformForMode(OscillatorMode mode) {
+    double value;
+    switch (mode) {
+        case OSCILLATOR_MODE_SINE:
+            value = sin(mPhase);
+            break;
+        case OSCILLATOR_MODE_SAW:
+            value = (2.0 * mPhase / twoPI) - 1.0;
+            break;
+        case OSCILLATOR_MODE_SQUARE:
+            if (mPhase < mPI) {
+                value = 1.0;
+            } else {
+                value = -1.0;
+            }
+            break;
+        case OSCILLATOR_MODE_TRIANGLE:
+            value = -1.0 + (2.0 * mPhase / twoPI);
+            value = 2.0 * (fabs(value) - 0.5);
+            break;
+        default:
+            break;
+    }
+    return value;
+}
+
+//double PolyBLEPOscillator::poly_blep(double t)
+//{
+//    double dt = mPhaseIncrement / twoPI;
+//    if (t < dt) // this is at beginning of wave: 0 <= t < 1
+//    {
+//        t /= dt;
+//        return t+t - t*t - 1.0;
+//    } // at end of wave: -1 < t < 0
+//    else if (t > 1.0 - dt)
+//    {
+//        t = (t - 1.0) / dt;
+//        return t*t + t+t + 1.0;
+//    }
+//    else
+//        return 0.0;
+//}
+//
+//double PolyBLEPOscillator::nextSample()
+//{
+//    double value = 0.0;
+//    double t = mPhase / twoPI;
+//    
+//    if (mOscillatorMode == OSCILLATOR_MODE_SINE) {
+//        value = naiveWaveformForMode(OSCILLATOR_MODE_SINE);
+//    } else if (mOscillatorMode == OSCILLATOR_MODE_SAW) {
+//        value = naiveWaveformForMode(OSCILLATOR_MODE_SAW);
+//        value -= poly_blep(t);
+//    } else {
+//        value = naiveWaveformForMode(OSCILLATOR_MODE_SQUARE);
+//        value += poly_blep(t);
+//        value -= poly_blep(fmod(t + 0.5, 1.0));
+//        if (mOscillatorMode == OSCILLATOR_MODE_TRIANGLE) {
+//            // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
+//            value = mPhaseIncrement * value + (1 - mPhaseIncrement) * lastOutput;
+//            lastOutput = value;
+//        }
+//    }
+//    
+//    mPhase += mPhaseIncrement;
+//    while (mPhase >= twoPI) {
+//        mPhase -= twoPI;
+//    }
+//    return value;
+//}
