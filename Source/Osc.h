@@ -42,10 +42,10 @@ public:
     mPhase(0.0),
     mSampleRate(44100.0) { updateIncrement(); };
     
-    ~Oscillator();
+//    ~Oscillator();
 protected:
     OscillatorMode mOscillatorMode;
-    double naiveWaveformForMode(OscillatorMode mode);
+//    double naiveWaveformForMode(OscillatorMode mode);
     const double mPI;
     const double twoPI;
     double mFrequency;

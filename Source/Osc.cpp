@@ -42,63 +42,88 @@ void Oscillator::startNote() {
 
 void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juce::ADSR& amp)
 {
-    switch (mOscillatorMode) {
-        case OSCILLATOR_MODE_SINE:
-            for (int i = 0; i < nFrames; i++) {
-                auto env = amp.getNextSample();
-                for (int j = 0; j < buffer.getNumChannels(); ++j) {
-                    buffer.addSample(j, i, (float) (sin(mPhase) * env));
-                }
-                mPhase += mPhaseIncrement;
-                while (mPhase >= twoPI) {
-                    mPhase -= twoPI;
-                }
-            }
-            break;
-        case OSCILLATOR_MODE_SAW:
-            for (int i = 0; i < nFrames; i++) {
-                auto env = amp.getNextSample();
-                for (int j = 0; j < buffer.getNumChannels(); ++j) {
-                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI)) * env);
-                }
-                mPhase += mPhaseIncrement;
-                while (mPhase >= twoPI) {
-                    mPhase -= twoPI;
-                }
-            }
-            break;
-        case OSCILLATOR_MODE_SQUARE:
-            for (int i = 0; i < nFrames; i++) {
-                auto env = amp.getNextSample();
-                if (mPhase <= mPI) {
-                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
-                        buffer.addSample(j, i, (float) 1.0 * env);
-                    }
-                } else {
-                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
-                        buffer.addSample(j, i, (float) -1.0 * env);
-                    }
-                }
-                mPhase += mPhaseIncrement;
-                while (mPhase >= twoPI) {
-                    mPhase -= twoPI;
-                }
-            }
-            break;
-        case OSCILLATOR_MODE_TRIANGLE:
-            for (int i = 0; i < nFrames; i++) {
-                auto env = amp.getNextSample();
-                double value = -1.0 + (2.0 * mPhase / twoPI);
-                for (int j = 0; j < buffer.getNumChannels(); ++j) {
-                    buffer.addSample(j, i, (float)(2.0 * (fabs(value) - 0.5)) * env);
-                }
-                mPhase += mPhaseIncrement;
-                while (mPhase >= twoPI) {
-                    mPhase -= twoPI;
-                }
-            }
-            break;
+    double value = 0.0;
+    double t = mPhase / twoPI;
+    
+    if (mOscillatorMode == OSCILLATOR_MODE_SINE) {
+        value = naiveWaveformForMode(OSCILLATOR_MODE_SINE);
+    } else if (mOscillatorMode == OSCILLATOR_MODE_SAW) {
+        value = naiveWaveformForMode(OSCILLATOR_MODE_SAW);
+        value -= poly_blep(t);
+    } else {
+        value = naiveWaveformForMode(OSCILLATOR_MODE_SQUARE);
+        value += poly_blep(t);
+        value -= poly_blep(fmod(t + 0.5, 1.0));
+        if (mOscillatorMode == OSCILLATOR_MODE_TRIANGLE) {
+            // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
+            value = mPhaseIncrement * value + (1 - mPhaseIncrement) * lastOutput;
+            lastOutput = value;
+        }
     }
+    
+    mPhase += mPhaseIncrement;
+    while (mPhase >= twoPI) {
+        mPhase -= twoPI;
+    }
+    return value;
+    
+//    switch (mOscillatorMode) {
+//        case OSCILLATOR_MODE_SINE:
+//            for (int i = 0; i < nFrames; i++) {
+//                auto env = amp.getNextSample();
+//                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+//                    buffer.addSample(j, i, (float) (sin(mPhase) * env));
+//                }
+//                mPhase += mPhaseIncrement;
+//                while (mPhase >= twoPI) {
+//                    mPhase -= twoPI;
+//                }
+//            }
+//            break;
+//        case OSCILLATOR_MODE_SAW:
+//            for (int i = 0; i < nFrames; i++) {
+//                auto env = amp.getNextSample();
+//                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+//                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI)) * env);
+//                }
+//                mPhase += mPhaseIncrement;
+//                while (mPhase >= twoPI) {
+//                    mPhase -= twoPI;
+//                }
+//            }
+//            break;
+//        case OSCILLATOR_MODE_SQUARE:
+//            for (int i = 0; i < nFrames; i++) {
+//                auto env = amp.getNextSample();
+//                if (mPhase <= mPI) {
+//                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
+//                        buffer.addSample(j, i, (float) 1.0 * env);
+//                    }
+//                } else {
+//                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
+//                        buffer.addSample(j, i, (float) -1.0 * env);
+//                    }
+//                }
+//                mPhase += mPhaseIncrement;
+//                while (mPhase >= twoPI) {
+//                    mPhase -= twoPI;
+//                }
+//            }
+//            break;
+//        case OSCILLATOR_MODE_TRIANGLE:
+//            for (int i = 0; i < nFrames; i++) {
+//                auto env = amp.getNextSample();
+//                double value = -1.0 + (2.0 * mPhase / twoPI);
+//                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+//                    buffer.addSample(j, i, (float)(2.0 * (fabs(value) - 0.5)) * env);
+//                }
+//                mPhase += mPhaseIncrement;
+//                while (mPhase >= twoPI) {
+//                    mPhase -= twoPI;
+//                }
+//            }
+//            break;
+//    }
 }
 
 double Oscillator::naiveWaveformForMode(OscillatorMode mode) {
