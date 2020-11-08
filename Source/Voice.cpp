@@ -126,11 +126,10 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             // set counters
             read += max;
             updateCounter -= max;
-            float nextFilterEnvSample;
-            int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
 
             // advance the filter envelope for the amount of processed samples
             // and keep the most recent setting
+            float nextFilterEnvSample;
             while (max-- > 0)
                  filterEnvelope.getNextSample();
             nextFilterEnvSample = filterEnvelope.getNextSample();
@@ -147,6 +146,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
                 // calculate max cutoff from envelope
                 float freqMax = freq + ((20000.0f - freq) * amount);
+                int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
                 float lfoCutoffFreqHz = juce::jmap (lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, freqMax);
                 auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
 

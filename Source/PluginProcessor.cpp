@@ -114,7 +114,7 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     lfo.setSampleRate(sampleRate);
     lfo.setFrequency(tree.getParameterAsValue("LFO_FREQUENCY").getValue());
     lfo.setMode(OSCILLATOR_MODE_SINE);
-    lfoBuffer = juce::dsp::AudioBlock<float> (heapBlock, getTotalNumOutputChannels(), samplesPerBlock);
+    lfoBuffer = juce::dsp::AudioBlock<float> (heapBlock, 1, samplesPerBlock);
     lfoBuffer.clear();
     
     // prepare voices with buffer/sample rate
@@ -173,8 +173,16 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     // prepare lfo for synth processing
     lfoBuffer.clear();
-    lfo.setFrequency(tree.getParameterAsValue("LFO_FREQUENCY").getValue());
-    lfo.generate(lfoBuffer, buffer.getNumSamples());
+    float lfoFrequency = tree.getParameterAsValue("LFO_FREQUENCY").getValue();
+    lfo.setFrequency(lfoFrequency);
+    if (lfoFrequency < 0.0005)
+    {
+        lfoBuffer.fill(-1.0f);
+    }
+    else
+    {
+        lfo.generate(lfoBuffer, buffer.getNumSamples());
+    }
     
     // This needs to be before this process loop.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
