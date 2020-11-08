@@ -25,12 +25,16 @@ public:
     void resized() override;
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> frequencyValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> amountValue;
 
 private:
     SympleSynthAudioProcessor& audioProcessor;
 
     juce::Slider frequencyDial;
     juce::Label frequencyLabel;
+    
+    juce::Slider amountDial;
+    juce::Label amountLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LfoInterface)
 };

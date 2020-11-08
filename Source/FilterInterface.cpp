@@ -57,7 +57,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     filterAmountDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterAmountDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     filterAmountDial.setPopupDisplayEnabled(true, true, this);
-    filterAmountDial.setTextValueSuffix("%");
+    filterAmountDial.setTextValueSuffix(" semitones");
 
     addAndMakeVisible(amountLabel);
     amountLabel.setText("Env Amount", juce::dontSendNotification);

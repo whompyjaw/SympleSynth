@@ -250,9 +250,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     cutoffRange.setSkewForCentre(1000.0f);
 
     // filter parameters
+    juce::NormalisableRange<float> envelopeAmountRange(0, 100, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", cutoffRange, 8000.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 0.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", amountRange, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", envelopeAmountRange, 0));
 
     // envelope knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
@@ -299,6 +300,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     juce::NormalisableRange<float> lfoFrequencyRange = juce::NormalisableRange<float>(0.0f, 200.0f);
     lfoFrequencyRange.setSkewForCentre(10.0f);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_FREQUENCY", "LFO Frequency", lfoFrequencyRange, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_AMOUNT", "LFO Amount", envelopeAmountRange, 0));
 
     return { parameters.begin(), parameters.end() };
 }

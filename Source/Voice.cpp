@@ -142,13 +142,18 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                 // get filter params from state tree
                 float freq = oscTree.getRawParameterValue("CUTOFF")->load();
                 float res = oscTree.getRawParameterValue("RESONANCE")->load() / 100;
-                float amount = oscTree.getRawParameterValue("AMOUNT")->load() / 100;
+                float amount = oscTree.getParameterAsValue("AMOUNT").getValue();
+                float lfoAmount = oscTree.getParameterAsValue("LFO_AMOUNT").getValue();
+                int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
 
                 // calculate max cutoff from envelope
-                float freqMax = freq + ((20000.0f - freq) * amount);
-                int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
-                float lfoCutoffFreqHz = juce::jmap (lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, freqMax);
+                // semitone calculations from
+                // https://pages.mtu.edu/~suits/NoteFreqCalcs.html
+                float freqMax = juce::jmin((float) (freq * pow(twelfthRoot, amount)), 20000.0f);
+                float lfoFreqMax = juce::jmin((float) (freq * pow(twelfthRoot, lfoAmount)), 20000.0f);
+
                 auto cutOffFreqHz = juce::jmap (nextFilterEnvSample, 0.0f, 1.0f, freq, freqMax);
+                float lfoCutoffFreqHz = juce::jmap (lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, lfoFreqMax);
 
                 // reset filter values
                 filterModeInt = oscTree.getParameterAsValue("FILTER_1_MODE").getValue();

@@ -22,18 +22,33 @@ LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
     frequencyDial.setPopupDisplayEnabled(true, true, this);
     frequencyDial.setTextValueSuffix(" hz");
     
+    // add lfo amount dial
+    addAndMakeVisible(&amountDial);
+    amountDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    amountDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    amountDial.setPopupDisplayEnabled(true, true, this);
+    amountDial.setTextValueSuffix(" semitones");
+    
     // add frequency label
     addAndMakeVisible(frequencyLabel);
     frequencyLabel.setText("Frequency", juce::dontSendNotification);
     frequencyLabel.setJustificationType(juce::Justification::centred);
     frequencyLabel.attachToComponent(&frequencyDial, false);
     
+    // add amount label
+    addAndMakeVisible(amountLabel);
+    amountLabel.setText("Amount", juce::dontSendNotification);
+    amountLabel.setJustificationType(juce::Justification::centred);
+    amountLabel.attachToComponent(&amountDial, false);
+    
     frequencyValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_FREQUENCY", frequencyDial);
+    amountValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_AMOUNT", amountDial);
 }
 
 LfoInterface::~LfoInterface()
 {
     frequencyValue.reset();
+    amountValue.reset();
 }
 
 void LfoInterface::paint (juce::Graphics&)
@@ -53,5 +68,8 @@ void LfoInterface::resized()
     auto knobHeight = paramsArea.getHeight() - labelMargin;
     
     auto frequencyArea = paramsArea.removeFromLeft(colWidth);
+    auto blankArea = paramsArea.removeFromLeft(colWidth);
+    auto amountArea = paramsArea.removeFromLeft(colWidth);
     frequencyDial.setBounds(frequencyArea.getX(), frequencyArea.getY() + labelMargin, colWidth, knobHeight);
+    amountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, colWidth, knobHeight);
 }

@@ -58,6 +58,7 @@ private:
     double level = 0.0;
     int osc1ModeInt = 0;
     int osc2ModeInt = 0;
+    double twelfthRoot = pow(2.0, 1.0 / 12.0);
     const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing
