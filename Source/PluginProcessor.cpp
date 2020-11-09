@@ -28,7 +28,7 @@ SympleSynthAudioProcessor::SympleSynthAudioProcessor()
     synth.clearVoices();
     for (int i = 0; i < VOICE_COUNT; ++i)
     {
-        synth.addVoice(new SynthVoice(tree));
+        synth.addVoice(new SynthVoice(tree, lfoBuffer));
     }
 
     synth.clearSounds();
@@ -110,6 +110,13 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     lastSampleRate = sampleRate; // this is in case the sample rate is changed while the synth is being used so it doesn't 
     synth.setCurrentPlaybackSampleRate(lastSampleRate);
     
+    // prepare lfo
+    lfo.setSampleRate(sampleRate);
+    lfo.setFrequency(tree.getParameterAsValue("LFO_FREQUENCY").getValue());
+    lfo.setMode(OSCILLATOR_MODE_SINE);
+    lfoBuffer = juce::dsp::AudioBlock<float> (heapBlock, 1, samplesPerBlock);
+    lfoBuffer.clear();
+    
     // prepare voices with buffer/sample rate
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
@@ -163,6 +170,19 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     buffer.clear();
     keyboardState.processNextMidiBuffer(midiMessages, 0,
         buffer.getNumSamples(), true);
+    
+    // prepare lfo for synth processing
+    lfoBuffer.clear();
+    float lfoFrequency = tree.getParameterAsValue("LFO_FREQUENCY").getValue();
+    lfo.setFrequency(lfoFrequency);
+    if (lfoFrequency < 0.0005)
+    {
+        lfoBuffer.fill(-1.0f);
+    }
+    else
+    {
+        lfo.generate(lfoBuffer, buffer.getNumSamples());
+    }
     
     // This needs to be before this process loop.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
@@ -230,9 +250,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     cutoffRange.setSkewForCentre(1000.0f);
 
     // filter parameters
+    juce::NormalisableRange<float> envelopeAmountRange(0, 100, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("CUTOFF", "Cutoff", cutoffRange, 8000.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("RESONANCE", "Resonance", resRange, 0.0f));
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", amountRange, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMOUNT", "Amount", envelopeAmountRange, 0));
 
     // envelope knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
@@ -274,6 +295,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 
     juce::NormalisableRange<float> filterMode(0, 5, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_MODE", "Filter 1 Mode", filterMode, 0));
+
+    // lfo parameters
+    juce::NormalisableRange<float> lfoFrequencyRange = juce::NormalisableRange<float>(0.0f, 200.0f);
+    lfoFrequencyRange.setSkewForCentre(10.0f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_FREQUENCY", "LFO Frequency", lfoFrequencyRange, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_AMOUNT", "LFO Amount", envelopeAmountRange, 0));
 
     return { parameters.begin(), parameters.end() };
 }

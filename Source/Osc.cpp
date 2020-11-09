@@ -40,7 +40,7 @@ void Oscillator::startNote() {
     mPhase = 0.0;
 }
 
-void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames, juce::ADSR& amp)
+void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int nFrames)
 {
     double value = 0.0;
     double t = mPhase / twoPI;
@@ -130,26 +130,57 @@ double Oscillator::naiveWaveformForMode(OscillatorMode mode) {
     double value;
     switch (mode) {
         case OSCILLATOR_MODE_SINE:
-            value = sin(mPhase);
+            for (int i = 0; i < nFrames; i++) {
+                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                    buffer.addSample(j, i, (float) (sin(mPhase)));
+                }
+                mPhase += mPhaseIncrement;
+                while (mPhase >= twoPI) {
+                    mPhase -= twoPI;
+                }
+            }
             break;
         case OSCILLATOR_MODE_SAW:
-            value = (2.0 * mPhase / twoPI) - 1.0;
+            for (int i = 0; i < nFrames; i++) {
+                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI)));
+                }
+                mPhase += mPhaseIncrement;
+                while (mPhase >= twoPI) {
+                    mPhase -= twoPI;
+                }
+            }
             break;
         case OSCILLATOR_MODE_SQUARE:
-            if (mPhase < mPI) {
-                value = 1.0;
-            } else {
-                value = -1.0;
+            for (int i = 0; i < nFrames; i++) {
+                if (mPhase <= mPI) {
+                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                        buffer.addSample(j, i, (float) 1.0);
+                    }
+                } else {
+                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                        buffer.addSample(j, i, (float) -1.0);
+                    }
+                }
+                mPhase += mPhaseIncrement;
+                while (mPhase >= twoPI) {
+                    mPhase -= twoPI;
+                }
             }
             break;
         case OSCILLATOR_MODE_TRIANGLE:
-            value = -1.0 + (2.0 * mPhase / twoPI);
-            value = 2.0 * (fabs(value) - 0.5);
-            break;
-        default:
+            for (int i = 0; i < nFrames; i++) {
+                double value = -1.0 + (2.0 * mPhase / twoPI);
+                for (int j = 0; j < buffer.getNumChannels(); ++j) {
+                    buffer.addSample(j, i, (float) (2.0 * (fabs(value) - 0.5)));
+                }
+                mPhase += mPhaseIncrement;
+                while (mPhase >= twoPI) {
+                    mPhase -= twoPI;
+                }
+            }
             break;
     }
-    return value;
 }
 
 //double PolyBLEPOscillator::poly_blep(double t)

@@ -13,6 +13,9 @@
             file="Source/FilterInterface.cpp"/>
       <FILE id="ZBJCU5" name="FilterInterface.h" compile="0" resource="0"
             file="Source/FilterInterface.h"/>
+      <FILE id="GE7QFi" name="LfoInterface.cpp" compile="1" resource="0"
+            file="Source/LfoInterface.cpp"/>
+      <FILE id="Z6EMJl" name="LfoInterface.h" compile="0" resource="0" file="Source/LfoInterface.h"/>
       <FILE id="g9C7Ld" name="MasterAmp.cpp" compile="1" resource="0" file="Source/MasterAmp.cpp"/>
       <FILE id="TZNHZQ" name="MasterAmp.h" compile="0" resource="0" file="Source/MasterAmp.h"/>
       <FILE id="PJBOZJ" name="Osc.cpp" compile="1" resource="0" file="Source/Osc.cpp"/>
