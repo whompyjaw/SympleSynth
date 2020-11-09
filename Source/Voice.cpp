@@ -165,12 +165,6 @@ void SynthVoice::prepare(const juce::dsp::ProcessSpec& spec)
 {
     voiceBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
     filter.prepare(spec);
-    
-    // initialize filter
-    float freq = oscTree.getRawParameterValue("CUTOFF")->load();
-    float res = oscTree.getRawParameterValue("RESONANCE")->load() / 10;
-    filter.setCutoffFrequencyHz(freq);
-    filter.setResonance(res);
 }
 
 /*
