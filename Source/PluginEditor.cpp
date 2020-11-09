@@ -19,7 +19,8 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       osc1(p),
       osc2(p),
       filter(p),
-      amplifier(p)
+      amplifier(p),
+      lfo(p)
 {
     // Add Title Label
     addAndMakeVisible(titleLabel);
@@ -61,6 +62,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(filter);
     addAndMakeVisible(amplifier);
+    addAndMakeVisible(lfo);
 
     // Add Labels
     addAndMakeVisible(osc1Label);
@@ -86,6 +88,12 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     ampLabel.setFont(juce::Font(18.0, juce::Font::bold));
     ampLabel.setJustificationType(juce::Justification::centred);
     ampLabel.attachToComponent(&amplifier, false);
+    
+    addAndMakeVisible(lfoLabel);
+    lfoLabel.setText("LFO", juce::dontSendNotification);
+    lfoLabel.setFont(juce::Font(18.0, juce::Font::bold));
+    lfoLabel.setJustificationType(juce::Justification::centred);
+    lfoLabel.attachToComponent(&lfo, false);
 
     setSize (1200, 800); 
     
@@ -131,6 +139,7 @@ void SympleSynthAudioProcessorEditor::resized()
 
     filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));
     amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
+    lfo.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
  }
 
 void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)
