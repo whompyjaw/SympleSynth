@@ -105,6 +105,16 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         nextFilterEnvSample = filterEnvelope.getNextSample();
         setFilter(read, nextFilterEnvSample);
 
+        // TODO: This is where I think we could put all our processing so we can DRY our code. remove the loops in Oscillator::generate
+//        for(int sample = startSample; sample < numSamples; sample++)
+//        {
+//            for(int channel = 0; channel < outputBuffer.getNumChannels(); channel++)
+//            {
+//
+//            }
+//
+//        }
+        
         // process every sample
         while (read < (startSample + numSamples)) {
             auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);

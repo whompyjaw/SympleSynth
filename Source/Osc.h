@@ -44,7 +44,8 @@ public:
 //    ~Oscillator();
 protected:
     OscillatorMode mOscillatorMode;
-//    double naiveWaveformForMode(OscillatorMode mode);
+    double naiveWaveformForMode(OscillatorMode mode);
+    double polyBlep(double t);
     const double mPI;
     const double twoPI;
     double mFrequency;
