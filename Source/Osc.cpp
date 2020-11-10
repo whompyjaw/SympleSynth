@@ -55,9 +55,11 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
         {
             for(int channel = 0; channel < buffer.getNumChannels(); channel++)
             {
-                waveSegment = (2.0 * mPhase / twoPI) - 1.0;
-//                waveSegment -= polyBlep(t);
-                buffer.addSample(channel, sample, (float) waveSegment);
+                // TODO: Put the if statements here for wave creation
+                waveSegment = (2.0 * mPhase / twoPI) - 1.0; // naive wave
+                waveSegment -= polyBlep(mPhase / twoPI);
+                buffer.addSample(channel, sample, (float) waveSegment); // add sample to buffer
+                
             }
             mPhase += mPhaseIncrement;
             while (mPhase >= twoPI)
