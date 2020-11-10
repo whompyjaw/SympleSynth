@@ -72,10 +72,10 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     osc1Label.attachToComponent(&osc1, false);
 
     addAndMakeVisible(osc2Label);
-    osc1Label.setText("OSCILLATOR 2", juce::dontSendNotification);
-    osc1Label.setFont(juce::Font(18.0, juce::Font::bold));
-    osc1Label.setJustificationType(juce::Justification::centred);
-    osc1Label.attachToComponent(&osc2, false);
+    osc2Label.setText("OSCILLATOR 2", juce::dontSendNotification);
+    osc2Label.setFont(juce::Font(18.0, juce::Font::bold));
+    osc2Label.setJustificationType(juce::Justification::centred);
+    osc2Label.attachToComponent(&osc2, false);
 
     addAndMakeVisible(filter1Label);
     filter1Label.setText("FILTER 1", juce::dontSendNotification);
@@ -95,7 +95,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     lfoLabel.setJustificationType(juce::Justification::centred);
     lfoLabel.attachToComponent(&lfo, false);
 
-    setSize (1200, 800); 
+    setSize (1200, 800);
     
 }
 
