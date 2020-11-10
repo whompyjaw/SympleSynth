@@ -25,9 +25,9 @@ enum OscillatorMode {
 class Oscillator {
 private:
     double polyBlep();
+    double lastOutput;
 
 public:
-
     void setMode(OscillatorMode mode);
     void setFrequency(double frequency);
     void setSampleRate(double sampleRate);
@@ -38,13 +38,12 @@ public:
     mPI(2*acos(0.0)),
     twoPI(2 * mPI),
     mFrequency(440.0),
-    mPhase(0.0),
-    mSampleRate(44100.0) { updateIncrement(); };
+    mPhase(0.0) { updateIncrement(); }; // TODO: This could be an issue if the user or DAW is set to a different sample rate.
     
 //    ~Oscillator();
 protected:
     OscillatorMode mOscillatorMode;
-    double naiveWaveformForMode(OscillatorMode mode);
+//    double naiveWaveformForMode(OscillatorMode mode);
     double polyBlep(double t);
     const double mPI;
     const double twoPI;
@@ -55,14 +54,3 @@ protected:
     
     void updateIncrement();
 };
-//
-//class PolyBLEPOscillator : public Oscillator
-//{
-//public:
-//    PolyBLEPOscillator() : lastOutput(0.0) {updateIncrement();};
-//    ~PolyBLEPOscillator();
-//    double nextSample();
-//private:
-//    double poly_blep(double t); // will generate the ripples at the edges
-//    double lastOutput; // needed by triangle wave
-//};

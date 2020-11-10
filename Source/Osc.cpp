@@ -45,36 +45,42 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
     double waveSegment = 0.0;
     double t = mPhase / twoPI;
     
-    if (mOscillatorMode == OSCILLATOR_MODE_SINE) {
-        waveSegment = naiveWaveformForMode(OSCILLATOR_MODE_SINE);
-    } else if (mOscillatorMode == OSCILLATOR_MODE_SAW) {
+//    if (mOscillatorMode == OSCILLATOR_MODE_SINE)
+//    {
+//        waveSegment = naiveWaveformForMode(OSCILLATOR_MODE_SINE);
+//    }
+    if (mOscillatorMode == OSCILLATOR_MODE_SAW)
+    {
         for(int sample = 0; sample < numSamples; sample++)
         {
             for(int channel = 0; channel < buffer.getNumChannels(); channel++)
             {
                 waveSegment = (2.0 * mPhase / twoPI) - 1.0;
-                waveSegment += polyBlep(t);
-                buffer.addSample(sample, channel, waveSegment);
+//                waveSegment -= polyBlep(t);
+                buffer.addSample(channel, sample, (float) waveSegment);
             }
             mPhase += mPhaseIncrement;
-            while (mPhase >= twoPI) {
+            while (mPhase >= twoPI)
+            {
                 mPhase -= twoPI;
-        }
-    } else {
-        waveSegment = naiveWaveformForMode(OSCILLATOR_MODE_SQUARE);
-        waveSegment += polyBlep(t);
-        waveSegment -= polyBlep(fmod(t + 0.5, 1.0));
-        if (mOscillatorMode == OSCILLATOR_MODE_TRIANGLE) {
-            // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
-            waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
-            lastOutput = waveSegment;
+            }
         }
     }
-    
-    mPhase += mPhaseIncrement;
-    while (mPhase >= twoPI) {
-        mPhase -= twoPI;
-    }
+//        else {
+//        waveSegment = naiveWaveformForMode(OSCILLATOR_MODE_SQUARE);
+//        waveSegment += polyBlep(t);
+//        waveSegment -= polyBlep(fmod(t + 0.5, 1.0));
+//        if (mOscillatorMode == OSCILLATOR_MODE_TRIANGLE) {
+//            // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
+//            waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
+//            lastOutput = waveSegment;
+//        }
+//    }
+//
+//    mPhase += mPhaseIncrement;
+//    while (mPhase >= twoPI) {
+//        mPhase -= twoPI;
+//    }
 //    return waveSegment;
 }
 
@@ -140,16 +146,18 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
 double Oscillator::polyBlep(double t)
 {
     double dt = mPhaseIncrement / twoPI;
-    if (t < dt) // this is at beginning of wave: 0 <= t < 1
+    // 0 <= t < 1
+    if (t < dt)
     {
         t /= dt;
         return t+t - t*t - 1.0;
-    } // at end of wave: -1 < t < 0
+    }
+    // -1 < t < 0
     else if (t > 1.0 - dt)
     {
         t = (t - 1.0) / dt;
         return t*t + t+t + 1.0;
     }
-    else
-        return 0.0;
+    // 0 otherwise
+    else return 0.0;
 }
