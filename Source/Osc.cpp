@@ -43,39 +43,68 @@ void Oscillator::startNote() {
 void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
 {
     double waveSegment = 0.0;
-    double t = mPhase / twoPI;
+    //double t = mPhase / twoPI;
     
-//    if (mOscillatorMode == OSCILLATOR_MODE_SINE)
-//    {
-//        waveSegment = naiveWaveformForMode(OSCILLATOR_MODE_SINE);
-//    }
-    if (mOscillatorMode == OSCILLATOR_MODE_SAW)
+    for (int sample = 0; sample < numSamples; sample++)
     {
-        for(int sample = 0; sample < numSamples; sample++)
-        {
-            for(int channel = 0; channel < buffer.getNumChannels(); channel++)
+        polyBlepPhase = mPhase / twoPI;
+        for (int channel = 0; channel < buffer.getNumChannels(); channel++)
+        {   
+            //polyBlepPhase = mPhase
+            switch (mOscillatorMode)
             {
-                // TODO: Put the if statements here for wave creation
+            case OSCILLATOR_MODE_SAW:
                 waveSegment = (2.0 * mPhase / twoPI) - 1.0; // naive wave
-                waveSegment -= polyBlep(mPhase / twoPI);
-                buffer.addSample(channel, sample, (float) waveSegment); // add sample to buffer
+                waveSegment -= polyBlep(polyBlepPhase);
+                break;
+            case OSCILLATOR_MODE_SINE:
+                waveSegment = sin(mPhase);
+                break;
+            case OSCILLATOR_MODE_SQUARE:
+                if (mPhase < mPI)
+                {
+                    waveSegment = 1.0;
+                }
+                else
+                {
+                    waveSegment = -1.0;
+                }
+                waveSegment += polyBlep(polyBlepPhase);
+                waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
+                break;
+            case OSCILLATOR_MODE_TRIANGLE:
+                //uncomment this for naive triangle
+                //waveSegment = -1.0 + (2.0 * mPhase / twoPI);
+                //waveSegment = 2.0 * (fabs(waveSegment) - 0.5);
                 
+                // uncomment this for polyBlep triangle
+                if (mPhase < mPI)
+                {
+                    waveSegment = 1.0;
+                }
+                else
+                {
+                    waveSegment = -1.0;
+                }
+                waveSegment += polyBlep(polyBlepPhase);
+                waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
+                // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
+                waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
+                lastOutput = waveSegment;
             }
-            mPhase += mPhaseIncrement;
-            while (mPhase >= twoPI)
-            {
-                mPhase -= twoPI;
-            }
+            buffer.addSample(channel, sample, (float)waveSegment);
+        }
+            
+        mPhase += mPhaseIncrement;
+        while (mPhase >= twoPI)
+        {
+            mPhase -= twoPI;
         }
     }
-//        else {
-//        waveSegment = naiveWaveformForMode(OSCILLATOR_MODE_SQUARE);
-//        waveSegment += polyBlep(t);
-//        waveSegment -= polyBlep(fmod(t + 0.5, 1.0));
+}
+
 //        if (mOscillatorMode == OSCILLATOR_MODE_TRIANGLE) {
-//            // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
-//            waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
-//            lastOutput = waveSegment;
+//            
 //        }
 //    }
 //
@@ -84,35 +113,8 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
 //        mPhase -= twoPI;
 //    }
 //    return waveSegment;
-}
 
-//double Oscillator::naiveWaveformForMode(OscillatorMode mode) {
-//    double waveSegment;
-//    double t = mPhase / twoPI;
-//    switch (mode) {
-//        case OSCILLATOR_MODE_SINE:
-//            for (int sample = 0; sample < numSamples; sample++) {
-//                for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
-//                    buffer.addSample(channel, sample, (float) (sin(mPhase)));
-//                }
-//                mPhase += mPhaseIncrement;
-//                while (mPhase >= twoPI) {
-//                    mPhase -= twoPI;
-//                }
-//            }
-//            break;
-//        case OSCILLATOR_MODE_SAW:
-//            for (int i = 0; i < nFrames; i++) {
-//                for (int j = 0; j < buffer.getNumChannels(); ++j) {
-//                    sample+=polyBlep(t);
-//                    buffer.addSample(j, i,(float) (1.0 - (2.0 * mPhase / twoPI)));
-//                }
-//                mPhase += mPhaseIncrement;
-//                while (mPhase >= twoPI) {
-//                    mPhase -= twoPI;
-//                }
-//            }
-//            break;
+
 //        case OSCILLATOR_MODE_SQUARE:
 //            for (int i = 0; i < nFrames; i++) {
 //                if (mPhase <= mPI) {
@@ -124,10 +126,6 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
 //                        buffer.addSample(j, i, (float) -1.0);
 //                    }
 //                }
-//                mPhase += mPhaseIncrement;
-//                while (mPhase >= twoPI) {
-//                    mPhase -= twoPI;
-//                }
 //            }
 //            break;
 //        case OSCILLATOR_MODE_TRIANGLE:
@@ -135,10 +133,6 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
 //                double waveSegment = -1.0 + (2.0 * mPhase / twoPI);
 //                for (int j = 0; j < buffer.getNumChannels(); ++j) {
 //                    buffer.addSample(j, i, (float) (2.0 * (fabs(waveSegment) - 0.5)));
-//                }
-//                mPhase += mPhaseIncrement;
-//                while (mPhase >= twoPI) {
-//                    mPhase -= twoPI;
 //                }
 //            }
 //            break;

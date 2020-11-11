@@ -24,8 +24,9 @@ enum OscillatorMode {
 
 class Oscillator {
 private:
-    double polyBlep();
+    double polyBlep(double);
     double lastOutput;
+    double polyBlepPhase;
 
 public:
     void setMode(OscillatorMode mode);
@@ -38,13 +39,13 @@ public:
     mPI(2*acos(0.0)),
     twoPI(2 * mPI),
     mFrequency(440.0),
+    lastOutput(0.0),
     mPhase(0.0) { updateIncrement(); }; // TODO: This could be an issue if the user or DAW is set to a different sample rate.
     
 //    ~Oscillator();
 protected:
     OscillatorMode mOscillatorMode;
 //    double naiveWaveformForMode(OscillatorMode mode);
-    double polyBlep(double t);
     const double mPI;
     const double twoPI;
     double mFrequency;
