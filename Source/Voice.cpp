@@ -122,14 +122,14 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             double osc1Gain = oscTree.getParameterAsValue("OSC_1_GAIN").getValue();
             oscMode = static_cast<OscillatorMode> (osc1ModeInt);
             osc1.setMode(oscMode);
-            osc1.generate(subBlock, (int) subBlock.getNumSamples());
+            osc1.generate(subBlock, (int) subBlock.getNumSamples(), osc1Gain);
 
             // add oscillator 2 sound
             osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
-            double osc2Gain = oscTree.getParameterAsValue("OSC_1_GAIN").getValue();
+            double osc2Gain = oscTree.getParameterAsValue("OSC_2_GAIN").getValue();
             oscMode = static_cast<OscillatorMode> (osc2ModeInt);
             osc2.setMode(oscMode);
-            osc2.generate(subBlock, (int) subBlock.getNumSamples());
+            osc2.generate(subBlock, (int) subBlock.getNumSamples(), osc2Gain);
 
             // apply envelope
             applyEnvelope(subBlock);

@@ -181,7 +181,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     }
     else
     {
-        lfo.generate(lfoBuffer, buffer.getNumSamples());
+        lfo.generate(lfoBuffer, buffer.getNumSamples(), 0.0);
     }
     
     // This needs to be before this process loop.
