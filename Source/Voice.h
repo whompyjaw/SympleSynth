@@ -55,7 +55,6 @@ struct SynthVoice : public juce::SynthesiserVoice
     void prepare(const juce::dsp::ProcessSpec& spec);
 
 private:
-    double level = 0.0;
     int osc1ModeInt = 0;
     int osc2ModeInt = 0;
     double twelfthRoot = pow(2.0, 1.0 / 12.0);

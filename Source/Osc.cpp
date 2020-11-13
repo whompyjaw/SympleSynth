@@ -40,7 +40,7 @@ void Oscillator::startNote() {
     mPhase = 0.0;
 }
 
-void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
+void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, double gain)
 {
     double waveSegment = 0.0;
     //double t = mPhase / twoPI;
@@ -92,7 +92,7 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples)
                 waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
                 lastOutput = waveSegment;
             }
-            buffer.addSample(channel, sample, (float)waveSegment);
+            buffer.addSample(channel, sample, (float)waveSegment * juce::Decibels::decibelsToGain(gain));
         }
             
         mPhase += mPhaseIncrement;

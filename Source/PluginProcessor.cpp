@@ -181,7 +181,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     }
     else
     {
-        lfo.generate(lfoBuffer, buffer.getNumSamples());
+        lfo.generate(lfoBuffer, buffer.getNumSamples(), 0.0);
     }
     
     // This needs to be before this process loop.
@@ -292,6 +292,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     juce::NormalisableRange<float> oscillatorWaveType (0, 3, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_WAVE_TYPE", "Wave Type 1", oscillatorWaveType, 1, "Wave Type"));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_WAVE_TYPE", "Wave Type 2", oscillatorWaveType, 1, "Wave Type"));
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_GAIN", "Gain 1", masterGainRange, -20.0f, "Gain"));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_GAIN", "Gain 2", masterGainRange, -20.0f, "Gain"));
 
     juce::NormalisableRange<float> filterMode(0, 5, 1);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_MODE", "Filter 1 Mode", filterMode, 0));
