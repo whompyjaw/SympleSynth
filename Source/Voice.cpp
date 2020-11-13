@@ -43,9 +43,6 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     // reset oscillator phase
     osc1.startNote();
     osc2.startNote();
-    
-    // reduce note amplitude
-    level = velocity * 0.15;
 
     // calculate the frequency from the midi and the APVST
     int currentOctave1 = oscTree.getParameterAsValue("OSC_1_OCTAVE").getValue();
@@ -112,12 +109,14 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
             // add oscillator 1 sound
             osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
+            double osc1Gain = oscTree.getParameterAsValue("OSC_1_GAIN").getValue();
             oscMode = static_cast<OscillatorMode> (osc1ModeInt);
             osc1.setMode(oscMode);
             osc1.generate(subBlock, (int) subBlock.getNumSamples());
 
             // add oscillator 2 sound
             osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
+            double osc2Gain = oscTree.getParameterAsValue("OSC_1_GAIN").getValue();
             oscMode = static_cast<OscillatorMode> (osc2ModeInt);
             osc2.setMode(oscMode);
             osc2.generate(subBlock, (int) subBlock.getNumSamples());
