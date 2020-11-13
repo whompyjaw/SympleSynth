@@ -62,6 +62,19 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     waveLabel.setJustificationType(juce::Justification::centred);
     waveLabel.attachToComponent(&waveDial, false);
 
+    // Add Gain Dial & Label
+    addAndMakeVisible(&gainDial);
+    gainDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    gainDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    gainDial.setPopupDisplayEnabled(true, true, this);
+    gainDial.setTextValueSuffix(" db");
+
+    addAndMakeVisible(gainLabel);
+    gainLabel.setText("Gain", juce::dontSendNotification);
+    gainLabel.setJustificationType(juce::Justification::centred);
+    gainLabel.attachToComponent(&gainDial, false);
+
+
     addAndMakeVisible(tuningLabel);
     tuningLabel.setText("Tuning", juce::dontSendNotification);
     tuningLabel.setJustificationType(juce::Justification::centred);
@@ -73,6 +86,7 @@ OscInterface::~OscInterface()
     semiValue.reset();
     fineValue.reset();
     waveValue.reset();
+    gainValue.reset();
 }
 
 void OscInterface::paint(juce::Graphics &g)
@@ -82,7 +96,7 @@ void OscInterface::paint(juce::Graphics &g)
 void OscInterface::resized()
 {
     juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
-    auto dialAreaWidth = getWidth() / 3;
+    auto dialAreaWidth = getWidth() / 4;
     auto margin = 5;
     auto labelMargin = octLabel.getHeight();
 
@@ -102,11 +116,12 @@ void OscInterface::resized()
     auto octArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
     auto semiArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
     auto fineArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
+    auto gainArea = area.removeFromLeft(dialAreaWidth).reduced(margin);
 
     octDial.setBounds(octArea.getX(), octArea.getY() + labelMargin, dialWidth, dialWidth);
     semiDial.setBounds(semiArea.getX(), semiArea.getY() + labelMargin, dialWidth, dialWidth);
     fineDial.setBounds(fineArea.getX(), fineArea.getY() + labelMargin, dialWidth, dialWidth);
-
+    gainDial.setBounds(gainArea.getX(), gainArea.getY() + labelMargin, dialWidth, dialWidth);
 }
 
 void OscInterface::setParameters(SympleOscParameterNames& params)
@@ -115,5 +130,6 @@ void OscInterface::setParameters(SympleOscParameterNames& params)
     semiValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.semitone, semiDial);
     fineValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.finetune, fineDial);
     waveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.wavetype, waveDial);
+    gainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.gain, gainDial);
 }
 

@@ -34,6 +34,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     osc1Parameters.semitone = "OSC_1_SEMITONE";
     osc1Parameters.finetune = "OSC_1_FINE_TUNE";
     osc1Parameters.wavetype = "OSC_1_WAVE_TYPE";
+    osc1Parameters.gain = "OSC_1_GAIN";
     osc1.setParameters(osc1Parameters);
 
     // init osc2 parameter names struct
@@ -42,6 +43,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     osc2Parameters.semitone = "OSC_2_SEMITONE";
     osc2Parameters.finetune = "OSC_2_FINE_TUNE";
     osc2Parameters.wavetype = "OSC_2_WAVE_TYPE";
+    osc2Parameters.gain = "OSC_2_GAIN";
     osc2.setParameters(osc2Parameters);
 
     // init filter parameter names struct

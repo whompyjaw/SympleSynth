@@ -18,6 +18,7 @@ public:
     std::string semitone;
     std::string finetune;
     std::string wavetype;
+    std::string gain;
 };
 
 
@@ -35,6 +36,7 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> semiValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> fineValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> waveValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainValue;
 
 private:
     juce::Label tuningLabel;
@@ -51,9 +53,8 @@ private:
     juce::Slider waveDial;
     juce::Label waveLabel;
 
-   
-//    void setLayoutParams();
-    
+    juce::Slider gainDial;
+    juce::Label gainLabel;    
     
     SympleSynthAudioProcessor& audioProcessor;
 };
