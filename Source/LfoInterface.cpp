@@ -61,6 +61,7 @@ LfoInterface::~LfoInterface()
 {
     frequencyValue.reset();
     amountValue.reset();
+    waveTypeValue.reset();
 }
 
 void LfoInterface::paint (juce::Graphics& g)
