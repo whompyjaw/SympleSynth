@@ -52,6 +52,7 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
 
     // Add Wave Type Dial & Label
     addAndMakeVisible(&waveDial);
+    waveDial.addListener(this);
     waveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     waveDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     waveDial.setPopupDisplayEnabled(true, true, this);
@@ -168,9 +169,19 @@ void OscInterface::setParameters(SympleOscParameterNames& params)
 
 void OscInterface::setWaveType(int value)
 {
+    // make a check to apply the new value since the old button
+    // also fires a click event for some reason
     int currentValue = (int) audioProcessor.getTree().getParameterAsValue(waveParameterName).getValue();
     if (currentValue != value) {
         waveDial.setValue(value);
     }
 }
 
+void OscInterface::sliderValueChanged(juce::Slider* slider)
+{
+    if (slider == &waveDial)
+    {
+        int buttonIndex = (int) waveDial.getValue();
+        waveSelectButtons[buttonIndex]->triggerClick();
+    }
+}

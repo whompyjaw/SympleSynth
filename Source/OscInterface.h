@@ -22,7 +22,8 @@ public:
 };
 
 
-class OscInterface : public juce::Component
+class OscInterface : public juce::Component,
+                     private juce::Slider::Listener
 {
 public:
     OscInterface(SympleSynthAudioProcessor&);
@@ -63,4 +64,5 @@ private:
     SympleSynthAudioProcessor& audioProcessor;
     
     void setWaveType(int);
+    void sliderValueChanged (juce::Slider* slider) override;
 };
