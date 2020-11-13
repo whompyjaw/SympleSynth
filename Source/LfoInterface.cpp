@@ -28,6 +28,12 @@ LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
     amountDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     amountDial.setPopupDisplayEnabled(true, true, this);
     amountDial.setTextValueSuffix(" semitones");
+
+    addAndMakeVisible(&waveTypeDial);
+    waveTypeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    waveTypeDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    waveTypeDial.setPopupDisplayEnabled(true, true, this);
+    
     
     // add frequency label
     addAndMakeVisible(frequencyLabel);
@@ -40,9 +46,15 @@ LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
     amountLabel.setText("Amount", juce::dontSendNotification);
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&amountDial, false);
+
+    addAndMakeVisible(waveTypeLabel);
+    waveTypeLabel.setText("Wave Type", juce::dontSendNotification);
+    waveTypeLabel.setJustificationType(juce::Justification::centred);
+    waveTypeLabel.attachToComponent(&waveTypeDial, false);
     
     frequencyValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_FREQUENCY", frequencyDial);
     amountValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_AMOUNT", amountDial);
+    waveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_WAVE_TYPE", waveTypeDial);
 }
 
 LfoInterface::~LfoInterface()
@@ -51,8 +63,9 @@ LfoInterface::~LfoInterface()
     amountValue.reset();
 }
 
-void LfoInterface::paint (juce::Graphics&)
+void LfoInterface::paint (juce::Graphics& g)
 {
+    //g.fillAll(juce::Colours::white);
 }
 
 void LfoInterface::resized()
@@ -68,8 +81,10 @@ void LfoInterface::resized()
     auto knobHeight = paramsArea.getHeight() - labelMargin;
     
     auto frequencyArea = paramsArea.removeFromLeft(colWidth);
-    auto blankArea = paramsArea.removeFromLeft(colWidth);
+    auto waveTypeArea = paramsArea.removeFromLeft(colWidth);
     auto amountArea = paramsArea.removeFromLeft(colWidth);
+    
     frequencyDial.setBounds(frequencyArea.getX(), frequencyArea.getY() + labelMargin, colWidth, knobHeight);
     amountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, colWidth, knobHeight);
+    waveTypeDial.setBounds(waveTypeArea.getX(), waveTypeArea.getY() + labelMargin, colWidth, knobHeight);
 }

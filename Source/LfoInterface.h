@@ -26,6 +26,7 @@ public:
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> frequencyValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> amountValue;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> waveTypeValue;
 
 private:
     SympleSynthAudioProcessor& audioProcessor;
@@ -35,6 +36,9 @@ private:
     
     juce::Slider amountDial;
     juce::Label amountLabel;
+
+    juce::Slider waveTypeDial;
+    juce::Label waveTypeLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LfoInterface)
 };

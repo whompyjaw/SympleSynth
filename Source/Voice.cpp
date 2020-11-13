@@ -105,15 +105,6 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         nextFilterEnvSample = filterEnvelope.getNextSample();
         setFilter(read, nextFilterEnvSample);
 
-        // TODO: This is where I think we could put all our processing so we can DRY our code. remove the loops in Oscillator::generate
-//        for(int sample = startSample; sample < numSamples; sample++)
-//        {
-//            for(int channel = 0; channel < outputBuffer.getNumChannels(); channel++)
-//            {
-//
-//            }
-//
-//        }
         
         // process every sample
         while (read < (startSample + numSamples)) {
@@ -223,6 +214,7 @@ void SynthVoice::setFilter(size_t read, float filterEnv)
     float res = oscTree.getRawParameterValue("RESONANCE")->load() / 100;
     float amount = oscTree.getParameterAsValue("AMOUNT").getValue();
     float lfoAmount = oscTree.getParameterAsValue("LFO_AMOUNT").getValue();
+    
     int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
 
     // calculate max cutoff from envelope

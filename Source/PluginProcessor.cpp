@@ -113,7 +113,8 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // prepare lfo
     lfo.setSampleRate(sampleRate);
     lfo.setFrequency(tree.getParameterAsValue("LFO_FREQUENCY").getValue());
-    lfo.setMode(OSCILLATOR_MODE_SINE);
+    int oscMode = tree.getParameterAsValue("LFO_WAVE_TYPE").getValue();
+    lfo.setMode(static_cast<OscillatorMode> (oscMode));
     lfoBuffer = juce::dsp::AudioBlock<float> (heapBlock, 1, samplesPerBlock);
     lfoBuffer.clear();
     
@@ -174,6 +175,8 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     // prepare lfo for synth processing
     lfoBuffer.clear();
     float lfoFrequency = tree.getParameterAsValue("LFO_FREQUENCY").getValue();
+    int oscMode = tree.getParameterAsValue("LFO_WAVE_TYPE").getValue();
+    lfo.setMode(static_cast<OscillatorMode> (oscMode));
     lfo.setFrequency(lfoFrequency);
     if (lfoFrequency < 0.0005)
     {
@@ -301,6 +304,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     lfoFrequencyRange.setSkewForCentre(10.0f);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_FREQUENCY", "LFO Frequency", lfoFrequencyRange, 0.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_AMOUNT", "LFO Amount", envelopeAmountRange, 0));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("LFO_WAVE_TYPE", "LFO Wave Type", oscillatorWaveType, 1));
 
     return { parameters.begin(), parameters.end() };
 }
