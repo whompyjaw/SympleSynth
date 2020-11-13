@@ -74,7 +74,6 @@ private:
     juce::AudioProcessorValueTreeState& oscTree;
     Oscillator osc1;
     Oscillator osc2;
-    juce::MixerAudioSource mixer;
 
     juce::dsp::LadderFilter<float> filter;
     OscillatorMode oscMode;
