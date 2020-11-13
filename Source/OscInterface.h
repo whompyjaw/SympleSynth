@@ -55,6 +55,12 @@ private:
 
     juce::Slider gainDial;
     juce::Label gainLabel;    
-    
+
+    int groupId = rand() % 1000000; // random number for radio group
+    juce::OwnedArray<juce::TextButton> waveSelectButtons;
+    std::string waveParameterName;
+
     SympleSynthAudioProcessor& audioProcessor;
+    
+    void setWaveType(int);
 };

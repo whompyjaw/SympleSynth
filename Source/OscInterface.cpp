@@ -78,6 +78,33 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     addAndMakeVisible(tuningLabel);
     tuningLabel.setText("Tuning", juce::dontSendNotification);
     tuningLabel.setJustificationType(juce::Justification::centred);
+
+    // create wave select buttons
+    for (int i = 0; i < 4; ++i)
+    {
+        auto* button = waveSelectButtons.add(new juce::TextButton());
+        switch (i) {
+            case 0:
+                button->setButtonText("Sine");
+                button->onClick = [this] { setWaveType(0); };
+                break;
+            case 1:
+                button->setButtonText("Saw");
+                button->onClick = [this] { setWaveType(1); };
+                break;
+            case 2:
+                button->setButtonText("Square");
+                button->onClick = [this] { setWaveType(2); };
+                break;
+            case 3:
+                button->setButtonText("Tri");
+                button->onClick = [this] { setWaveType(3); };
+                break;
+        }
+        button->setRadioGroupId(groupId);
+        button->setClickingTogglesState(true);
+        addAndMakeVisible(*button);
+    }
 }
 
 OscInterface::~OscInterface()
@@ -104,8 +131,13 @@ void OscInterface::resized()
     auto waveArea = area.removeFromTop(getHeight() / 2).reduced(margin);
     auto waveHeight = waveArea.getHeight() - labelMargin;
     auto waveY = waveArea.getY() + labelMargin;
+    auto waveWidth = waveArea.getWidth() / 4;
 
-    waveDial.setBounds(waveArea.getX(), waveY, waveArea.getWidth(), waveHeight);
+    // mount wave select buttons to the UI
+    for (juce::TextButton* button : waveSelectButtons) {
+        auto buttonArea = waveArea.removeFromLeft(waveWidth);
+        button->setBounds(buttonArea.getX(), waveY, waveWidth, waveHeight);
+    }
 
     // Set Tuning Label Bounds
     tuningLabel.setBounds(area.removeFromTop(labelMargin));
@@ -131,5 +163,15 @@ void OscInterface::setParameters(SympleOscParameterNames& params)
     fineValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.finetune, fineDial);
     waveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.wavetype, waveDial);
     gainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.gain, gainDial);
+    waveParameterName = params.wavetype;
+
+}
+
+void OscInterface::setWaveType(int value)
+{
+    int currentValue = (int) audioProcessor.getTree().getParameterAsValue(waveParameterName).getValue();
+    if (currentValue - value != 0) {
+        waveDial.setValue(value);
+    }
 }
 
