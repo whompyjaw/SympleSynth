@@ -164,13 +164,12 @@ void OscInterface::setParameters(SympleOscParameterNames& params)
     waveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.wavetype, waveDial);
     gainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.gain, gainDial);
     waveParameterName = params.wavetype;
-
 }
 
 void OscInterface::setWaveType(int value)
 {
     int currentValue = (int) audioProcessor.getTree().getParameterAsValue(waveParameterName).getValue();
-    if (currentValue - value != 0) {
+    if (currentValue != value) {
         waveDial.setValue(value);
     }
 }
