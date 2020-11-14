@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "WaveSelectSlider.h"
 
 //==============================================================================
 /*
@@ -37,7 +38,7 @@ private:
     juce::Slider amountDial;
     juce::Label amountLabel;
 
-    juce::Slider waveTypeDial;
+    WaveSelectSlider waveTypeDial;
     juce::Label waveTypeLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LfoInterface)

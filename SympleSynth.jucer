@@ -32,6 +32,8 @@
             file="Source/PluginProcessor.h"/>
       <FILE id="pJr26U" name="Voice.cpp" compile="1" resource="0" file="Source/Voice.cpp"/>
       <FILE id="AoJlel" name="Voice.h" compile="0" resource="0" file="Source/Voice.h"/>
+      <FILE id="R0XLUF" name="WaveSelectSlider.h" compile="0" resource="0"
+            file="Source/WaveSelectSlider.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
