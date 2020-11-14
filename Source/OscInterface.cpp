@@ -52,15 +52,26 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
 
     // Add Wave Type Dial & Label
     addAndMakeVisible(&waveDial);
-    waveDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    waveDial.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
     waveDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    waveDial.setPopupDisplayEnabled(true, true, this);
-    waveDial.setTextValueSuffix(" wave");
+    //waveDial.setPopupDisplayEnabled(true, true, this);
 
     addAndMakeVisible(waveLabel);
-    waveLabel.setText("Wave Type", juce::dontSendNotification);
+    waveLabel.setText("Sine", juce::dontSendNotification);
     waveLabel.setJustificationType(juce::Justification::centred);
-    waveLabel.attachToComponent(&waveDial, false);
+
+    addAndMakeVisible(waveLabel2);
+    waveLabel2.setText("Saw", juce::dontSendNotification);
+    waveLabel2.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(waveLabel3);
+    waveLabel3.setText("Square", juce::dontSendNotification);
+    waveLabel3.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(waveLabel4);
+    waveLabel4.setText("Triangle", juce::dontSendNotification);
+    waveLabel4.setJustificationType(juce::Justification::centred);
+
 
     // Add Gain Dial & Label
     addAndMakeVisible(&gainDial);
@@ -73,7 +84,6 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     gainLabel.setText("Gain", juce::dontSendNotification);
     gainLabel.setJustificationType(juce::Justification::centred);
     gainLabel.attachToComponent(&gainDial, false);
-
 
     addAndMakeVisible(tuningLabel);
     tuningLabel.setText("Tuning", juce::dontSendNotification);
@@ -96,16 +106,33 @@ void OscInterface::paint(juce::Graphics &g)
 void OscInterface::resized()
 {
     juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
-    auto dialAreaWidth = getWidth() / 4;
     auto margin = 5;
     auto labelMargin = octLabel.getHeight();
 
     // Set Wave Bounds
-    auto waveArea = area.removeFromTop(getHeight() / 2).reduced(margin);
-    auto waveHeight = waveArea.getHeight() - labelMargin;
-    auto waveY = waveArea.getY() + labelMargin;
+    auto waveLabelArea = area.removeFromTop(getHeight() / 4).reduced(margin);
+    auto waveHeight = labelMargin;
+    auto waveLabelY = waveLabelArea.getY() + waveLabelArea.getHeight()/2;
+    auto dialAreaWidth = waveLabelArea.getWidth() / 4;
 
-    waveDial.setBounds(waveArea.getX(), waveY, waveArea.getWidth(), waveHeight);
+    auto sineArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto sawArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto squareArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto triArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+
+    waveLabel.setBounds(sineArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel2.setBounds(sawArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel3.setBounds(squareArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel4.setBounds(triArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+
+    auto waveSliderArea = area.removeFromTop(getHeight() / 4).reduced(margin);
+    waveSliderArea.removeFromLeft(dialAreaWidth / 2 - margin * 2);
+    waveSliderArea.removeFromRight(dialAreaWidth / 2 - margin * 2);
+
+    auto waveY = waveSliderArea.getY();
+
+    waveDial.setBounds(waveSliderArea.getX(), waveY, waveSliderArea.getWidth(), waveHeight);
+
 
     // Set Tuning Label Bounds
     tuningLabel.setBounds(area.removeFromTop(labelMargin));

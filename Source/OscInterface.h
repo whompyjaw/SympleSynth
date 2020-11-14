@@ -53,6 +53,10 @@ private:
 
     WaveSelectSlider waveDial;
     juce::Label waveLabel;
+    juce::Label waveLabel2;
+    juce::Label waveLabel3;
+    juce::Label waveLabel4;
+
 
     juce::Slider gainDial;
     juce::Label gainLabel;    
