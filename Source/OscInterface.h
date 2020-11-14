@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "WaveSelectSlider.h"
 
 struct SympleOscParameterNames {
 public:
@@ -50,7 +51,7 @@ private:
     juce::Slider fineDial;
     juce::Label fineLabel;
 
-    juce::Slider waveDial;
+    WaveSelectSlider waveDial;
     juce::Label waveLabel;
 
     juce::Slider gainDial;
