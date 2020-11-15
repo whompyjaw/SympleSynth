@@ -56,6 +56,7 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, 
             case OSCILLATOR_MODE_SAW:
                 waveSegment = (2.0 * mPhase / twoPI) - 1.0; // naive wave
                 waveSegment -= polyBlep(polyBlepPhase);
+                waveSegment *= -1;
                 break;
             case OSCILLATOR_MODE_SINE:
                 waveSegment = sin(mPhase);
