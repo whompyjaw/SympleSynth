@@ -13,8 +13,12 @@
 
 LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
 {
-    setSize(400, 200);
+    setSize(400, 600);
     
+    addAndMakeVisible(&waveDial);
+    waveDial.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+    waveDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+
     //  add lfo frequency dial
     addAndMakeVisible(&frequencyDial);
     frequencyDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
@@ -29,11 +33,7 @@ LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
     amountDial.setPopupDisplayEnabled(true, true, this);
     amountDial.setTextValueSuffix(" semitones");
 
-    addAndMakeVisible(&waveTypeDial);
-    waveTypeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    waveTypeDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    waveTypeDial.setPopupDisplayEnabled(true, true, this);
-    
+
     
     // add frequency label
     addAndMakeVisible(frequencyLabel);
@@ -47,14 +47,25 @@ LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&amountDial, false);
 
-    addAndMakeVisible(waveTypeLabel);
-    waveTypeLabel.setText("Wave Type", juce::dontSendNotification);
-    waveTypeLabel.setJustificationType(juce::Justification::centred);
-    waveTypeLabel.attachToComponent(&waveTypeDial, false);
-    
+    addAndMakeVisible(waveLabel);
+    waveLabel.setText("Sine", juce::dontSendNotification);
+    waveLabel.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(waveLabel2);
+    waveLabel2.setText("Saw", juce::dontSendNotification);
+    waveLabel2.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(waveLabel3);
+    waveLabel3.setText("Square", juce::dontSendNotification);
+    waveLabel3.setJustificationType(juce::Justification::centred);
+
+    addAndMakeVisible(waveLabel4);
+    waveLabel4.setText("Triangle", juce::dontSendNotification);
+    waveLabel4.setJustificationType(juce::Justification::centred);
+
     frequencyValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_FREQUENCY", frequencyDial);
     amountValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_AMOUNT", amountDial);
-    waveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_WAVE_TYPE", waveTypeDial);
+    waveTypeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "LFO_WAVE_TYPE", waveDial);
 }
 
 LfoInterface::~LfoInterface()
@@ -73,19 +84,37 @@ void LfoInterface::resized()
 {
     juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
     auto margin = 5;
-    auto labelMargin = frequencyLabel.getHeight();
-    auto rowHeight = area.getHeight() / 2;
-    auto colWidth = area.getWidth() / 3;
+    auto labelMargin = amountLabel.getHeight();
 
-    auto oscArea = area.removeFromTop(rowHeight).reduced(margin);
-    auto paramsArea = area.removeFromTop(rowHeight).reduced(margin);
-    auto knobHeight = paramsArea.getHeight() - labelMargin;
+    // Set Wave Bounds
+    auto waveLabelArea = area.removeFromTop(getHeight() / 4).reduced(margin);
+    auto waveHeight = labelMargin;
+    auto waveLabelY = waveLabelArea.getY() + waveLabelArea.getHeight() / 2;
+    auto dialAreaWidth = waveLabelArea.getWidth() / 4;
+
+    auto sineArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto sawArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto squareArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto triArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+
+    waveLabel.setBounds(sineArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel2.setBounds(sawArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel3.setBounds(squareArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel4.setBounds(triArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+
+    auto waveSliderArea = area.removeFromTop(getHeight() / 4).reduced(margin);
+    waveSliderArea.removeFromLeft(dialAreaWidth / 2 - margin * 2);
+    waveSliderArea.removeFromRight(dialAreaWidth / 2 - margin * 2);
+
+    auto waveY = waveSliderArea.getY();
+
+    waveDial.setBounds(waveSliderArea.getX(), waveY, waveSliderArea.getWidth(), waveHeight);
+
+    auto dialWidth = (area.getWidth() - labelMargin) / 2;
     
-    auto frequencyArea = paramsArea.removeFromLeft(colWidth);
-    auto waveTypeArea = paramsArea.removeFromLeft(colWidth);
-    auto amountArea = paramsArea.removeFromLeft(colWidth);
+    auto frequencyArea = area.removeFromLeft(dialWidth).reduced(margin);
+    auto amountArea = area.removeFromLeft(dialWidth).reduced(margin);
     
-    frequencyDial.setBounds(frequencyArea.getX(), frequencyArea.getY() + labelMargin, colWidth, knobHeight);
-    amountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, colWidth, knobHeight);
-    waveTypeDial.setBounds(waveTypeArea.getX(), waveTypeArea.getY() + labelMargin, colWidth, knobHeight);
+    frequencyDial.setBounds(frequencyArea.getX(), frequencyArea.getY() + labelMargin, dialWidth, dialWidth/1.5);
+    amountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, dialWidth, dialWidth/1.5);
 }

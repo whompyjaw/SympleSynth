@@ -38,8 +38,11 @@ private:
     juce::Slider amountDial;
     juce::Label amountLabel;
 
-    WaveSelectSlider waveTypeDial;
-    juce::Label waveTypeLabel;
+    WaveSelectSlider waveDial;
+    juce::Label waveLabel;
+    juce::Label waveLabel2;
+    juce::Label waveLabel3;
+    juce::Label waveLabel4;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LfoInterface)
 };

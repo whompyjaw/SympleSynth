@@ -54,7 +54,6 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     addAndMakeVisible(&waveDial);
     waveDial.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
     waveDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    //waveDial.setPopupDisplayEnabled(true, true, this);
 
     addAndMakeVisible(waveLabel);
     waveLabel.setText("Sine", juce::dontSendNotification);
