@@ -22,11 +22,11 @@ public:
         switch (mode)
         {
             case 0:
-                return juce::String("Sine");
+                return juce::String("Sine Wave");
             case 1:
-                return juce::String("Saw");
+                return juce::String("Saw Wave");
             case 2:
-                return juce::String("Square");
+                return juce::String("Square Wave");
             case 3:
                 return juce::String("Triangle");
             default:
