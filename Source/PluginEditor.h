@@ -46,6 +46,7 @@ private:
     OscInterface osc1;
     OscInterface osc2;
     SympleFilterComponent filter;
+    SympleFilterComponent filter2;
     MasterAmp amplifier;
     LfoInterface lfo;
 

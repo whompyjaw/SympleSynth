@@ -19,6 +19,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       osc1(p),
       osc2(p),
       filter(p),
+      filter2(p),
       amplifier(p),
       lfo(p)
 {
@@ -52,6 +53,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filterParameters.amount = "AMOUNT";
     filterParameters.mode = "FILTER_1_MODE";
     filter.setParameters(filterParameters);
+    filter2.setParameters(filterParameters);
 
     // init gain parameter names struct
     MasterAmpParameterNames ampParameters;
@@ -63,6 +65,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(osc2);
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(filter);
+    addAndMakeVisible(filter2);
     addAndMakeVisible(amplifier);
     addAndMakeVisible(lfo);
 
@@ -84,6 +87,12 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     filter1Label.setFont(juce::Font(18.0, juce::Font::bold));
     filter1Label.setJustificationType(juce::Justification::centred);
     filter1Label.attachToComponent(&filter, false);
+    
+    addAndMakeVisible(filter2Label);
+    filter2Label.setText("FILTER 2", juce::dontSendNotification);
+    filter2Label.setFont(juce::Font(18.0, juce::Font::bold));
+    filter2Label.setJustificationType(juce::Justification::centred);
+    filter2Label.attachToComponent(&filter2, false);
 
     addAndMakeVisible(ampLabel);
     ampLabel.setText("AMPLIFIER", juce::dontSendNotification);
@@ -140,6 +149,7 @@ void SympleSynthAudioProcessorEditor::resized()
     osc2.setBounds(oscArea.removeFromTop(componentHeight).reduced(margin));
 
     filter.setBounds(filterArea.removeFromTop(componentHeight).reduced(margin));
+    filter2.setBounds(filterArea.removeFromTop(componentHeight * 2).reduced(margin));
     amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
     lfo.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
  }
