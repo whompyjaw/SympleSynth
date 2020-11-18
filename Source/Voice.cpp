@@ -104,6 +104,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         // prepare filter
         float nextFilterEnvSample;
         nextFilterEnvSample = filterEnvelope.getNextSample();
+        // get sample for second filter
         setFilter(read, nextFilterEnvSample);
 
         
@@ -130,7 +131,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             osc2.generate(subBlock, (int) subBlock.getNumSamples(), osc2Gain);
 
             // apply envelope
-            applyEnvelope(subBlock);
+            applyAmpEnvelope(subBlock);
 
             // filter sound
             filter1.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
@@ -151,14 +152,14 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             nextFilterEnvSample = filterEnvelope.getNextSample();
 
             juce::Logger::writeToLog("updateCounter: " + static_cast<juce::String> (updateCounter));
-            //if (updateCounter == 0)
-            //{
-            //    // reset the amount of samples to process
-            //    updateCounter = PARAM_UPDATE_RATE;
+            if (updateCounter == 0)
+            {
+                // reset the amount of samples to process
+                updateCounter = PARAM_UPDATE_RATE;
 
-            //    // update filter
-            //    setFilter(read, nextFilterEnvSample);
-            //}
+                // update filter
+                setFilter(read, nextFilterEnvSample);
+            }
         }
         juce::Logger::writeToLog(readString + "(after while loop) " + static_cast<juce::String> (read));
 
@@ -218,7 +219,7 @@ void SynthVoice::readParameterState()
 /*
  *  Applies the voice's envelope to a juce dsp audio block
  */
-void SynthVoice::applyEnvelope(juce::dsp::AudioBlock<float>& subBlock)
+void SynthVoice::applyAmpEnvelope(juce::dsp::AudioBlock<float>& subBlock)
 {
     float env;
     for (int sample = 0; sample < subBlock.getNumSamples(); ++sample)

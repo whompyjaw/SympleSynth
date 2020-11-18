@@ -91,7 +91,7 @@ private:
     OscillatorMode oscMode;
 
     void readParameterState();
-    void applyEnvelope(juce::dsp::AudioBlock<float>&);
+    void applyAmpEnvelope(juce::dsp::AudioBlock<float>&);
     void setFilter(size_t, float);
 
 };

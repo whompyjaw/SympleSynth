@@ -258,9 +258,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_RESONANCE", "Resonance", resRange, 0.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_AMOUNT", "Amount", envelopeAmountRange, 0));
 
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_CUTOFF", "Cutoff", cutoffRange, 8000.0f));
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_RESONANCE", "Resonance", resRange, 0.0f));
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_AMOUNT", "Amount", envelopeAmountRange, 0));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_CUTOFF", "Cutoff", cutoffRange, 8000.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_RESONANCE", "Resonance", resRange, 0.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_AMOUNT", "Amount", envelopeAmountRange, 0));
 
     // envelope knob ranges
     juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
@@ -285,11 +285,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_1_RELEASE", "Release", releaseRange, 0.1f));
 
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_MODE", "Filter 2 Mode", filterMode, 0));
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_ATTACK", "Attack", attackRange, 0.001f));
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_DECAY", "Decay", decayRange, 1.0f));
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_SUSTAIN", "Sustain", sustainRange, 100.0f));
-    //parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_RELEASE", "Release", releaseRange, 0.1f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_MODE", "Filter 2 Mode", filterMode, 0));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_ATTACK", "Attack", attackRange, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_DECAY", "Decay", decayRange, 1.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_SUSTAIN", "Sustain", sustainRange, 100.0f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_RELEASE", "Release", releaseRange, 0.1f));
 
     // oscillator 1 defaults
     juce::NormalisableRange<float> oscillatorOctaveParams (-2, 2, 1);
