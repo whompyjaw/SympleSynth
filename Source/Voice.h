@@ -75,10 +75,11 @@ private:
     juce::dsp::AudioBlock<float> voiceBlock;
     juce::dsp::AudioBlock<float>& lfoBuffer;
 
-    juce::ADSR envelope;
+    juce::ADSR ampEnvelope;
     juce::dsp::LadderFilterMode filterMode;
     int filterModeInt;
     juce::ADSR filterEnvelope;
+    juce::ADSR filter2Envelope;
     juce::ADSR::Parameters envelopeParameters;
     juce::ADSR::Parameters filterEnvelopeParameters;
     juce::AudioProcessorValueTreeState& oscTree;
