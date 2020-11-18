@@ -94,7 +94,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
     
     if (ampEnvelope.isActive())
     {
-        juce::Logger::writeToLog("Rendering Next Block");
+        //juce::Logger::writeToLog("Rendering Next Block");
         // clear voice block for processing
         voiceBlock.clear();
         
@@ -118,8 +118,8 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             
             auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);
             auto subBlock = voiceBlock.getSubBlock (read, max);
-            juce::Logger::writeToLog(readString + static_cast<juce::String> (read));
-            juce::Logger::writeToLog(maxString + static_cast<juce::String> (max));
+            //juce::Logger::writeToLog(readString + static_cast<juce::String> (read));
+            //juce::Logger::writeToLog(maxString + static_cast<juce::String> (max));
 
             // add oscillator 1 sound
             osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
@@ -157,7 +157,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             nextFilterEnvSample = filterEnvelope.getNextSample();
             nextFilter2EnvSample = filter2Envelope.getNextSample();
 
-            juce::Logger::writeToLog("updateCounter: " + static_cast<juce::String> (updateCounter));
+            //juce::Logger::writeToLog("updateCounter: " + static_cast<juce::String> (updateCounter));
             if (updateCounter == 0)
             {
                 // reset the amount of samples to process
@@ -167,7 +167,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                 setFilter(read, nextFilterEnvSample, nextFilter2EnvSample);
             }
         }
-        juce::Logger::writeToLog(readString + "(after while loop) " + static_cast<juce::String> (read));
+        //juce::Logger::writeToLog(readString + "(after while loop) " + static_cast<juce::String> (read));
 
         // add voice output to main buffer
         juce::dsp::AudioBlock<float> output(outputBuffer);
