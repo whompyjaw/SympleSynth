@@ -80,8 +80,9 @@ private:
     int filterModeInt;
     juce::ADSR filterEnvelope;
     juce::ADSR filter2Envelope;
-    juce::ADSR::Parameters envelopeParameters;
+    juce::ADSR::Parameters ampEnvelopeParameters;
     juce::ADSR::Parameters filterEnvelopeParameters;
+    juce::ADSR::Parameters filter2EnvelopeParameters;
     juce::AudioProcessorValueTreeState& oscTree;
     Oscillator osc1;
     Oscillator osc2;
@@ -92,6 +93,6 @@ private:
 
     void readParameterState();
     void applyAmpEnvelope(juce::dsp::AudioBlock<float>&);
-    void setFilter(size_t, float);
+    void setFilter(size_t, float, float);
 
 };
