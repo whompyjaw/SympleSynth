@@ -55,9 +55,19 @@ struct SynthVoice : public juce::SynthesiserVoice
     void prepare(const juce::dsp::ProcessSpec& spec);
 
 private:
+    float freq;
+    float res;
+    float amount;
+    float lfoAmount;
+    int lfoSample;
+    float freqMax;
+    float lfoFreqMax;
+    float lfoCutoffFreqHz;
     int osc1ModeInt = 0;
     int osc2ModeInt = 0;
     double twelfthRoot = pow(2.0, 1.0 / 12.0);
+    juce::String maxString = "max: ";
+    juce::String readString = "read: ";
     const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing
@@ -75,10 +85,12 @@ private:
     Oscillator osc1;
     Oscillator osc2;
 
-    juce::dsp::LadderFilter<float> filter;
+    juce::dsp::LadderFilter<float> filter1;
+    juce::dsp::LadderFilter<float> filter2;
     OscillatorMode oscMode;
 
     void readParameterState();
     void applyEnvelope(juce::dsp::AudioBlock<float>&);
     void setFilter(size_t, float);
+
 };

@@ -64,17 +64,6 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&filterAmountDial, false);
     
-
-
-    // init amp parameter names struct
-    SympleADSRParameterNames envParameters;
-    envParameters.attack = "FILTER_ATTACK";
-    envParameters.decay = "FILTER_DECAY";
-    envParameters.sustain = "FILTER_SUSTAIN";
-    envParameters.release = "FILTER_RELEASE";
-    envelope.setParameters(envParameters);
-
-    //  Add Amp & Label
     addAndMakeVisible(envelope);
 
     addAndMakeVisible(envLabel);
@@ -123,9 +112,10 @@ void SympleFilterComponent::resized()
     filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), envHeight);
 }
 
-void SympleFilterComponent::setParameters(SympleFilterParameterNames& params) {
+void SympleFilterComponent::setParameters(SympleFilterParameterNames& params, SympleADSRParameterNames& envNames) {
     filterCutoffValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.cutoff, filterCutoffDial);
     filterResValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.resonance, filterResDial);
     filterAmountValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.amount, filterAmountDial);
     filterModeValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.mode, filterModeDial);
+    envelope.setParameters(envNames);
 }

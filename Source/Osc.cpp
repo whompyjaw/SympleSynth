@@ -43,7 +43,6 @@ void Oscillator::startNote() {
 void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, double gain)
 {
     double waveSegment = 0.0;
-    //double t = mPhase / twoPI;
     
     for (int sample = 0; sample < numSamples; sample++)
     {
@@ -74,11 +73,6 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, 
                 waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
                 break;
             case OSCILLATOR_MODE_TRIANGLE:
-                //uncomment this for naive triangle
-                //waveSegment = -1.0 + (2.0 * mPhase / twoPI);
-                //waveSegment = 2.0 * (fabs(waveSegment) - 0.5);
-                
-                // uncomment this for polyBlep triangle
                 if (mPhase < mPI)
                 {
                     waveSegment = 1.0;
@@ -103,42 +97,6 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, 
         }
     }
 }
-
-//        if (mOscillatorMode == OSCILLATOR_MODE_TRIANGLE) {
-//            
-//        }
-//    }
-//
-//    mPhase += mPhaseIncrement;
-//    while (mPhase >= twoPI) {
-//        mPhase -= twoPI;
-//    }
-//    return waveSegment;
-
-
-//        case OSCILLATOR_MODE_SQUARE:
-//            for (int i = 0; i < nFrames; i++) {
-//                if (mPhase <= mPI) {
-//                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
-//                        buffer.addSample(j, i, (float) 1.0);
-//                    }
-//                } else {
-//                    for (int j = 0; j < buffer.getNumChannels(); ++j) {
-//                        buffer.addSample(j, i, (float) -1.0);
-//                    }
-//                }
-//            }
-//            break;
-//        case OSCILLATOR_MODE_TRIANGLE:
-//            for (int i = 0; i < nFrames; i++) {
-//                double waveSegment = -1.0 + (2.0 * mPhase / twoPI);
-//                for (int j = 0; j < buffer.getNumChannels(); ++j) {
-//                    buffer.addSample(j, i, (float) (2.0 * (fabs(waveSegment) - 0.5)));
-//                }
-//            }
-//            break;
-//    }
-//}
 
 double Oscillator::polyBlep(double t)
 {

@@ -88,14 +88,18 @@ void SynthVoice::stopNote(float, bool allowTailOff)
 */
 void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
+    
     if (envelope.isActive())
     {
+        juce::Logger::writeToLog("Rendering Next Block");
         // clear voice block for processing
         voiceBlock.clear();
         
         // init counters
         size_t updateCounter = PARAM_UPDATE_RATE;
         size_t read = startSample;
+        static_cast<size_t> (startSample);
+        static_cast<size_t> (numSamples);
         
         // prepare filter
         float nextFilterEnvSample;
@@ -105,8 +109,11 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         
         // process every sample
         while (read < (startSample + numSamples)) {
+            
             auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);
             auto subBlock = voiceBlock.getSubBlock (read, max);
+            juce::Logger::writeToLog(readString + static_cast<juce::String> (read));
+            juce::Logger::writeToLog(maxString + static_cast<juce::String> (max));
 
             // add oscillator 1 sound
             osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
@@ -126,7 +133,8 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             applyEnvelope(subBlock);
 
             // filter sound
-            filter.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+            filter1.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+            filter2.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
 
             // set counters
             read += max;
@@ -138,6 +146,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                  filterEnvelope.getNextSample();
             nextFilterEnvSample = filterEnvelope.getNextSample();
 
+            juce::Logger::writeToLog("updateCounter: " + static_cast<juce::String> (updateCounter));
             if (updateCounter == 0)
             {
                 // reset the amount of samples to process
@@ -147,6 +156,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                 setFilter(read, nextFilterEnvSample);
             }
         }
+        juce::Logger::writeToLog(readString + "(after while loop) " + static_cast<juce::String> (read));
 
         // add voice output to main buffer
         juce::dsp::AudioBlock<float> output(outputBuffer);
@@ -164,7 +174,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 void SynthVoice::prepare(const juce::dsp::ProcessSpec& spec)
 {
     voiceBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
-    filter.prepare(spec);
+    filter1.prepare(spec);
 }
 
 /*
@@ -181,10 +191,10 @@ void SynthVoice::readParameterState()
     };
 
     filterEnvelopeParameters = {
-        oscTree.getRawParameterValue("FILTER_ATTACK")->load(),
-        oscTree.getRawParameterValue("FILTER_DECAY")->load(),
-        oscTree.getRawParameterValue("FILTER_SUSTAIN")->load() / 100,
-        oscTree.getRawParameterValue("FILTER_RELEASE")->load(),
+        oscTree.getRawParameterValue("FILTER_1_ATTACK")->load(),
+        oscTree.getRawParameterValue("FILTER_1_DECAY")->load(),
+        oscTree.getRawParameterValue("FILTER_1_SUSTAIN")->load() / 100,
+        oscTree.getRawParameterValue("FILTER_1_RELEASE")->load(),
     };
     envelope.setParameters(envelopeParameters);
     filterEnvelope.setParameters(filterEnvelopeParameters);
@@ -208,27 +218,38 @@ void SynthVoice::applyEnvelope(juce::dsp::AudioBlock<float>& subBlock)
 
 void SynthVoice::setFilter(size_t read, float filterEnv)
 {
-    // get filter params from state tree
-    float freq = oscTree.getRawParameterValue("CUTOFF")->load();
-    float res = oscTree.getRawParameterValue("RESONANCE")->load() / 100;
-    float amount = oscTree.getParameterAsValue("AMOUNT").getValue();
-    float lfoAmount = oscTree.getParameterAsValue("LFO_AMOUNT").getValue();
-    
-    int lfoSample = (int) juce::jmax((int) read - 1, (int) 0);
 
-    // calculate max cutoff from envelope
-    // semitone calculations from
-    // https://pages.mtu.edu/~suits/NoteFreqCalcs.html
-    float freqMax = juce::jmin((float) (freq * pow(twelfthRoot, amount)), 20000.0f);
-    float lfoFreqMax = juce::jmin((float) (freq * pow(twelfthRoot, lfoAmount)), 20000.0f);
+    //lfoSample = (int)juce::jmax((int)read - 1, (int)0);
 
-    auto cutOffFreqHz = juce::jmap (filterEnv, 0.0f, 1.0f, freq, freqMax);
-    float lfoCutoffFreqHz = juce::jmap (lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, lfoFreqMax);
+    //// calculate max cutoff from envelope
+    //// semitone calculations from
+    //// https://pages.mtu.edu/~suits/NoteFreqCalcs.html
+    //freqMax = juce::jmin((float)(freq * pow(twelfthRoot, amount)), 20000.0f);
+    //lfoFreqMax = juce::jmin((float)(freq * pow(twelfthRoot, lfoAmount)), 20000.0f);
 
-    // reset filter values
-    filterModeInt = oscTree.getParameterAsValue("FILTER_1_MODE").getValue();
-    filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
-    filter.setMode(filterMode);
-    filter.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
-    filter.setResonance(res);
+    //auto cutOffFreqHz = juce::jmap(filterEnv, 0.0f, 1.0f, freq, freqMax);
+    //lfoCutoffFreqHz = juce::jmap(lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, lfoFreqMax);
+    //// get filter params from state tree for filter 1
+    //freq = oscTree.getRawParameterValue("FILTER_1_CUTOFF")->load();
+    //res = oscTree.getRawParameterValue("FILTER_1_RESONANCE")->load() / 100;
+    //amount = oscTree.getParameterAsValue("FILTER_1_AMOUNT").getValue();
+    //lfoAmount = oscTree.getParameterAsValue("LFO_AMOUNT").getValue();
+
+    //// set the filter 1 values
+    //filterModeInt = oscTree.getParameterAsValue("FILTER_1_MODE").getValue();
+    //filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
+    //filter1.setMode(filterMode);
+    //filter1.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
+    //filter1.setResonance(res);
+
+    // SET FILTER 2
+    //freq = oscTree.getRawParameterValue("FILTER_2_CUTOFF")->load();
+    //res = oscTree.getRawParameterValue("FILTER_2_RESONANCE")->load() / 100;
+    //amount = oscTree.getParameterAsValue("FILTER_2_AMOUNT").getValue();
+    //cutOffFreqHz = juce::jmap(filter2Env, 0.0f, 1.0f, freq, freqMax);
+    //filterModeInt = oscTree.getParameterAsValue("FILTER_2_MODE").getValue();
+    //filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
+    //filter2.setMode(filterMode);
+    //filter2.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
+    //filter2.setResonance(res);
 }

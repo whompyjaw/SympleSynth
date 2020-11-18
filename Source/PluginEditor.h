@@ -37,8 +37,8 @@ public:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterResValue;
     SympleFilterParameterNames filterParameters;
+    SympleADSRParameterNames filterEnvNames;
     
-
 private:
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;

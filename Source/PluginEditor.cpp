@@ -47,13 +47,25 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     osc2Parameters.gain = "OSC_2_GAIN";
     osc2.setParameters(osc2Parameters);
 
-    // init filter parameter names struct
-    filterParameters.cutoff = "CUTOFF";
-    filterParameters.resonance = "RESONANCE";
-    filterParameters.amount = "AMOUNT";
+    filterParameters.cutoff = "FILTER_1_CUTOFF";
+    filterParameters.resonance = "FILTER_1_RESONANCE";
+    filterParameters.amount = "FILTER_1_AMOUNT";
     filterParameters.mode = "FILTER_1_MODE";
-    filter.setParameters(filterParameters);
-    filter2.setParameters(filterParameters);
+    filterEnvNames.attack = "FILTER_1_ATTACK";
+    filterEnvNames.decay = "FILTER_1_DECAY";
+    filterEnvNames.sustain = "FILTER_1_SUSTAIN";
+    filterEnvNames.release = "FILTER_1_RELEASE";
+    filter.setParameters(filterParameters, filterEnvNames);
+
+    filterParameters.cutoff = "FILTER_2_CUTOFF";
+    filterParameters.resonance = "FILTER_2_RESONANCE";
+    filterParameters.amount = "FILTER_2_AMOUNT";
+    filterParameters.mode = "FILTER_2_MODE";
+    filterEnvNames.attack = "FILTER_2_ATTACK";
+    filterEnvNames.decay = "FILTER_2_DECAY";
+    filterEnvNames.sustain = "FILTER_2_SUSTAIN";
+    filterEnvNames.release = "FILTER_2_RELEASE";
+    filter2.setParameters(filterParameters, filterEnvNames);
 
     // init gain parameter names struct
     MasterAmpParameterNames ampParameters;
