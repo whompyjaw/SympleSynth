@@ -30,7 +30,7 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    void setParameters(SympleFilterParameterNames&);
+    void setParameters(SympleFilterParameterNames&, SympleADSRParameterNames&);
     
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filterCutoffValue;
