@@ -73,6 +73,11 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     amplifier.setParameters(ampParameters);
 
     osc1.setLookAndFeel(&sympleLook);
+    osc2.setLookAndFeel(&sympleLook);
+    filter.setLookAndFeel(&sympleLook);
+    filter2.setLookAndFeel(&sympleLook);
+    amplifier.setLookAndFeel(&sympleLook);
+    lfo.setLookAndFeel(&sympleLook);
 
     // Add Components
     addAndMakeVisible(osc1);
