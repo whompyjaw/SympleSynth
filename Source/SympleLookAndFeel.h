@@ -24,7 +24,7 @@ public:
         const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider&) override
     {
         // Calculation variables
-        auto radius = (float)juce::jmin(width / 2.5, height / 2.5) - 3.0f;
+        auto radius = (float)juce::jmin(width / 3.5, height / 3.5) - 3.0f;
         auto centreX = (float)x + (float)width * 0.5f;
         auto centreY = (float)y + (float)height * 0.5f;
         auto rx = centreX - radius;
