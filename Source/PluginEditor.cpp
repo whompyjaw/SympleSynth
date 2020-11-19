@@ -23,6 +23,9 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       amplifier(p),
       lfo(p)
 {
+    // Set Look & Feel
+    setLookAndFeel(&sympleLook);
+
     // Add Title Label
     addAndMakeVisible(titleLabel);
     titleLabel.setText("SYMPLESYNTH 1.0", juce::dontSendNotification);
@@ -71,13 +74,6 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     MasterAmpParameterNames ampParameters;
     ampParameters.gain = "MASTER_GAIN";
     amplifier.setParameters(ampParameters);
-
-    osc1.setLookAndFeel(&sympleLook);
-    osc2.setLookAndFeel(&sympleLook);
-    filter.setLookAndFeel(&sympleLook);
-    filter2.setLookAndFeel(&sympleLook);
-    amplifier.setLookAndFeel(&sympleLook);
-    lfo.setLookAndFeel(&sympleLook);
 
     // Add Components
     addAndMakeVisible(osc1);
@@ -131,6 +127,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
 
 SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 {
+    setLookAndFeel(nullptr);
 }
 
 //==============================================================================
