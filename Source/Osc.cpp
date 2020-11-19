@@ -47,46 +47,50 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, 
     for (int sample = 0; sample < numSamples; sample++)
     {
         polyBlepPhase = mPhase / twoPI;
-        for (int channel = 0; channel < buffer.getNumChannels(); channel++)
-        {   
-            //polyBlepPhase = mPhase
-            switch (mOscillatorMode)
+        switch (mOscillatorMode)
+        {
+        case OSCILLATOR_MODE_SAW:
+            waveSegment = (2.0 * mPhase / twoPI) - 1.0; // naive wave
+            waveSegment -= polyBlep(polyBlepPhase);
+            waveSegment *= -1;
+            break;
+        case OSCILLATOR_MODE_SINE:
+            waveSegment = sin(mPhase);
+            break;
+        case OSCILLATOR_MODE_SQUARE:
+            if (mPhase < mPI)
             {
-            case OSCILLATOR_MODE_SAW:
-                waveSegment = (2.0 * mPhase / twoPI) - 1.0; // naive wave
-                waveSegment -= polyBlep(polyBlepPhase);
-                waveSegment *= -1;
-                break;
-            case OSCILLATOR_MODE_SINE:
-                waveSegment = sin(mPhase);
-                break;
-            case OSCILLATOR_MODE_SQUARE:
-                if (mPhase < mPI)
-                {
-                    waveSegment = 1.0;
-                }
-                else
-                {
-                    waveSegment = -1.0;
-                }
-                waveSegment += polyBlep(polyBlepPhase);
-                waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
-                break;
-            case OSCILLATOR_MODE_TRIANGLE:
-                if (mPhase < mPI)
-                {
-                    waveSegment = 1.0;
-                }
-                else
-                {
-                    waveSegment = -1.0;
-                }
-                waveSegment += polyBlep(polyBlepPhase);
-                waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
-                // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
-                waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
-                lastOutput = waveSegment;
+                waveSegment = 1.0;
             }
+            else
+            {
+                waveSegment = -1.0;
+            }
+            waveSegment += polyBlep(polyBlepPhase);
+            waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
+            break;
+        case OSCILLATOR_MODE_TRIANGLE:
+            if (mPhase < mPI)
+            {
+                waveSegment = 1.0;
+            }
+            else
+            {
+                waveSegment = -1.0;
+            }
+            waveSegment += polyBlep(polyBlepPhase);
+            waveSegment -= polyBlep(fmod(polyBlepPhase + 0.5, 1.0));
+            // Leaky integrator: y[n] = A * x[n] + (1 - A) * y[n-1]
+            waveSegment = mPhaseIncrement * waveSegment + (1 - mPhaseIncrement) * lastOutput;
+            lastOutput = waveSegment;
+                break;
+        case OSCILLATOR_MODE_NOISE:
+            waveSegment = random.nextFloat() * 0.25 - 0.125;
+        }
+
+        // copy the same sample into all channels for mono sound
+        for (int channel = 0; channel < buffer.getNumChannels(); channel++)
+        {
             buffer.addSample(channel, sample, (float)waveSegment * juce::Decibels::decibelsToGain(gain));
         }
             

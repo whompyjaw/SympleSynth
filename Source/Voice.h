@@ -86,6 +86,7 @@ private:
     juce::AudioProcessorValueTreeState& oscTree;
     Oscillator osc1;
     Oscillator osc2;
+    Oscillator noiseOsc;
 
     juce::dsp::LadderFilter<float> filter1;
     juce::dsp::LadderFilter<float> filter2;
