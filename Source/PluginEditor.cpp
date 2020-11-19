@@ -72,6 +72,8 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     ampParameters.gain = "MASTER_GAIN";
     amplifier.setParameters(ampParameters);
 
+    osc1.setLookAndFeel(&sympleLook);
+
     // Add Components
     addAndMakeVisible(osc1);
     addAndMakeVisible(osc2);

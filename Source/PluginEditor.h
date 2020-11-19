@@ -15,6 +15,7 @@
 #include "MasterAmp.h"
 #include "OscInterface.h"
 #include "LfoInterface.h"
+#include "SympleLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -40,6 +41,8 @@ public:
     SympleADSRParameterNames filterEnvNames;
     
 private:
+    SympleLookAndFeel sympleLook;
+
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;
     
