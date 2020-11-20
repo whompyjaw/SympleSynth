@@ -20,6 +20,10 @@
       <FILE id="Z6EMJl" name="LfoInterface.h" compile="0" resource="0" file="Source/LfoInterface.h"/>
       <FILE id="g9C7Ld" name="MasterAmp.cpp" compile="1" resource="0" file="Source/MasterAmp.cpp"/>
       <FILE id="TZNHZQ" name="MasterAmp.h" compile="0" resource="0" file="Source/MasterAmp.h"/>
+      <FILE id="RTNEca" name="NoiseOscInterface.cpp" compile="1" resource="0"
+            file="Source/NoiseOscInterface.cpp"/>
+      <FILE id="E6jVeO" name="NoiseOscInterface.h" compile="0" resource="0"
+            file="Source/NoiseOscInterface.h"/>
       <FILE id="PJBOZJ" name="Osc.cpp" compile="1" resource="0" file="Source/Osc.cpp"/>
       <FILE id="K3TYMj" name="Osc.h" compile="0" resource="0" file="Source/Osc.h"/>
       <FILE id="hWX73p" name="OscInterface.cpp" compile="1" resource="0"

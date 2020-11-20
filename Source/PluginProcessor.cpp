@@ -310,8 +310,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_1_GAIN", "Gain 1", masterGainRange, -20.0f, "Gain"));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OSC_2_GAIN", "Gain 2", masterGainRange, -20.0f, "Gain"));
-
-
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NOISE_GAIN", "Noise Gain", masterGainRange, -60.0f, "Gain"));
 
     // lfo parameters
     juce::NormalisableRange<float> lfoFrequencyRange = juce::NormalisableRange<float>(0.0f, 200.0f);

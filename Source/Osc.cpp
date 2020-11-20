@@ -9,6 +9,9 @@
             http://www.martin-finke.de/blog/articles/audio-plugins-008-synthesizing-waveforms
             The PolyBLEP (removing aliasing) feature was adapted from
             http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
+            Noise oscillator code adapted from
+            https://docs.juce.com/master/tutorial_simple_synth_noise.html
+            https://docs.juce.com/master/tutorial_synth_level_control.html
 
   ==============================================================================
 */
@@ -85,7 +88,7 @@ void Oscillator::generate(juce::dsp::AudioBlock<float>& buffer, int numSamples, 
             lastOutput = waveSegment;
                 break;
         case OSCILLATOR_MODE_NOISE:
-            waveSegment = random.nextFloat() * 0.25 - 0.125;
+            waveSegment = random.nextFloat() * 2.0f - 1.0f;
         }
 
         // copy the same sample into all channels for mono sound

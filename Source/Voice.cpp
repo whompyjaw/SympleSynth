@@ -103,8 +103,6 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         // init counters
         size_t updateCounter = PARAM_UPDATE_RATE;
         size_t read = startSample;
-        static_cast<size_t> (startSample);
-        static_cast<size_t> (numSamples);
         
         // prepare filter
         float nextFilterEnvSample;
@@ -138,7 +136,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             osc2.generate(subBlock, (int) subBlock.getNumSamples(), osc2Gain);
             
             // add noise osc sound
-            float noiseGain = 0.2f;
+            float noiseGain = oscTree.getParameterAsValue("NOISE_GAIN").getValue();
             noiseOsc.generate(subBlock, (int) subBlock.getNumSamples(), noiseGain);
 
             // apply envelope
