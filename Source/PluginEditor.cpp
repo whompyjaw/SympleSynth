@@ -21,7 +21,8 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       filter(p),
       filter2(p),
       amplifier(p),
-      lfo(p)
+      lfo(p),
+      noise(p)
 {
     // Set Look & Feel
     setLookAndFeel(&sympleLook);
@@ -83,6 +84,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     addAndMakeVisible(filter2);
     addAndMakeVisible(amplifier);
     addAndMakeVisible(lfo);
+    addAndMakeVisible(noise);
 
     // Add Labels
     addAndMakeVisible(osc1Label);
@@ -168,6 +170,11 @@ void SympleSynthAudioProcessorEditor::resized()
     filter2.setBounds(filterArea.removeFromTop(componentHeight * 2).reduced(margin));
     amplifier.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
     lfo.setBounds(ampArea.removeFromTop(componentHeight).reduced(margin));
+
+    noise.setBounds(componentWidth - (componentWidth / 8) - (margin / 2),
+                    componentHeight,
+                    (componentWidth / 4) + margin,
+                    componentHeight / 4);
  }
 
 void SympleSynthAudioProcessorEditor::sliderValueChanged(juce::Slider* slider)

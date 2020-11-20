@@ -16,6 +16,7 @@
 #include "OscInterface.h"
 #include "LfoInterface.h"
 #include "SympleLookAndFeel.h"
+#include "NoiseOscInterface.h"
 
 //==============================================================================
 /**
@@ -52,6 +53,7 @@ private:
     SympleFilterComponent filter2;
     MasterAmp amplifier;
     LfoInterface lfo;
+    NoiseOscInterface noise;
 
     juce::Label titleLabel;
 

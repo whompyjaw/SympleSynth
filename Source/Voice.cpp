@@ -17,6 +17,8 @@ SynthVoice::SynthVoice(juce::AudioProcessorValueTreeState& tree, juce::dsp::Audi
 
     osc1.setSampleRate(getSampleRate());
     osc2.setSampleRate(getSampleRate());
+    noiseOsc.setSampleRate(getSampleRate());
+    noiseOsc.setMode(OSCILLATOR_MODE_NOISE); // always set to noise
 
     // initialize amplifier envelope
     ampEnvelope.setSampleRate(getSampleRate());
@@ -101,8 +103,6 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         // init counters
         size_t updateCounter = PARAM_UPDATE_RATE;
         size_t read = startSample;
-        static_cast<size_t> (startSample);
-        static_cast<size_t> (numSamples);
         
         // prepare filter
         float nextFilterEnvSample;
@@ -134,6 +134,10 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             oscMode = static_cast<OscillatorMode> (osc2ModeInt);
             osc2.setMode(oscMode);
             osc2.generate(subBlock, (int) subBlock.getNumSamples(), osc2Gain);
+            
+            // add noise osc sound
+            float noiseGain = oscTree.getParameterAsValue("NOISE_GAIN").getValue();
+            noiseOsc.generate(subBlock, (int) subBlock.getNumSamples(), noiseGain);
 
             // apply envelope
             applyAmpEnvelope(subBlock);
