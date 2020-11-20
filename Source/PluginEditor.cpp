@@ -23,6 +23,9 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
       amplifier(p),
       lfo(p)
 {
+    // Set Look & Feel
+    setLookAndFeel(&sympleLook);
+
     // Add Title Label
     addAndMakeVisible(titleLabel);
     titleLabel.setText("SYMPLESYNTH 1.0", juce::dontSendNotification);
@@ -124,6 +127,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
 
 SympleSynthAudioProcessorEditor::~SympleSynthAudioProcessorEditor()
 {
+    setLookAndFeel(nullptr);
 }
 
 //==============================================================================
