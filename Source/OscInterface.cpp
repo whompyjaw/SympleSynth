@@ -140,7 +140,10 @@ void OscInterface::resized()
     auto waveY = waveSliderArea.getY();
 
     waveDial.setBounds(waveSliderArea.getX(), waveY, waveSliderArea.getWidth(), waveHeight);
-    noise.setBounds(noiseArea.getX(), waveLabelY - 9, noiseWidth, 3 * waveHeight);
+    
+    // add noise knob
+    int noiseMargin = 15;
+    noise.setBounds(noiseArea.getX() - noiseMargin, waveLabelY - 9, noiseWidth + noiseMargin, 3 * waveHeight);
 
     // Set Tuning Label Bounds
     tuningLabel.setBounds(area.removeFromTop(labelMargin));
