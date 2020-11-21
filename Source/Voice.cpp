@@ -276,9 +276,13 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
     freq = oscTree.getRawParameterValue("FILTER_2_CUTOFF")->load();
     res = oscTree.getRawParameterValue("FILTER_2_RESONANCE")->load() / 100;
     amount = oscTree.getParameterAsValue("FILTER_2_AMOUNT").getValue();
+    
     freqMax = juce::jmin((float)(freq * pow(twelfthRoot, amount)), 20000.0f);
+    lfoFreqMax = juce::jmin((float)(freq * pow(twelfthRoot, lfoAmount)), 20000.0f);
     cutOffFreqHz = juce::jmap(filter2EnvSample, 0.0f, 1.0f, freq, freqMax);
     lfoCutoffFreqHz = juce::jmap(lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, lfoFreqMax);
+    
+    // set filter 2 values
     filterModeInt = oscTree.getParameterAsValue("FILTER_2_MODE").getValue();
     filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
     filter2.setMode(filterMode);
