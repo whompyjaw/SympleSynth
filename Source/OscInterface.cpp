@@ -91,7 +91,7 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p)
     tuningLabel.setJustificationType(juce::Justification::centred);
 
     // add noise dial
-//    addAndMakeVisible(&noise);
+    addAndMakeVisible(&noise);
 }
 
 OscInterface::~OscInterface()
@@ -140,6 +140,7 @@ void OscInterface::resized()
     auto waveY = waveSliderArea.getY();
 
     waveDial.setBounds(waveSliderArea.getX(), waveY, waveSliderArea.getWidth(), waveHeight);
+    noise.setBounds(noiseArea.getX(), waveLabelY - 9, noiseWidth, 3 * waveHeight);
 
     // Set Tuning Label Bounds
     tuningLabel.setBounds(area.removeFromTop(labelMargin));
