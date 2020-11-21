@@ -118,25 +118,28 @@ void OscInterface::resized()
     auto waveHeight = labelMargin;
     auto waveLabelY = waveLabelArea.getY() + waveLabelArea.getHeight()/2;
     auto dialAreaWidth = waveLabelArea.getWidth() / 4;
+    auto fourFifthsWidth = ((4.0 * waveLabelArea.getWidth()) / 5.0);
+    auto labelAreaWidth = fourFifthsWidth / 4;
 
-    auto sineArea = waveLabelArea.removeFromLeft(dialAreaWidth);
-    auto sawArea = waveLabelArea.removeFromLeft(dialAreaWidth);
-    auto squareArea = waveLabelArea.removeFromLeft(dialAreaWidth);
-    auto triArea = waveLabelArea.removeFromLeft(dialAreaWidth);
+    auto sineArea = waveLabelArea.removeFromLeft(labelAreaWidth);
+    auto sawArea = waveLabelArea.removeFromLeft(labelAreaWidth);
+    auto squareArea = waveLabelArea.removeFromLeft(labelAreaWidth);
+    auto triArea = waveLabelArea.removeFromLeft(labelAreaWidth);
 
-    waveLabel.setBounds(sineArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
-    waveLabel2.setBounds(sawArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
-    waveLabel3.setBounds(squareArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
-    waveLabel4.setBounds(triArea.getX(), waveLabelY, dialAreaWidth, waveHeight);
+    waveLabel.setBounds(sineArea.getX(), waveLabelY, labelAreaWidth, waveHeight);
+    waveLabel2.setBounds(sawArea.getX(), waveLabelY, labelAreaWidth, waveHeight);
+    waveLabel3.setBounds(squareArea.getX(), waveLabelY, labelAreaWidth, waveHeight);
+    waveLabel4.setBounds(triArea.getX(), waveLabelY, labelAreaWidth, waveHeight);
 
     auto waveSliderArea = area.removeFromTop(getHeight() / 4).reduced(margin);
-    waveSliderArea.removeFromLeft(dialAreaWidth / 2 - margin * 2);
-    waveSliderArea.removeFromRight(dialAreaWidth / 2 - margin * 2);
+    auto noiseWidth = waveSliderArea.getWidth() - fourFifthsWidth;
+    auto noiseArea = waveSliderArea.removeFromRight(noiseWidth);
+    waveSliderArea.removeFromLeft(labelAreaWidth / 2 - margin * 2);
+    waveSliderArea.removeFromRight(labelAreaWidth / 2 - margin * 2);
 
     auto waveY = waveSliderArea.getY();
 
     waveDial.setBounds(waveSliderArea.getX(), waveY, waveSliderArea.getWidth(), waveHeight);
-//    noise.setBounds(noiseArea.getX(), noiseArea.getY(), noiseArea.getWidth(), waveHeight);
 
     // Set Tuning Label Bounds
     tuningLabel.setBounds(area.removeFromTop(labelMargin));
