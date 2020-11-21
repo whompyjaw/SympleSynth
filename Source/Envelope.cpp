@@ -81,7 +81,6 @@ void SympleADSRComponent::resized()
 {
     juce::Rectangle<int> area(0, 0, getWidth(), getHeight());
     auto knobWidth = getWidth() / 4;
-    auto margin = 5;
     auto labelMargin = attackLabel.getHeight();
 
     // Set Dial Bounds
