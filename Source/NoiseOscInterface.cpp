@@ -25,8 +25,6 @@ NoiseOscInterface::NoiseOscInterface(SympleSynthAudioProcessor& p) : audioProces
     noiseLabel.setText("Noise", juce::dontSendNotification);
     noiseLabel.setJustificationType(juce::Justification::centred);
     noiseLabel.attachToComponent(&noiseDial, false);
- 
-    noiseValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), "NOISE_GAIN", noiseDial);
 }
 
 NoiseOscInterface::~NoiseOscInterface()
@@ -48,4 +46,9 @@ void NoiseOscInterface::resized()
                         area.getY() + popupMargin,
                         area.getWidth() - margin,
                         area.getHeight() - labelMargin - margin);
+}
+
+void NoiseOscInterface::setAttachmentParameter(std::string& parameter)
+{
+    noiseValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), parameter, noiseDial);
 }

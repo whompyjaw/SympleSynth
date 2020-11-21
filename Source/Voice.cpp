@@ -135,9 +135,10 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             osc2.generate(subBlock2, (int) subBlock2.getNumSamples(), osc2Gain);
             
             // add noise osc sound
-            float noiseGain = oscTree.getParameterAsValue("NOISE_GAIN").getValue();
-            noiseOsc.generate(subBlock1, (int) subBlock1.getNumSamples(), noiseGain);
-            noiseOsc.generate(subBlock2, (int) subBlock2.getNumSamples(), noiseGain);
+            float noiseGain1 = oscTree.getParameterAsValue("NOISE_1_GAIN").getValue();
+            float noiseGain2 = oscTree.getParameterAsValue("NOISE_2_GAIN").getValue();
+            noiseOsc.generate(subBlock1, (int) subBlock1.getNumSamples(), noiseGain1);
+            noiseOsc.generate(subBlock2, (int) subBlock2.getNumSamples(), noiseGain2);
 
             // apply envelope
             applyAmpEnvelope(subBlock1, subBlock2);

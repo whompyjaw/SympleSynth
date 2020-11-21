@@ -10,7 +10,9 @@
 
 #include "OscInterface.h"
 
-OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
+OscInterface::OscInterface(SympleSynthAudioProcessor &p)
+    : audioProcessor(p),
+      noise(p)
 {
     setSize(400, 600);
 
@@ -87,6 +89,9 @@ OscInterface::OscInterface(SympleSynthAudioProcessor &p) : audioProcessor(p)
     addAndMakeVisible(tuningLabel);
     tuningLabel.setText("Tuning", juce::dontSendNotification);
     tuningLabel.setJustificationType(juce::Justification::centred);
+
+    // add noise dial
+//    addAndMakeVisible(&noise);
 }
 
 OscInterface::~OscInterface()
@@ -131,7 +136,7 @@ void OscInterface::resized()
     auto waveY = waveSliderArea.getY();
 
     waveDial.setBounds(waveSliderArea.getX(), waveY, waveSliderArea.getWidth(), waveHeight);
-
+//    noise.setBounds(noiseArea.getX(), noiseArea.getY(), noiseArea.getWidth(), waveHeight);
 
     // Set Tuning Label Bounds
     tuningLabel.setBounds(area.removeFromTop(labelMargin));
@@ -157,5 +162,6 @@ void OscInterface::setParameters(SympleOscParameterNames& params)
     fineValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.finetune, fineDial);
     waveValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.wavetype, waveDial);
     gainValue = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.getTree(), params.gain, gainDial);
+    noise.setAttachmentParameter(params.noise);
 }
 

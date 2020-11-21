@@ -53,7 +53,6 @@ private:
     SympleFilterComponent filter2;
     MasterAmp amplifier;
     LfoInterface lfo;
-    NoiseOscInterface noise;
 
     juce::Label titleLabel;
 
