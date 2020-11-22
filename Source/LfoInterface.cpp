@@ -18,6 +18,7 @@ LfoInterface::LfoInterface(SympleSynthAudioProcessor& p) : audioProcessor(p)
     addAndMakeVisible(&waveDial);
     waveDial.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
     waveDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    waveDial.setColour(juce::Slider::thumbColourId, juce::Colours::floralwhite);
 
     //  add lfo frequency dial
     addAndMakeVisible(&frequencyDial);

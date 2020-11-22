@@ -55,6 +55,8 @@ private:
     SympleADSRComponent envelope;
     juce::Label envLabel;
     
+    juce::Label filterModeLabelLP12;
+    
     SympleSynthAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleFilterComponent)

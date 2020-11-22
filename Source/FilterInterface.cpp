@@ -64,6 +64,12 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&filterAmountDial, false);
     
+    addAndMakeVisible(filterModeLabelLP12);
+    filterModeLabelLP12.setText("LP12", juce::dontSendNotification);
+    filterModeLabelLP12.setFont(juce::Font(12.0f));
+    filterModeLabelLP12.attachToComponent(&filterModeDial, false);
+    
+    
     addAndMakeVisible(envelope);
 
     addAndMakeVisible(envLabel);
@@ -110,6 +116,8 @@ void SympleFilterComponent::resized()
     filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), envHeight);
     filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), envHeight);
     filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), envHeight);
+    
+    filterModeLabelLP12.setBounds(filterModeDial.getX() - 10, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 10, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params, SympleADSRParameterNames& envNames) {
