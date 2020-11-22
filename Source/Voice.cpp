@@ -96,9 +96,9 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
     
     if (ampEnvelope.isActive())
     {
-        //juce::Logger::writeToLog("Rendering Next Block");
         // clear voice block for processing
-        voiceBlock.clear();
+        voice1Block.clear();
+        voice2Block.clear();
         
         // init counters
         size_t updateCounter = PARAM_UPDATE_RATE;
@@ -117,34 +117,35 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         while (read < (startSample + numSamples)) {
             
             auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);
-            auto subBlock = voiceBlock.getSubBlock (read, max);
-            //juce::Logger::writeToLog(readString + static_cast<juce::String> (read));
-            //juce::Logger::writeToLog(maxString + static_cast<juce::String> (max));
+            auto subBlock1 = voice1Block.getSubBlock (read, max);
+            auto subBlock2 = voice2Block.getSubBlock (read, max);
 
             // add oscillator 1 sound
             osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
             double osc1Gain = oscTree.getParameterAsValue("OSC_1_GAIN").getValue();
             oscMode = static_cast<OscillatorMode> (osc1ModeInt);
             osc1.setMode(oscMode);
-            osc1.generate(subBlock, (int) subBlock.getNumSamples(), osc1Gain);
+            osc1.generate(subBlock1, (int) subBlock1.getNumSamples(), osc1Gain);
 
             // add oscillator 2 sound
             osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
             double osc2Gain = oscTree.getParameterAsValue("OSC_2_GAIN").getValue();
             oscMode = static_cast<OscillatorMode> (osc2ModeInt);
             osc2.setMode(oscMode);
-            osc2.generate(subBlock, (int) subBlock.getNumSamples(), osc2Gain);
+            osc2.generate(subBlock2, (int) subBlock2.getNumSamples(), osc2Gain);
             
             // add noise osc sound
-            float noiseGain = oscTree.getParameterAsValue("NOISE_GAIN").getValue();
-            noiseOsc.generate(subBlock, (int) subBlock.getNumSamples(), noiseGain);
+            float noiseGain1 = oscTree.getParameterAsValue("NOISE_1_GAIN").getValue();
+            float noiseGain2 = oscTree.getParameterAsValue("NOISE_2_GAIN").getValue();
+            noiseOsc.generate(subBlock1, (int) subBlock1.getNumSamples(), noiseGain1);
+            noiseOsc.generate(subBlock2, (int) subBlock2.getNumSamples(), noiseGain2);
 
             // apply envelope
-            applyAmpEnvelope(subBlock);
+            applyAmpEnvelope(subBlock1, subBlock2);
 
             // filter sound
-            filter1.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
-            filter2.process(juce::dsp::ProcessContextReplacing<float>(subBlock));
+            filter1.process(juce::dsp::ProcessContextReplacing<float>(subBlock1));
+            filter2.process(juce::dsp::ProcessContextReplacing<float>(subBlock2));
 
             // set counters
             read += max;
@@ -175,7 +176,8 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
         // add voice output to main buffer
         juce::dsp::AudioBlock<float> output(outputBuffer);
-        output.add(voiceBlock);
+        output.add(voice1Block);
+        output.add(voice2Block);
         
         // reset amp envelope if it's finished
         if (!ampEnvelope.isActive()) {
@@ -189,7 +191,8 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
 void SynthVoice::prepare(const juce::dsp::ProcessSpec& spec)
 {
-    voiceBlock = juce::dsp::AudioBlock<float> (heapBlock, spec.numChannels, spec.maximumBlockSize);
+    voice1Block = juce::dsp::AudioBlock<float> (heap1Block, spec.numChannels, spec.maximumBlockSize);
+    voice2Block = juce::dsp::AudioBlock<float> (heap2Block, spec.numChannels, spec.maximumBlockSize);
     filter1.prepare(spec);
     filter2.prepare(spec);
 }
@@ -228,15 +231,16 @@ void SynthVoice::readParameterState()
 /*
  *  Applies the voice's envelope to a juce dsp audio block
  */
-void SynthVoice::applyAmpEnvelope(juce::dsp::AudioBlock<float>& subBlock)
+void SynthVoice::applyAmpEnvelope(juce::dsp::AudioBlock<float>& subBlock1, juce::dsp::AudioBlock<float>& subBlock2)
 {
     float env;
-    for (int sample = 0; sample < subBlock.getNumSamples(); ++sample)
+    for (int sample = 0; sample < subBlock1.getNumSamples(); ++sample)
     {
         env = ampEnvelope.getNextSample();
-        for (int channel = 0; channel < subBlock.getNumChannels(); ++channel)
+        for (int channel = 0; channel < subBlock1.getNumChannels(); ++channel)
         {
-            subBlock.setSample(channel, sample, subBlock.getSample(channel, sample) * env);
+            subBlock1.setSample(channel, sample, subBlock1.getSample(channel, sample) * env);
+            subBlock2.setSample(channel, sample, subBlock2.getSample(channel, sample) * env);
         }
     }
 }
@@ -272,11 +276,16 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
     freq = oscTree.getRawParameterValue("FILTER_2_CUTOFF")->load();
     res = oscTree.getRawParameterValue("FILTER_2_RESONANCE")->load() / 100;
     amount = oscTree.getParameterAsValue("FILTER_2_AMOUNT").getValue();
+    
     freqMax = juce::jmin((float)(freq * pow(twelfthRoot, amount)), 20000.0f);
+    lfoFreqMax = juce::jmin((float)(freq * pow(twelfthRoot, lfoAmount)), 20000.0f);
     cutOffFreqHz = juce::jmap(filter2EnvSample, 0.0f, 1.0f, freq, freqMax);
+    lfoCutoffFreqHz = juce::jmap(lfoBuffer.getSample(0, lfoSample), -1.0f, 1.0f, freq, lfoFreqMax);
+    
+    // set filter 2 values
     filterModeInt = oscTree.getParameterAsValue("FILTER_2_MODE").getValue();
     filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
     filter2.setMode(filterMode);
-    filter2.setCutoffFrequencyHz(cutOffFreqHz);
+    filter2.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
     filter2.setResonance(res);
 }

@@ -12,6 +12,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "WaveSelectSlider.h"
+#include "NoiseOscInterface.h"
 
 struct SympleOscParameterNames {
 public:
@@ -20,6 +21,7 @@ public:
     std::string finetune;
     std::string wavetype;
     std::string gain;
+    std::string noise;
 };
 
 
@@ -57,9 +59,10 @@ private:
     juce::Label waveLabel3;
     juce::Label waveLabel4;
 
-
     juce::Slider gainDial;
-    juce::Label gainLabel;    
+    juce::Label gainLabel;
+
+    NoiseOscInterface noise;
     
     SympleSynthAudioProcessor& audioProcessor;
 };

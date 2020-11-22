@@ -71,8 +71,10 @@ private:
     const int PARAM_UPDATE_RATE = 100; // the number of samples each parameter setting will process
 
     // memory for voice processing
-    juce::HeapBlock<char> heapBlock;
-    juce::dsp::AudioBlock<float> voiceBlock;
+    juce::HeapBlock<char> heap1Block;
+    juce::HeapBlock<char> heap2Block;
+    juce::dsp::AudioBlock<float> voice1Block;
+    juce::dsp::AudioBlock<float> voice2Block;
     juce::dsp::AudioBlock<float>& lfoBuffer;
 
     juce::ADSR ampEnvelope;
@@ -93,7 +95,7 @@ private:
     OscillatorMode oscMode;
 
     void readParameterState();
-    void applyAmpEnvelope(juce::dsp::AudioBlock<float>&);
+    void applyAmpEnvelope(juce::dsp::AudioBlock<float>&, juce::dsp::AudioBlock<float>&);
     void setFilter(size_t, float, float);
 
 };

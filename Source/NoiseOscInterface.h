@@ -20,6 +20,7 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    void setAttachmentParameter(std::string&);
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> noiseValue;
 
