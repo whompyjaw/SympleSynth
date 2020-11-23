@@ -21,7 +21,6 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     addAndMakeVisible(&filterModeDial);
     filterModeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterModeDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    filterModeDial.setPopupDisplayEnabled(true, true, this);
     
     addAndMakeVisible(filterModeLabel);
     filterModeLabel.setText("Filter Mode", juce::dontSendNotification);
@@ -64,6 +63,39 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     amountLabel.setJustificationType(juce::Justification::centred);
     amountLabel.attachToComponent(&filterAmountDial, false);
     
+    fontSize = 11.0;
+    addAndMakeVisible(filterModeLabelLP12);
+    filterModeLabelLP12.setText("LP12", juce::dontSendNotification);
+    filterModeLabelLP12.setFont(juce::Font(fontSize));
+    filterModeLabelLP12.attachToComponent(&filterModeDial, false);
+    //filterModeLabelLP12.setColour(juce::Label::backgroundColourId, juce::Colours::red);
+    
+    addAndMakeVisible(filterModeLabelHP12);
+    filterModeLabelHP12.setText("HP12", juce::dontSendNotification);
+    filterModeLabelHP12.setFont(juce::Font(fontSize));
+    filterModeLabelHP12.attachToComponent(&filterModeDial, false);
+
+    addAndMakeVisible(filterModeLabelBP12);
+    filterModeLabelBP12.setText("BP12", juce::dontSendNotification);
+    filterModeLabelBP12.setFont(juce::Font(fontSize));
+    filterModeLabelBP12.attachToComponent(&filterModeDial, false);
+    
+    addAndMakeVisible(filterModeLabelLP24);
+    filterModeLabelLP24.setText("LP24", juce::dontSendNotification);
+    filterModeLabelLP24.setFont(juce::Font(fontSize));
+    filterModeLabelLP24.attachToComponent(&filterModeDial, false);
+    
+    addAndMakeVisible(filterModeLabelHP24);
+    filterModeLabelHP24.setText("HP24", juce::dontSendNotification);
+    filterModeLabelHP24.setFont(juce::Font(fontSize));
+    filterModeLabelHP24.attachToComponent(&filterModeDial, false);
+    
+    addAndMakeVisible(filterModeLabelBP24);
+    filterModeLabelBP24.setText("BP24", juce::dontSendNotification);
+    filterModeLabelBP24.setFont(juce::Font(fontSize));
+    filterModeLabelBP24.attachToComponent(&filterModeDial, false);
+    
+    
     addAndMakeVisible(envelope);
 
     addAndMakeVisible(envLabel);
@@ -83,6 +115,7 @@ SympleFilterComponent::~SympleFilterComponent()
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
 //    g.fillAll(juce::Colours::grey);
+
 }
 
 void SympleFilterComponent::resized()
@@ -110,6 +143,18 @@ void SympleFilterComponent::resized()
     filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), envHeight);
     filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), envHeight);
     filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), envHeight);
+    
+
+    int rotaryLabelWidth = 30;
+    int rotaryLabelHeight = 15;
+    filterModeLabelLP12.setBounds(filterModeDial.getX() + 4, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelHP12.setBounds(filterModeDial.getX() - 12, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelBP12.setBounds(filterModeDial.getX() + 4 , filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, rotaryLabelWidth, rotaryLabelHeight);
+    
+    
+    filterModeLabelLP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelHP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 21, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelBP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params, SympleADSRParameterNames& envNames) {

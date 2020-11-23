@@ -13,6 +13,7 @@
 #include "Envelope.h"
 
 
+
 struct SympleFilterParameterNames {
 public:
     std::string cutoff;
@@ -40,6 +41,7 @@ public:
 
 
 private:
+    float fontSize;
     juce::Slider filterCutoffDial;
     juce::Label cutoffLabel;
 
@@ -55,7 +57,15 @@ private:
     SympleADSRComponent envelope;
     juce::Label envLabel;
     
+    juce::Label filterModeLabelLP12;
+    juce::Label filterModeLabelHP12;
+    juce::Label filterModeLabelBP12;
+    juce::Label filterModeLabelLP24;
+    juce::Label filterModeLabelHP24;
+    juce::Label filterModeLabelBP24;
+    
     SympleSynthAudioProcessor& audioProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SympleFilterComponent)
 };
+
