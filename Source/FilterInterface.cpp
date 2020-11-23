@@ -21,7 +21,6 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     addAndMakeVisible(&filterModeDial);
     filterModeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterModeDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-//    filterModeDial.setPopupDisplayEnabled(true, true, this);
     
     addAndMakeVisible(filterModeLabel);
     filterModeLabel.setText("Filter Mode", juce::dontSendNotification);
@@ -69,6 +68,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     filterModeLabelLP12.setText("LP12", juce::dontSendNotification);
     filterModeLabelLP12.setFont(juce::Font(fontSize));
     filterModeLabelLP12.attachToComponent(&filterModeDial, false);
+    //filterModeLabelLP12.setColour(juce::Label::backgroundColourId, juce::Colours::red);
     
     addAndMakeVisible(filterModeLabelHP12);
     filterModeLabelHP12.setText("HP12", juce::dontSendNotification);
@@ -115,6 +115,7 @@ SympleFilterComponent::~SympleFilterComponent()
 void SympleFilterComponent::paint(juce::Graphics& g)
 {
 //    g.fillAll(juce::Colours::grey);
+
 }
 
 void SympleFilterComponent::resized()
@@ -143,14 +144,17 @@ void SympleFilterComponent::resized()
     filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), envHeight);
     filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), envHeight);
     
-    filterModeLabelLP12.setBounds(filterModeDial.getX() + 4, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
-    filterModeLabelHP12.setBounds(filterModeDial.getX() - 12, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
-    filterModeLabelBP12.setBounds(filterModeDial.getX() + 4 , filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
+
+    int rotaryLabelWidth = 30;
+    int rotaryLabelHeight = 15;
+    filterModeLabelLP12.setBounds(filterModeDial.getX() + 4, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelHP12.setBounds(filterModeDial.getX() - 12, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelBP12.setBounds(filterModeDial.getX() + 4 , filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, rotaryLabelWidth, rotaryLabelHeight);
     
     
-    filterModeLabelLP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
-    filterModeLabelHP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 21, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
-    filterModeLabelBP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, filterModeLabelLP12.getWidth(), filterModeLabelLP12.getHeight());
+    filterModeLabelLP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelHP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 21, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelBP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params, SympleADSRParameterNames& envNames) {
