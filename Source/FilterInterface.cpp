@@ -21,7 +21,7 @@ SympleFilterComponent::SympleFilterComponent(SympleSynthAudioProcessor& p)
     addAndMakeVisible(&filterModeDial);
     filterModeDial.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     filterModeDial.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    filterModeDial.setPopupDisplayEnabled(true, true, this);
+//    filterModeDial.setPopupDisplayEnabled(true, true, this);
     
     addAndMakeVisible(filterModeLabel);
     filterModeLabel.setText("Filter Mode", juce::dontSendNotification);
