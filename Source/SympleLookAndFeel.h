@@ -49,3 +49,13 @@ public:
 
     }
 };
+
+class LabelLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+    LabelLookAndFeel()
+    {
+        setColour(juce::Label::textColourId, juce::Colours::black);
+        setColour(juce::Label::backgroundColourId, juce::Colours::lightgrey);
+    }
+};

@@ -123,6 +123,14 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
     lfoLabel.setJustificationType(juce::Justification::centred);
     lfoLabel.attachToComponent(&lfo, false);
 
+    osc1Label.setLookAndFeel(&labelLook);
+    osc2Label.setLookAndFeel(&labelLook);
+    filter1Label.setLookAndFeel(&labelLook);
+    filter2Label.setLookAndFeel(&labelLook);
+    ampLabel.setLookAndFeel(&labelLook);
+    lfoLabel.setLookAndFeel(&labelLook);
+
+
     setSize (1200, 800);
     
 }
