@@ -53,9 +53,21 @@ public:
 class LabelLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
-    LabelLookAndFeel()
+    void drawLabel(juce::Graphics& g, juce::Label& l) override
     {
-        setColour(juce::Label::textColourId, juce::Colours::black);
-        setColour(juce::Label::backgroundColourId, juce::Colours::lightgrey);
+        auto labelArea = l.getLocalBounds();
+        auto margin = labelArea.getWidth() / 4;
+        labelArea.removeFromLeft(margin);
+        labelArea.removeFromRight(margin);
+        auto cornerSize = juce::jmin(l.getHeight(), l.getWidth()) / 2.5;
+
+        juce::Path p;
+        p.addRoundedRectangle(labelArea, cornerSize, cornerSize);
+        g.setColour(juce::Colours::lightgrey);
+        g.fillPath(p);
+
+        g.setFont(l.getFont());
+        g.setColour(juce::Colours::black);
+        g.drawFittedText(l.getText(), labelArea.reduced(5), juce::Justification::centred, 2);
     }
 };
