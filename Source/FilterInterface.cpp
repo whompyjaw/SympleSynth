@@ -139,7 +139,7 @@ void SympleFilterComponent::resized()
     auto amountArea = area.removeFromLeft(filterWidth).reduced(margin);
 
 
-    filterModeDial.setBounds(modeArea.getX(), modeArea.getY() + labelMargin, modeArea.getWidth(), envHeight);
+    filterModeDial.setBounds(modeArea.getX()+5, modeArea.getY() + labelMargin, modeArea.getWidth(), envHeight);
     filterCutoffDial.setBounds(cutoffArea.getX(), cutoffArea.getY() + labelMargin, cutoffArea.getWidth(), envHeight);
     filterResDial.setBounds(resArea.getX(), resArea.getY() + labelMargin, resArea.getWidth(), envHeight);
     filterAmountDial.setBounds(amountArea.getX(), amountArea.getY() + labelMargin, amountArea.getWidth(), envHeight);
@@ -147,14 +147,14 @@ void SympleFilterComponent::resized()
 
     int rotaryLabelWidth = 30;
     int rotaryLabelHeight = 15;
-    filterModeLabelLP12.setBounds(filterModeDial.getX() + 4, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
-    filterModeLabelHP12.setBounds(filterModeDial.getX() - 12, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelLP12.setBounds(filterModeDial.getX() + 4, filterModeDial.getY()+2 + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelHP12.setBounds(filterModeDial.getX() - 10, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
     filterModeLabelBP12.setBounds(filterModeDial.getX() + 4 , filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, rotaryLabelWidth, rotaryLabelHeight);
     
     
     filterModeLabelLP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 62, rotaryLabelWidth, rotaryLabelHeight);
     filterModeLabelHP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 21, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 40, rotaryLabelWidth, rotaryLabelHeight);
-    filterModeLabelBP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY() + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
+    filterModeLabelBP24.setBounds(filterModeDial.getX() + filterModeDial.getWidth() - 34, filterModeDial.getY()+2 + filterModeDial.getHeight() - labelMargin - 14, rotaryLabelWidth, rotaryLabelHeight);
 }
 
 void SympleFilterComponent::setParameters(SympleFilterParameterNames& params, SympleADSRParameterNames& envNames) {

@@ -114,9 +114,8 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
         
         // process every sample
-        while (read < (startSample + numSamples)) {
-            
-            auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);
+        while ((int)read < (startSample + numSamples)) {
+            auto max = juce::jmin((startSample + numSamples) - (int)read, (int)updateCounter);
             auto subBlock1 = voice1Block.getSubBlock (read, max);
             auto subBlock2 = voice2Block.getSubBlock (read, max);
 

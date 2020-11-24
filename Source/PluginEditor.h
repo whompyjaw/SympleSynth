@@ -43,6 +43,7 @@ public:
     
 private:
     SympleLookAndFeel sympleLook;
+    LabelLookAndFeel labelLook;
 
     juce::MidiKeyboardComponent keyboardComponent;
     SympleSynthAudioProcessor& audioProcessor;
