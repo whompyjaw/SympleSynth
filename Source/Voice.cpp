@@ -122,7 +122,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
 
             // add oscillator 1 sound
             osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
-            double osc1Gain = oscTree.getParameterAsValue("OSC_1_GAIN").getValue();
+            float osc1Gain = oscTree.getRawParameterValue("OSC_1_GAIN")->load();
             oscMode = static_cast<OscillatorMode> (osc1ModeInt);
             osc1.setMode(oscMode);
             osc1.generate(subBlock1, (int) subBlock1.getNumSamples(), osc1Gain);
