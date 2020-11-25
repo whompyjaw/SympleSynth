@@ -56,8 +56,8 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesiser
     int currentSemitone2 = oscTree.getParameterAsValue("OSC_2_SEMITONE").getValue();
 
     // adjust the frequency with value from the fine tune knob
-    float fineTune1 = oscTree.getParameterAsValue("OSC_1_FINE_TUNE").getValue();
-    float fineTune2 = oscTree.getParameterAsValue("OSC_2_FINE_TUNE").getValue();
+    float fineTune1 = oscTree.getRawParameterValue("OSC_1_FINE_TUNE")->load();
+    float fineTune2 = oscTree.getRawParameterValue("OSC_2_FINE_TUNE")->load();
 
     auto hertz1 = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber + currentSemitone1);
     auto hertz2 = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber + currentSemitone2);
@@ -104,6 +104,16 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         size_t updateCounter = PARAM_UPDATE_RATE;
         size_t read = startSample;
         
+        // add oscillator 1 sound
+        osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
+        oscMode = static_cast<OscillatorMode> (osc1ModeInt);
+        osc1.setMode(oscMode);
+
+        // add oscillator 2 sound
+        osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
+        oscMode = static_cast<OscillatorMode> (osc2ModeInt);
+        osc2.setMode(oscMode);
+
         // prepare filter
         float nextFilterEnvSample;
         nextFilterEnvSample = filterEnvelope.getNextSample();
@@ -119,24 +129,16 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             auto max = juce::jmin((size_t) (startSample + numSamples) - read, updateCounter);
             auto subBlock1 = voice1Block.getSubBlock (read, max);
             auto subBlock2 = voice2Block.getSubBlock (read, max);
-
-            // add oscillator 1 sound
-            osc1ModeInt = oscTree.getParameterAsValue("OSC_1_WAVE_TYPE").getValue();
+     
             float osc1Gain = oscTree.getRawParameterValue("OSC_1_GAIN")->load();
-            oscMode = static_cast<OscillatorMode> (osc1ModeInt);
-            osc1.setMode(oscMode);
             osc1.generate(subBlock1, (int) subBlock1.getNumSamples(), osc1Gain);
 
-            // add oscillator 2 sound
-            osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
-            double osc2Gain = oscTree.getParameterAsValue("OSC_2_GAIN").getValue();
-            oscMode = static_cast<OscillatorMode> (osc2ModeInt);
-            osc2.setMode(oscMode);
+            float osc2Gain = oscTree.getRawParameterValue("OSC_2_GAIN")->load();
             osc2.generate(subBlock2, (int) subBlock2.getNumSamples(), osc2Gain);
             
             // add noise osc sound
-            float noiseGain1 = oscTree.getParameterAsValue("NOISE_1_GAIN").getValue();
-            float noiseGain2 = oscTree.getParameterAsValue("NOISE_2_GAIN").getValue();
+            float noiseGain1 = oscTree.getRawParameterValue("NOISE_1_GAIN")->load();
+            float noiseGain2 = oscTree.getRawParameterValue("NOISE_2_GAIN")->load();
             noiseOsc.generate(subBlock1, (int) subBlock1.getNumSamples(), noiseGain1);
             noiseOsc.generate(subBlock2, (int) subBlock2.getNumSamples(), noiseGain2);
 
@@ -171,6 +173,7 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
                 // update filter
                 setFilter(read, nextFilterEnvSample, nextFilter2EnvSample);
             }
+            
         }
         //juce::Logger::writeToLog(readString + "(after while loop) " + static_cast<juce::String> (read));
 
@@ -249,8 +252,8 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
 {
     freq = oscTree.getRawParameterValue("FILTER_1_CUTOFF")->load();
     res = oscTree.getRawParameterValue("FILTER_1_RESONANCE")->load() / 100;
-    amount = oscTree.getParameterAsValue("FILTER_1_AMOUNT").getValue();
-    lfoAmount = oscTree.getParameterAsValue("LFO_AMOUNT").getValue();
+    amount = oscTree.getRawParameterValue("FILTER_1_AMOUNT")->load();
+    lfoAmount = oscTree.getRawParameterValue("LFO_AMOUNT")->load();
 
     lfoSample = (int)juce::jmax((int)read - 1, (int)0);
 
@@ -275,7 +278,7 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
     // SET FILTER 2
     freq = oscTree.getRawParameterValue("FILTER_2_CUTOFF")->load();
     res = oscTree.getRawParameterValue("FILTER_2_RESONANCE")->load() / 100;
-    amount = oscTree.getParameterAsValue("FILTER_2_AMOUNT").getValue();
+    amount = oscTree.getRawParameterValue("FILTER_2_AMOUNT")->load();
     
     freqMax = juce::jmin((float)(freq * pow(twelfthRoot, amount)), 20000.0f);
     lfoFreqMax = juce::jmin((float)(freq * pow(twelfthRoot, lfoAmount)), 20000.0f);
