@@ -112,7 +112,7 @@ void SympleSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     
     // prepare lfo
     lfo.setSampleRate(sampleRate);
-    lfo.setFrequency(tree.getParameterAsValue("LFO_FREQUENCY").getValue());
+    lfo.setFrequency(tree.getRawParameterValue("LFO_FREQUENCY")->load());
     int oscMode = tree.getParameterAsValue("LFO_WAVE_TYPE").getValue();
     lfo.setMode(static_cast<OscillatorMode> (oscMode));
     lfoBuffer = juce::dsp::AudioBlock<float> (heapBlock, 1, samplesPerBlock);
@@ -174,7 +174,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     // prepare lfo for synth processing
     lfoBuffer.clear();
-    float lfoFrequency = tree.getParameterAsValue("LFO_FREQUENCY").getValue();
+    float lfoFrequency = tree.getRawParameterValue("LFO_FREQUENCY")->load();
     int oscMode = tree.getParameterAsValue("LFO_WAVE_TYPE").getValue();
     lfo.setMode(static_cast<OscillatorMode> (oscMode));
     lfo.setFrequency(lfoFrequency);
@@ -189,7 +189,7 @@ void SympleSynthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     // This needs to be before this process loop.
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
-    float gainValue = tree.getParameterAsValue("MASTER_GAIN").getValue();
+    float gainValue = tree.getRawParameterValue("MASTER_GAIN")->load();
     for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
@@ -243,7 +243,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
 {
 //    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
-    juce::NormalisableRange<float> masterGainRange = juce::NormalisableRange<float>(-60.0f, 0.0f);
+    juce::NormalisableRange<float> masterGainRange = juce::NormalisableRange<float>(-120.0f, 0.0f);
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MASTER_GAIN", "MasterGain", masterGainRange, -20.0f));
 
     // filter knob ranges
@@ -263,7 +263,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("FILTER_2_AMOUNT", "Amount", envelopeAmountRange, 0));
 
     // envelope knob ranges
-    juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.0f, 10.0f);
+    juce::NormalisableRange<float> attackRange = juce::NormalisableRange<float>(0.01f, 10.0f);
     juce::NormalisableRange<float> decayRange = juce::NormalisableRange<float>(0.0f, 10.0f);
     juce::NormalisableRange<float> sustainRange = juce::NormalisableRange<float>(0.0f, 100.0f);
     juce::NormalisableRange<float> releaseRange = juce::NormalisableRange<float>(0.0f, 10.0f);
@@ -273,7 +273,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     releaseRange.setSkewForCentre(0.35f);
     
     // amp envelope parameters
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.001f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_ATTACK", "Attack", attackRange, 0.01f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_DECAY", "Decay", decayRange, 1.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_SUSTAIN", "Sustain", sustainRange, 100.0f));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("AMP_RELEASE", "Release", releaseRange, 0.1f));
@@ -313,14 +313,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout SympleSynthAudioProcessor::c
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NOISE_1_GAIN",
                                                                      "Noise Gain 1",
                                                                      masterGainRange,
-                                                                     -60.0f,
+                                                                     -120.0f,
                                                                      "Gain",
                                                                      juce::AudioProcessorParameter::genericParameter,
                                                                      [](float value, int) { return juce::String (value, 1); }));
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("NOISE_2_GAIN",
                                                                      "Noise Gain 2",
                                                                      masterGainRange,
-                                                                     -60.0f,
+                                                                     -120.0f,
                                                                      "Gain",
                                                                      juce::AudioProcessorParameter::genericParameter,
                                                                      [](float value, int) { return juce::String (value, 1); }));
