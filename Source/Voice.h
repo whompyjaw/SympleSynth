@@ -98,5 +98,5 @@ private:
     void readParameterState();
     void applyAmpEnvelope(juce::dsp::AudioBlock<float>&, juce::dsp::AudioBlock<float>&);
     void setFilter(size_t, float, float);
-
+    void runSmoothers(int);
 };

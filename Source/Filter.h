@@ -6,7 +6,7 @@
     Author:  woz
     Description: This is juce library code copied out to switch protected access
                  to public access on updateSmoothers so that it can be called
-                 whe n notes are not playing. This was done to save CPU and fix
+                 when notes are not playing. This was done to save CPU and fix
                  filter smoothing when large cutoff changes are made.
   ==============================================================================
 */

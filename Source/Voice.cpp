@@ -193,11 +193,9 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
     }
     else
     {
-        for (int i = 0; i < numSamples; ++i)
-        {
-            filter1.updateSmoothers();
-            filter2.updateSmoothers();
-        }
+        // run smoothing updates on filters to fix popping on
+        // big cutoff changes while no notes are being played
+        runSmoothers(numSamples);
     }
 }
 
@@ -257,6 +255,9 @@ void SynthVoice::applyAmpEnvelope(juce::dsp::AudioBlock<float>& subBlock1, juce:
     }
 }
 
+/*
+ *  Updates the filter settings with changes from the UI and LFO
+ */
 void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
 {
     freq = oscTree.getRawParameterValue("FILTER_1_CUTOFF")->load();
@@ -300,4 +301,16 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
     filter2.setMode(filterMode);
     filter2.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
     filter2.setResonance(res);
+}
+
+/*
+ *  Runs smoothers on the filters while no notes are being played
+ */
+void SynthVoice::runSmoothers(int numSamples)
+{
+    for (int i = 0; i < numSamples; ++i)
+    {
+        filter1.updateSmoothers();
+        filter2.updateSmoothers();
+    }
 }
