@@ -79,7 +79,7 @@ private:
     juce::dsp::AudioBlock<float>& lfoBuffer;
 
     juce::ADSR ampEnvelope;
-    juce::dsp::LadderFilterMode filterMode;
+    FilterMode filterMode;
     int filterModeInt;
     juce::ADSR filterEnvelope;
     juce::ADSR filter2Envelope;
@@ -91,8 +91,8 @@ private:
     Oscillator osc2;
     Oscillator noiseOsc;
 
-    Filter filter1;
-    Filter filter2;
+    Filter<float> filter1;
+    Filter<float> filter2;
     OscillatorMode oscMode;
 
     void readParameterState();

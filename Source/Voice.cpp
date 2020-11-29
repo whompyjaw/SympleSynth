@@ -98,7 +98,15 @@ void SynthVoice::stopNote(float, bool allowTailOff)
 */
 void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    
+    // prepare filter
+    float nextFilterEnvSample;
+    float nextFilter2EnvSample;
+    nextFilterEnvSample = filterEnvelope.getNextSample();
+    nextFilter2EnvSample = filter2Envelope.getNextSample();
+
+    // set filter values
+    setFilter(startSample, nextFilterEnvSample, nextFilter2EnvSample);
+
     if (ampEnvelope.isActive())
     {
         // clear voice block for processing
@@ -118,15 +126,6 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
         osc2ModeInt = oscTree.getParameterAsValue("OSC_2_WAVE_TYPE").getValue();
         oscMode = static_cast<OscillatorMode> (osc2ModeInt);
         osc2.setMode(oscMode);
-
-        // prepare filter
-        float nextFilterEnvSample;
-        nextFilterEnvSample = filterEnvelope.getNextSample();
-        float nextFilter2EnvSample;
-        nextFilter2EnvSample = filter2Envelope.getNextSample();
-        // get sample for second filter
-        setFilter(read, nextFilterEnvSample, nextFilter2EnvSample);
-
         
         // process every sample
         while ((int)read < (startSample + numSamples)) {
@@ -168,7 +167,6 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             nextFilterEnvSample = filterEnvelope.getNextSample();
             nextFilter2EnvSample = filter2Envelope.getNextSample();
 
-            //juce::Logger::writeToLog("updateCounter: " + static_cast<juce::String> (updateCounter));
             if (updateCounter == 0)
             {
                 // reset the amount of samples to process
@@ -179,7 +177,6 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             }
             
         }
-        //juce::Logger::writeToLog(readString + "(after while loop) " + static_cast<juce::String> (read));
 
         // add voice output to main buffer
         juce::dsp::AudioBlock<float> output(outputBuffer);
@@ -192,6 +189,14 @@ void SynthVoice::renderNextBlock(juce::AudioSampleBuffer& outputBuffer, int star
             filterEnvelope.reset();
             filter2Envelope.reset();
             clearCurrentNote();
+        }
+    }
+    else
+    {
+        for (int i = 0; i < numSamples; ++i)
+        {
+            filter1.updateSmoothers();
+            filter2.updateSmoothers();
         }
     }
 }
@@ -274,7 +279,7 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
 
     // set the filter 1 values
     filterModeInt = oscTree.getParameterAsValue("FILTER_1_MODE").getValue();
-    filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
+    filterMode = static_cast<FilterMode> (filterModeInt);
     filter1.setMode(filterMode);
     filter1.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
     filter1.setResonance(res);
@@ -291,7 +296,7 @@ void SynthVoice::setFilter(size_t read, float filterEnv, float filter2EnvSample)
     
     // set filter 2 values
     filterModeInt = oscTree.getParameterAsValue("FILTER_2_MODE").getValue();
-    filterMode = static_cast<juce::dsp::LadderFilterMode> (filterModeInt);
+    filterMode = static_cast<FilterMode> (filterModeInt);
     filter2.setMode(filterMode);
     filter2.setCutoffFrequencyHz(juce::jmax(cutOffFreqHz, lfoCutoffFreqHz));
     filter2.setResonance(res);
