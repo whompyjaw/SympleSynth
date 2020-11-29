@@ -36,7 +36,12 @@ bool SynthVoice::canPlaySound(juce::SynthesiserSound* sound)
 // Start the sine tone based on midi input
 
 void SynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound*, int)
-{    
+{
+    // reset envelopes
+    ampEnvelope.reset();
+    filterEnvelope.reset();
+    filter2Envelope.reset();
+
     // turn on envelopes
     ampEnvelope.noteOn();
     filterEnvelope.noteOn();

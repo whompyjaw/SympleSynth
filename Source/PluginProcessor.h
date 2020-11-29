@@ -63,7 +63,7 @@ public:
     juce::dsp::AudioBlock<float> lfoBuffer;
 
 private:
-    const int VOICE_COUNT = 1;
+    const int VOICE_COUNT = 5;
     
     juce::Synthesiser synth;
     juce::MidiKeyboardState keyboardState;

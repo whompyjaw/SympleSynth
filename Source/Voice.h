@@ -12,6 +12,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "Osc.h"
+#include "Filter.h"
 
 /*
 Describes one of the sounds that a Synthesiser can play.
@@ -90,8 +91,8 @@ private:
     Oscillator osc2;
     Oscillator noiseOsc;
 
-    juce::dsp::LadderFilter<float> filter1;
-    juce::dsp::LadderFilter<float> filter2;
+    Filter filter1;
+    Filter filter2;
     OscillatorMode oscMode;
 
     void readParameterState();
