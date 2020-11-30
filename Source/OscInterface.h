@@ -11,7 +11,6 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "WaveSelectSlider.h"
 #include "NoiseOscInterface.h"
 
 struct SympleOscParameterNames {
@@ -53,7 +52,7 @@ private:
     juce::Slider fineDial;
     juce::Label fineLabel;
 
-    WaveSelectSlider waveDial;
+    juce::Slider waveDial;
     juce::Label waveLabel;
     juce::Label waveLabel2;
     juce::Label waveLabel3;

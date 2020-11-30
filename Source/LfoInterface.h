@@ -11,7 +11,6 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "WaveSelectSlider.h"
 
 //==============================================================================
 /*
@@ -38,7 +37,7 @@ private:
     juce::Slider amountDial;
     juce::Label amountLabel;
 
-    WaveSelectSlider waveDial;
+    juce::Slider waveDial;
     juce::Label waveLabel;
     juce::Label waveLabel2;
     juce::Label waveLabel3;
