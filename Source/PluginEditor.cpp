@@ -28,7 +28,7 @@ SympleSynthAudioProcessorEditor::SympleSynthAudioProcessorEditor (SympleSynthAud
 
     // Add Title Label
     addAndMakeVisible(titleLabel);
-    titleLabel.setText("SYMPLESYNTH 1.0", juce::dontSendNotification);
+    titleLabel.setText("SYMPLESYNTH 2.0", juce::dontSendNotification);
     titleLabel.setFont(juce::Font(36.0, juce::Font::bold));
     titleLabel.setJustificationType(juce::Justification::centred);
 
